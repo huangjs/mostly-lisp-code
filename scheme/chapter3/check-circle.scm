@@ -1,0 +1,22 @@
+(define (check-circle x)
+  (define stack '())
+  (define (push x) (set! stack (cons x stack)))
+  (define (pop) (set! stack (cdr stack)))
+  (define (check x)
+    (cond ((null? x) #f)
+          ((memq x stack) #t)
+          (else (push x)
+                (check (cdr x)))))
+  (check x))
+
+;:*=======================
+;:* a very clever implementation with constant space
+(define (loop-check x)
+  (define (check x0 x1)
+    (cond ((eq? x0 x1) #t)
+          ((null? (cdr x1)) #f)
+          ((null? (cddr x1)) #f)
+          (else (check (cdr x0) (cddr x1)))))
+  (if (and (pair? x) (pair? (cdr x)))
+      (check (cdr x) (cddr x))
+      #f))

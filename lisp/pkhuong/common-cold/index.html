@@ -1,0 +1,182 @@
+<html>
+<head>
+<title> Common Cold, a lightweight continuations-based webpage package
+  with cooler URLs for Common Lisp
+</title>
+<style>
+
+<!-- 
+P { 
+    width: 30em; 
+    margin-left: 4em;
+    text-align: justify;
+  }
+-->
+
+</style>
+</head>
+<body bgcolor='LightGray'>
+<div style="margin-top: 2em; padding-top: 0.5em; margin-left: 4em; background-color:DarkGray; width: 45em;">
+<h1 style='margin-left:2em;'>Common Cold</h1>
+<h2 style='width: 20em; margin-left:2em;'>a lightweight continuations-based webpage package
+  with <a href="http://www.w3.org/Provider/Style/URI">cooler URLs</a> 
+for Common Lisp</h2>
+
+<br/>
+
+<p>Writing dynamic webpages with continuations can save a lot of pain,
+by letting the computer compile the inversion of control
+away. Unfortunately, continuations can rarely be exported outside the
+language implementation's runtime, so we are usually forced to save
+them at the server, and only pass a handle to the client. Not only may
+this open the server up to DOS attacks, but it also usually means that
+URLs have a finite, and relatively short, lifetime.</p>
+
+<ol style='margin-left:5em; text-size:small;'>
+  <li><a href='#overview'>What makes Common Cold different</a></li>
+  <li><a href='#capture'>Finer points of static and dynamic
+  scoping</a></li>
+  <li><a href='#specials'>More on special variables in Common
+  Cold</a></li>
+  <li><a href='#special-forms'>Common Cold's own special
+  forms</a></li>
+  <li><a href='#continuations'>How to use continuations in dynamic
+  pages</a></li>
+  <li><a href='#misc'>Miscellaneous information</a></li>
+  <li><a href='#files'>Links to the source files and a tarball</a></li>
+</ol>
+
+<p id='overview'>Common Cold (CC)'s continuations are serialisable,
+avoiding these problems and much of the complexity associated with
+them. Moreover, instead of attempting to 'hide' the fact that we do
+not use native continuations, I tried to make the transformation as
+explicit as possible (by having the package use its own special forms
+instead of a codewalker), but still usable (by using its
+own <emph>special</emph> forms). The programmer can thus easily
+control where the transformation will be made, and completely avoid
+any overhead in sections of code that will never be captured. Since
+the borders between the vanilla CL world and that of transformed code
+are kept explicit, the danger of being surprised by a leaky
+abstraction, e.g. when mixing continuations and native higher-order
+functions, should be much lesser.</p>
+
+<p id='capture'>CC supports both lexical bindings (static scoping) and
+special variables (dynamic scoping). Serialised closures or
+continuations always create fresh copies of the lexical scopes in the
+state they were when the closure or the continuation frame was
+created. Assigning to lexically bound variables can result in
+surprising behaviour, especially since closures/continuations that
+have not been deserialised have normal CL lexical bindings. Again, in
+the interest of explicitness, nothing is done to prevent this from
+happening; the programmer may very well know that a given variable is
+only assigned to before capturing its scope. Note that side-effecting
+lexically bound variables in continuations-based web framework is
+often a cause of weird bugs, since it can be difficult to know when
+bindings must be shared, and when they must be copied. Special
+variables are the prime way to introduce mutable bindings in
+CC. Specials created in CL code or via CC's own special forms can be
+mixed transparently, but only CC's special forms will capture them in
+continuations. Dynamic bindings are never shared between
+continuations, and are recaptured every time a continuation is
+captured. Assignments to special variables are thus carried from a
+continuation's invocation to the next.</p>
+
+<p id='specials'>Specials are also treated specially by the web
+serving code. While the bindings are always saved in the
+continuations, the topmost (non shadowed) ones are also exposed as CGI
+parameters (as their qualified, URL-encoded, <code>SYMBOL-NAME</code>)
+to the continuation's URL (this part may be buggy
+with <code>GET</code> forms?). When a continuation is invoked (a
+response is sent to the server), the topmost special bindings are
+replaced (as if by assignment) by the rightmost parameter with the
+corresponding name, if any. Parameters can thus simply be special
+variables (I should create a special package for them to avoid their
+being qualified), which will be side-effected with their value in the
+form if any. Since CC uses Hunchentoot, it is of course also possible
+to use Hunchentoot's functions for better access to parameters or
+control of the headers.</p>
+
+<p id='special-forms'>Lexical bindings may be created
+ via <code>bind</code>, <code>mlet*</code> or <code>mlet</code> (if
+ the computed values may capture the continuations;
+ otherwise, <code>let</code> and <code>let*</code> are fine). Local
+ functions should be bound normally, using <code>flet</code>
+ and <code>labels</code>. Special variables may be introduced
+ with <code>dbind</code>, <code>mdlet*</code> or <code>mdlet</code>
+ (if no continuation will be captured in their dynamic scope, normal
+ CL special forms will also work). Finally, <code>mprogn</code>
+ introduces sequencing (when one of the forms may capture its
+ continuation), <code>mcatch</code> a <code>catch</code> frame (that
+ interacts with CL's <code>catch</code> and <code>throw</code>
+ correctly, but is captured in continuations),
+ and <code>mblock</code>, <code>mreturn-from</code>
+ and <code>mreturn</code> (which may not always interact correctly
+ with CL's <code>block</code>/<code>return-from</code>).</p>
+
+<p id='continuations'>Page creating functions simply return a string,
+ and may use Hunchentoot's functions freely. To use
+ continuations, <code>call-with-&#x200B;continuation-&#x200B;url</code>
+ or
+ <code>send/suspend</code> may be
+ used. <code>(call-with-&#x200B;continuation-&#x200B;url
+ [argument-&#x200B;function])</code> unwinds the stack (thus making it
+ closer to shift), builds a copy of the continuation's dynamic scope
+ environment, and calls its argument function, passing it the URL
+ representing its continuation. The argument function should return a
+ string, the web page's contents. <code>(send/suspend ([k])
+ [body])</code> builds on top
+ of <code>call-with-&#x200B;continuation-&#x200B;url</code> and
+ executes <code>[body]</code> with <code>[k]</code> bound to the URL
+ representing <code>send/suspend</code>'s continuation. The body
+ should evaluate to the response page's contents. In both cases, only
+ a copy of the dynamic bindings is restored. Side effects, even to
+ special variables, will not be reflected in the captured
+ continuations, and <code>mcatch</code>s, <code>mblock</code>s,
+ etc. are not active.</p>
+
+<p id='misc'>The continuation part of URLs are encrypted using AES
+ when a secret key has been registered
+ using <code>register-key</code>. Registering a zero-length key
+ disables the encryption (which is disabled by default). Continuations
+ are then base64 (adapted to URIs) encodings of unencrypted gziped
+ strings.</p>
+
+<p><code>ensure-all-builders</code> may be called at any time to
+compile all fragment (closures or continuation frames) deserialising
+functions. In would then be possible to export the data to other nodes
+for easier load balancing.</p>
+
+<p>Finally, <code>make-continuation-&#x200B;handler</code> should be
+used to create a dispatch function for Hunchentoot. The example should
+make its usage clear.</p>
+
+<ul id='files'>
+  <li><a href="closures.lisp">serialisable closures</a>
+
+    <p>The user should mostly be interested in <code>slambda</code> and
+    <code>sfunction</code>, special forms that are, respectively,
+    like <code>lambda</code> and <code>function</code>, but return
+    closures that can be serialised (printed readably).</p>
+  </li>
+  <li><a href="continuations.lisp">serialisable continuations</a>
+
+    <p>Exports symbols related to dynamic-binding and catch frames, and
+    the macros for the continuations mini
+    language. <code>invoke-cont</code> may be interesting to someone
+    building something else.</p>
+  </li>
+  <li><a href="handler.lisp">handler for hunchentoot</a>
+
+    <p>Fills the COMMON-COLD package, which is the only one that should
+    be USEd by the user. Defines <code>ensure-all-builders</code>, all
+    the web interaction-related functions/macros, and all the
+    continuation encoding machinery.</p>
+  </li>
+  <li><a href="example.lisp">example usage</a></li>
+  <li><a href="packages.lisp">packages.lisp</a></li>
+  <li><a href="common-cold.asd">ADSF definition</a></li>
+  <li><a href="../common-cold.tar.gz">tarball</a></li>
+</ul>
+</div>
+</body>
+</html>

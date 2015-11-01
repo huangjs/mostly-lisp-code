@@ -1,0 +1,6 @@
+(defun foo ()
+  #+allegro (do-one-thing)
+  #+sbcl (do-another-thing)
+  #+clisp (someting-else)
+  #+cmu (yet-another-version)
+  #-(or allegro sbcl clisp cmu) (error "Not implemented"))

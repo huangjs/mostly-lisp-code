@@ -1,0 +1,30 @@
+Overview
+
+ Implements a small lispy lambda calculus that compiles to C++
+ templates. Primitive data types: cons cells, integers, booleans. 
+
+Usage
+
+ Defining templates lisp (TL) macros
+ (add-macro symbol function) function is a CL function.
+
+ Compiling TL code to templates
+ (tl2cpp TL-form*) where TL-form is a list.
+
+Predefined primitives:
+
+ cons, car, cdr, nil (also doubles as False)
+ integers, 1+, 1-, +, -, *, /, %, ^, &, |, ~, <, >, <<, >>
+ T, !, &&, ||
+ equal, =
+ if, lambda, cond
+ (out struct/class name (&key access parent inherit-type)
+      template-string*)
+
+ Where template-string is a normal string that will be outputted
+ verbatim in the code. Expressions in #{ } will be evaluated in TL,
+ and replaced by their value (at C++ compile time).
+
+ Use enable-raw-string-syntax to enable """ strings, which lets you
+ have unescaped " and backslashes (shamelessly stolen from
+ Yury Sulsky's cinline).

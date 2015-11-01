@@ -1,0 +1,42 @@
+PLT Scheme Simulation Collection
+
+PLT Scheme Simulation Collection
+Version 1.0
+ 
+  The PLT Scheme Simulation Collection implements a combined discrete-event and
+continuous simulation engine for developing simulation models in PLT Scheme.  The
+simulation engine:
+ 
+    * Provides a process-based simulation engine
+    * Provides combined discrete-event and continuous simulation models
+    * Provides automatic data collection
+ 
+The source code is distributed with the simulation collection and is licensed under
+the GNU Lesser General Public License (LGPL).
+ 
+  The motivation behind the PLT Scheme Simulation Collection is to provide the
+simulation engine for developing knowledge-based simulations in PLT Scheme.  It
+is based on work originally done in Symbolics Common Lisp.  This is not as much a
+port of the earlier work as a complete re-engineering of the system into PLT
+Scheme.  In particular, it makes extensive use of continuations to provide a
+process-based approach to building simulation models.  It also adds support for
+building continuous simulation models, which were not part of the original work.
+ 
+  The PLT Scheme Simulation Collection provides the following functionality for 
+building and executing simulation models:
+ 
+    * Simulation Environments (Basic)
+    * Simulation Control (Basic)
+    * Events
+    * Processes
+    * Resources
+    * Data Collection
+    * Sets
+    * Continuous Simulation Models
+    * Simulation Classes
+    * Simulation Control (Advanced)
+    * Simulation Environments (Hierarchical)
+ 
+  A complete reference manual for the PLT Scheme Simulation Collection is under 
+development.  A draft copy can be obtained by contacting the author mailto:m.douglas.williams@saic.com.  For now, please look at the examples for guidance on using the
+simulation collection.

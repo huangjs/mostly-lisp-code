@@ -1,0 +1,23 @@
+"HLA subtypes associated with diseases",
+"A3","Hemochromatosis"
+"B27","Psoriasis, Ankylosing spondylitis, Inflammatory bowel disease, Reiter's syndrome."
+"B8","Graves' disease."
+"DR2","Multiple selerosis, hay fever, SLE, Goodpasture's."
+"DR3","Diabetes mellitus type 1."
+"DR4","Rheumatoid arthritis, diabetes mellitus type l."
+"DR5","Pernicious anemia--->B12 deficiency,Hashimoto's thyroiditis."
+"DR7","Steroid-responsive nephrotic syndrome."
+"T- and B-cell activation","2 signals are required for T-cell activation and B-cell class switching––signal 1 and signal 2.
+Th activation:
+1. Foreign body is phagocytosed by APC
+2. Foreign antigen is presented on MHC II and
+recognized by TCR on Th cell (signal 1)
+3. “Costimulatory signal” is given by interaction
+of B7 and CD28 (signal 2)
+4. Th cell activated to produce cytokines
+Tc activation:
+1. Endogenously synthesized (viral or self)
+proteins are presented on MHC I and
+recognized by TCR on Tc cell (signal 1)
+2. IL-2 from Th cell activates Tc cell to kill
+virus-infected cell (signal 2)      B-cell class switching: 1. IL-4,IL-5 or IL-6 from Th2 cell (signal 1)  2. CD 40 receptor activation by binding         CD 40 ligand on Th cell (signal 2)"

@@ -1,0 +1,221 @@
+#ifndef VECTOR_ELEMENT_TYPE
+# error "VECTOR_ELEMENT_TYPE must be defined"
+#endif
+
+#if !defined(VECTOR_STRUCT_NAME) && !defined(VECTOR_TYPEDEF)
+# error "VECTOR_STRUCT_NAME or VECTOR_TYPEDEF must be defined"
+#endif
+
+#ifndef VECTOR_AFFIX
+# ifdef VECTOR_STRUCT_NAME
+#  define VECTOR_AFFIX_ VECTOR_STRUCT_NAME
+# else
+#  define VECTOR_AFFIX_ VECTOR_TYPEDEF
+# endif
+#else
+# define VECTOR_AFFIX_ VECTOR_AFFIX
+#endif
+
+#ifdef VECTOR_STRUCT_NAME
+# define VECTOR_TYPE_NAME struct VECTOR_STRUCT_NAME
+#else
+# define VECTOR_TYPE_NAME VECTOR_TYPEDEF
+#endif
+
+#ifndef VECTOR_LINKAGE
+# define VECTOR_LINKAGE_ static
+#else
+# define VECTOR_LINKAGE_ VECTOR_LINKAGE
+#endif
+
+#ifndef VECTOR_PUSH_POP_LINKAGE
+# define VECTOR_PUSH_POP_LINKAGE_ VECTOR_LINKAGE
+#else
+# define VECTOR_PUSH_POP_LINKAGE_ VECTOR_PUSH_POP_LINKAGE
+#endif
+
+#ifndef VECTOR_REALLOC
+# define VECTOR_REALLOC_ realloc
+#else
+# define VECTOR_REALLOC_ VECTOR_REALLOC
+#endif
+
+#ifndef VECTOR_FREE
+# define VECTOR_FREE_ free
+#else
+# define VECTOR_FREE_ VECTOR_FREE
+#endif
+
+#ifndef VECTOR_ERROR
+# define VECTOR_ERROR_(X) return (X)
+#else
+# define VECTOR_ERROR_(X) VECTOR_ERROR(X)
+#endif
+
+#define VECTOR_CONCATENATE__(X, Y, Z) X ## Y ## Z
+#define VECTOR_CONCATENATE_(X, Y, Z) VECTOR_CONCATENATE__(X, Y, Z)
+#define VECTORIFY_(X, Z) VECTOR_CONCATENATE_(X, VECTOR_AFFIX, Z)
+
+#ifdef VECTOR_TYPEDEF
+    typedef
+#endif
+struct
+#ifdef VECTOR_STRUCT_NAME
+    VECTOR_STRUCT_NAME 
+#endif
+{
+        size_t size;
+        size_t count;
+        ELEMENT_TYPE * vec;
+}
+#ifdef VECTOR_TYPEDEF
+    VECTOR_TYPEDEF
+#endif
+;
+
+VECTOR_LINKAGE_
+int VECTORIFY(initialize_,) (VECTOR_TYPE_NAME * vec, size_t initial_size)
+{
+#ifndef NO_GENERIC
+    return VECTOR_generic_initialize(vec, initial_size, sizeof(ELEMENT_TYPE), VECTOR_REALLOC_);
+#else
+    vec->count = 0;
+    vec->size = initial_size;
+    vec->vec = 0;
+
+    if (initial_size) {
+        size_t byte_count = sizeof(ELEMENT_TYPE)*initial_size;
+        if (byte_count/sizeof(ELEMENT_TYPE) != initial_size)
+            VECTOR_ERROR_(-2);
+
+        vec->vec = VECTOR_REALLOC_(0, byte_count);
+        if (!vec->vec)
+            VECTOR_ERROR_(-1);
+    }
+
+    return 0;
+#endif
+}
+
+VECTOR_LINKAGE
+int VECTORIFY(resize_,) (VECTOR_TYPE_NAME * vec, size_t new_size)
+{
+#ifndef NO_GENERIC
+    return VECTOR_generic_resize(vec, new_size, sizeof(ELEMENT_TYPE), VECTOR_REALLOC_);
+#else
+    size_t byte_count;
+    if (0 == new_size) {
+        vec->size = vec->count = 0;
+        VECTOR_FREE_(vec->vec);
+        vec->vec = 0;
+        return 0;
+    }
+
+    byte_count = new_size * sizeof(ELEMENT_TYPE);
+    if (byte_count/sizeof(ELEMENT_TYPE) != new_size)
+        VECTOR_ERROR_(-2);
+    ELEMENT_TYPE * new_vec = VECTOR_REALLOC_(vec->vec, byte_count);
+    if (!new_vec) VECTOR_ERROR_(-1);
+
+    vec->vec = new_vec;
+    vec->size = new_vec;
+    if (vec->count > vec->size)
+        vec->count = vec->size;
+
+    return 0;
+#endif
+}
+
+VECTOR_LINKAGE
+int VECTORIFY(destroy_,) (VECTOR_TYPE_NAME * vec)
+{
+#ifndef NO_GENERIC
+    return VECTOR_generic_destroy(vec);
+#else
+    vec->size = vec->count = 0;
+    VECTOR_FREE_(vec->vec);
+    vec->vec = 0;
+    return 0;
+#endif
+}
+
+VECTOR_LINKAGE
+int VECTORIFY(adjust_,) (VECTOR_TYPE_NAME * vec)
+{
+#ifndef NO_GENERIC
+    return VECTOR_generic_adjust(vec);
+#else
+    size_t new_size = 0, byte_count;
+    if (vec->count) {
+        size_t nlpo2 = vec->count;
+        if (CHAR_BIT * sizeof(size_t) > 1)
+            nlpo2 |= nlpo2 >> 1;
+        if (CHAR_BIT * sizeof(size_t) > 2)
+            nlpo2 |= nlpo2 >> 2;
+        if (CHAR_BIT * sizeof(size_t) > 4)
+            nlpo2 |= nlpo2 >> 4;
+        if (CHAR_BIT * sizeof(size_t) > 8)
+            nlpo2 |= nlpo2 >> 8;
+        if (CHAR_BIT * sizeof(size_t) > 16)
+            nlpo2 |= nlpo2 >> 6;
+        if (CHAR_BIT * sizeof(size_t) > 32)
+            nlpo2 |= nlpo2 >> 32;
+
+        new_size = nlpo2+1;
+    }
+
+    if (!new_size) {
+        vec->size = vec->count = 0;
+        VECTOR_FREE_(vec->vec);
+        vec->vec = 0;
+        return 0;
+    }
+
+    byte_count = new_size*sizeof(ELEMENT_TYPE);
+    if (byte_count/sizeof(ELEMENT_TYPE) != new_size) VECTOR_ERROR_(-2);
+
+    ELEMENT_TYPE * new_vec = VECTOR_REALLOC_(vec->vec, byte_count);
+    if (!new_vec) VECTOR_ERROR_(-1);
+
+    vec->vec = new_vec;
+    vec->size = new_vec;
+    if (vec->count > vec->size)
+        vec->count = vec->size;
+
+    return 0;
+#endif
+}
+
+VECTOR_PUSH_POP_LINKAGE
+int VECTORIFY(,_push) (VECTOR_TYPE_NAME * vec, ELEMENT_TYPE datum)
+{
+    if ((vec->count >= vec->size)
+        && VECTORIFY(adjust_,) (vec)) VECTOR_ERROR_(-1);
+
+    vec->vec[vec->count++] = datum;
+    return 0;
+}
+
+VECTOR_PUSH_POP_LINKAGE
+int VECTORIFY(,_pop) (VECTOR_TYPE_NAME * vec, ELEMENT_TYPE * ret)
+{
+    if (!vec->count) VECTOR_ERROR_(-3);
+
+    if ((vec->count < vec->size/4)
+        && VECTORIFY(adjust_,)(vec))
+        return VECTOR_ERROR_(-1);
+    
+    *ret = vec->vec[--vec->count];
+    return 0;
+}
+
+#undef VECTOR_ELEMENT_TYPE
+#undef VECTOR_STRUCT_NAME
+#undef VECTOR_TYPEDEF
+#undef VECTOR_TYPE_NAME
+#undef VECTOR_AFFIX_
+#undef VECTOR_LINKAGE_
+#undef VECTOR_PUSH_POP_LINKAGE_
+#undef VECTOR_REALLOC_
+#undef VECTOR_FREE_
+#undef VECTOR_ERROR_

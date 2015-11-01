@@ -1,0 +1,165 @@
+* Tasks
+
+
+* Notes
+
+
+_Compilateur natif (x86-64) pour noyaux computationnels_
+
+Objectif: Ecriture d'un compilateur adapte aux caracteristiques de
+codes E/S-limite generes et aux couts des architectures modernes.
+
+Applications types: dot, axpy, filtres graphiques, gemm, qsort,
+FFT (cas de base de tailles fixes).
+
+Caracteristiques des codes:
+
+ 1. Enormes blocs de base
+ 2. Operations repetitives
+ 3. Generation semi-automatique
+
+Caracteristiques des processeurs modernes:
+
+ 1. ``spill'' tres couteux (memory wall)
+ 2. Ordonnancement des instructions peu important (superscalaire, OOO)
+ 3. Regularite des acces memoires essentielle (cache, prefetch)
+ 4. SIMD a vecteurs courts
+
+Les compilateurs de production actuels sont souvent mesadaptes a ces
+circonstances.  Par exemple, dans "The Power of Belady's Algorithm in
+Register Allocation for Long Basic Blocks" (Guo, Garzaran & Padua
+'03), les auteurs trouvent qu'un allocateur de registre trivial
+performe sensiblement mieux que ceux de GCC ou MIPSPro sur de
+tels codes. De meme, "Static Scheduling for Out-of-order Instruction
+Issue Processors" (Tate, Steven & Steven, '00) montre qu'un
+ordonnancement exact aggressif d'instructions (de meme que les
+techniques associees, par exemple pipelinage logiciel) sur des
+architectures OOO (avec bonne prediction de branchements) a souvent
+une influence nulle ou nefaste sur l'efficacite d'execution.
+
+On peut aussi s'attendre a ce que certaines passes d'optimisation qui
+sont utiles sur les codes ecrits a la mains ne le soient pas, ou
+beaucoup moins (surtout en comparaison au temps de calcul), sur ces
+codes.  Entre autres, particulierement pour des expressions larges, il
+est parfois possible de grandement reduire la pression sur les
+registres en (re)introduisant des sous-expressions communes
+("Manipulating MAXLIVE For Spill-Free Register Allocation", Arcot,
+Dietz & Rajachidambaram '05).
+
+Afin de generer des acces memoire reguliers et de prendre avantage du
+fait que les entrees soient generees semi-automatiquement, je suggere
+aussi un compilateur qui ne travaille que sur de tres long blocs de
+base (boucles finies entierement deroulees).  Cela permettrait
+d'ordonnancer des unites de travail principalement independantes, et
+de re-enrouler les boucles par apres (en tant qu'optimisation de
+localite du code lui-meme).  J'espere qu'une telle structure permettra
+de retrouver quelques optimisations de boucles de haut niveau,
+e.g. permutation de boucles imbriquees (parfaitement ou non) ou
+unroll-and-jam, lorsqu'appropriees.  Cela permet aussi de voir la
+parallelisation courte comme une optimisation de localite/regularite
+des acces memoire (suivi d'une passe opportuniste pour remplacer les
+groupes d'instructions appropries par des instructions vectorielles).
+
+Le compilateur serait divise en quatre phases:
+
+1. a) inference et verification de type (double, int, ou tableau de
+      double/int) [1]
+
+2. a) vivacite des variables [1]
+   b) propagation de constantes, copies, calculs constants [1]
+   c) detection des expression communes [2]
+   d) simplifications algebriques
+
+3. a) ordonnancement des taches independantes [?]
+   b) elimination d'expressions communes [1]
+   c) identification & reordonnancement local de sequences
+      parallelisables
+   d) identification de boucles
+   e) emission de code (par programmation dynamique si le temps le
+      permet)
+
+4. a) allocation de registres [2] & ``spilling'' [?], avec retour (modulo
+      feedback) en 3. si necessaire
+   b) optimisation par ``peephole'' [1]
+
+Pour le rapport 1, les elements 1a), 2a) et 2b) devraient etre
+presents.  Pour le rapport 2, 3a), 3e) et 4a) devraient etre prets
+Pour le rapport final, 2c), 2d), 3b) et 4b) devraient etre finalises.
+Si plus de temps est disponibles, 2d), 3d) 3c) et 3e) (par
+programmation dynamique) seront implementes (dans cet ordre).
+
+Le langage source serait un langage en s-expression specialise pour
+les calculs sur tableaux. Le langage destination est l'assembleur
+x86-64 (avec SSE2).
+
+let*-expr:
+ (let* (([var] [value-expr])*)
+   [expr])
+
+Permet d'introduire des liaisons.
+
+par-expr:
+ (par [expr]*)
+
+Permet de specifier des unites de travail independentes (mais
+atomiques, semantiquement)
+
+(Il serait aussi interessant d'avoir des any-expr, permettant de
+specifier plusieurs sequences de code equivalentes.)
+
+select-expr:
+ (select [bool-expr] [expr1] [expr2])
+
+Evalue a la valeur de [expr1] sur [bool-expr] est vrai, [expr2]
+sinon.  Les expressions pourraient etre evaluees dans n'importe quel
+ordre, ou meme partiellement.
+
+set-expr:
+ (set [var] [value-expr])
+
+Assigne une nouvelle valeur a [var]; les types doivent correspondre.
+
+aset-expr:
+ (aset [array-var] [int-expr] [value-expr])
+
+Modifie le tableau approprie a l'index donne.
+
+ref-expr:
+ (ref [array-var] [int-expr])
+
+arith-expr:
+ (+ [value-expr]*) |
+ (- [value-expr]*) |
+ (* [value-expr]*) |
+ (/ [value-expr]*)
+
+cmp-expr:
+ (<  [value-expr]*) |
+ (>  [value-expr]*) |
+ (=  [value-expr]*) |
+ (/= [value-expr]*)
+
+bool-expr:
+ [cmp-expr]         |
+ (not [bool-expr])  |
+ (and [bool-expr]*) |
+ (or  [bool-expr]*) |
+ (xor [bool-expr]*)
+
+value-expr:
+ [let*-expr]   |
+ [select-expr] |
+ [ref-expr]    |
+ [arith-expr]
+
+expr:
+ [value-expr] | [set-expr] | [aset-expr] | [par-expr]
+
+function:
+ (defun [name] (([type] [argument])*)
+   [expr])
+   
+type: scalar-type | vector-type
+
+scalar-type: int | float
+vector-type: (vector [scalar-type])

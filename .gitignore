@@ -1,0 +1,16 @@
+*.fasl
+*.FASL
+*.out
+*.o
+*.a
+*.tmp
+*.cache
+*~
+*.obj
+*.so
+*.cmi
+*.cmx
+*.cmo
+.DS_Store
+
+.git.bak/

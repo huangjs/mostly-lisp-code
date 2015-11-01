@@ -1,0 +1,199 @@
+(tc +)
+
+
+- Enumeration Types
+
+(datatype fruit
+  ______________
+  cherry : fruit;
+
+  ______________
+  pear : fruit;
+
+  ______________
+  orange : fruit;
+
+  _________________
+  pineapple : fruit;
+
+  ______________
+  lemon : fruit;
+  )
+
+cherry
+
+
+- Side Conditions
+
+(datatype fruit
+  if (element? Fruit [cherry pear orange pineapple lemon])
+  ______________
+  Fruit : fruit;
+  )
+
+cherry : fruit
+
+(datatype nat
+  if (and (integer? N) (>= N 0))
+  ______________
+  N : nat;
+  )
+
+1 : nat
+0 : nat
+-1 : nat
+1.4 : nat
+
+
+- Left and Right Rules
+
+>>
+A_1, A_2, ... >> B
+
+(datatype details
+  Name : string; Telephone : number;
+  ______________
+  [Name Telephone] : details;
+
+  Name : string; Telephone : number >> P;
+  ______________
+  [Name Telephone] : details >> P;
+  )
+
+abbrev:
+
+(datatype details
+  Name : string; Telephone : number;
+  =============
+  [Name Telephone] : details;
+  )
+
+
+- Example: a simple calculator
+
+(datatype arith-expr
+  X : number;
+  ______________
+  X : arith-expr;
+
+  if (element? Op [+ - * /])
+  X : arith-expr; Y : arith-expr;
+  =============
+  [X Op Y] : arith-expr;
+  )
+
+(define do-calculation
+  {arith-expr --> number}
+  [X + Y] -> (+ (do-calculation X) (do-calculation Y))
+  [X - Y] -> (- (do-calculation X) (do-calculation Y))
+  [X * Y] -> (* (do-calculation X) (do-calculation Y))
+  [X / Y] -> (/ (do-calculation X) (do-calculation Y))
+  X -> X
+  )
+
+
+Use label (called constructor function in ML or Haskell) to
+distinguish between user defined type with primitive types
+
+(datatype arith-expr
+  X : number >> Y : A;
+  ______________
+  [num X] : arith-expr >> Y : A;
+
+  X : number;
+  ______________
+  [num X] : arith-expr;
+
+  if (element? Op [+ - * /])
+  X : arith-expr; Y : arith-expr;
+  =============
+  [X Op Y] : arith-expr;
+  )
+
+(define do-calculation
+  {arith-expr --> number}
+  [X + Y] -> (+ (do-calculation X) (do-calculation Y))
+  [X - Y] -> (- (do-calculation X) (do-calculation Y))
+  [X * Y] -> (* (do-calculation X) (do-calculation Y))
+  [X / Y] -> (/ (do-calculation X) (do-calculation Y))
+  [num X] -> X
+  )  
+
+[[num 2] + [num 3]]
+(do-calculation [[num 2] + [num 3]])
+[2 + 3]
+
+
+- Verified Objects
+
+We want to input [2 + 3]
+
+______________
+(number? X) : verified >> X : number;
+
+So,
+
+(datatype arith-expr
+  ______________
+  (number? X) : verified >> X : number;
+
+  X : number >> Y : A;
+  ______________
+  X : arith-expr >> Y : A;
+
+  X : number;
+  ______________
+  X : arith-expr;
+
+  if (element? Op [+ - * /])
+  X : arith-expr; Y : arith-expr;
+  =============
+  [X Op Y] : arith-expr;
+  )
+
+(define do-calculation
+  {arith-expr --> number}
+  [X + Y] -> (+ (do-calculation X) (do-calculation Y))
+  [X - Y] -> (- (do-calculation X) (do-calculation Y))
+  [X * Y] -> (* (do-calculation X) (do-calculation Y))
+  [X / Y] -> (/ (do-calculation X) (do-calculation Y))
+  X -> X
+  )
+
+[2 + 3]
+(do-calculation [2 - [3 * 4]])
+
+
+- Subtypes
+
+Subtype refinement rule are built-in.
+
+(datatype nat
+  if (and (integer? N) (>= N 0))
+  ______________
+  N : nat;
+
+  X : nat; Y : nat;
+  ______________
+  (+ X Y) : nat;
+  )
+
+(define plus
+  {nat --> nat --> nat}
+  X Y -> (+ X Y))
+
+(plus 1 2)
+(- (plus 1 2) 3)
+
+(datatype subtype
+  (subtype B A); X : B;
+  ______________
+  X : A;
+
+  ______________
+  (subtype nat number);
+  )
+
+(- (plus 1 2) 3)
+
+

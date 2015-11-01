@@ -1,0 +1,307 @@
+diff --git a/src/compiler/x86-64/alloc.lisp b/src/compiler/x86-64/alloc.lisp
+index c6218c8..7b436a0 100644
+--- a/src/compiler/x86-64/alloc.lisp
++++ b/src/compiler/x86-64/alloc.lisp
+@@ -81,7 +81,7 @@
+   (:generator 100
+     (inst lea result (make-ea :byte :index words
+                               :scale (ash 1 (- word-shift n-fixnum-tag-bits))
+-                              :disp (+ (1- (ash 1 n-lowtag-bits))
++                              :disp (+ lowtag-mask
+                                        (* vector-data-offset n-word-bytes))))
+     (inst and result (lognot lowtag-mask))
+     (pseudo-atomic
+@@ -107,7 +107,7 @@
+   (:generator 100
+     (inst lea result (make-ea :byte :index words
+                               :scale (ash 1 (- word-shift n-fixnum-tag-bits))
+-                              :disp (+ (1- (ash 1 n-lowtag-bits))
++                              :disp (+ lowtag-mask
+                                        (* vector-data-offset n-word-bytes))))
+     (inst and result (lognot lowtag-mask))
+     ;; FIXME: It would be good to check for stack overflow here.
+@@ -208,7 +208,7 @@
+           (make-ea :qword :disp (* (1+ words) n-word-bytes) :index extra
+                    :scale (ash 1 (- word-shift n-fixnum-tag-bits))))
+     (inst mov header bytes)
+-    (inst shl header (- n-widetag-bits 3)) ; w+1 to length field
++    (inst shl header (- n-widetag-bits word-shift)) ; w+1 to length field
+     (inst lea header                    ; (w-1 << 8) | type
+           (make-ea :qword :base header :disp (+ (ash -2 n-widetag-bits) type)))
+     (inst and bytes (lognot lowtag-mask))
+diff --git a/src/compiler/x86-64/arith.lisp b/src/compiler/x86-64/arith.lisp
+index 542ee54..cd626ce 100644
+--- a/src/compiler/x86-64/arith.lisp
++++ b/src/compiler/x86-64/arith.lisp
+@@ -220,7 +220,7 @@
+   (:generator 2
+     (cond ((and (sc-is x any-reg) (sc-is y any-reg) (sc-is r any-reg)
+                 (not (location= x r)))
+-           (inst lea r (make-ea :qword :base x :index y :scale 1)))
++           (inst lea r (make-ea :qword :base x :index y)))
+           (t
+            (move r x)
+            (inst add r y)))))
+@@ -266,7 +266,7 @@
+   (:generator 5
+     (cond ((and (sc-is x signed-reg) (sc-is y signed-reg) (sc-is r signed-reg)
+                 (not (location= x r)))
+-           (inst lea r (make-ea :qword :base x :index y :scale 1)))
++           (inst lea r (make-ea :qword :base x :index y)))
+           (t
+            (move r x)
+            (inst add r y)))))
+diff --git a/src/compiler/x86-64/array.lisp b/src/compiler/x86-64/array.lisp
+index 0b24555..eefd30b 100644
+--- a/src/compiler/x86-64/array.lisp
++++ b/src/compiler/x86-64/array.lisp
+@@ -30,7 +30,8 @@
+   (:node-var node)
+   (:generator 13
+     (inst lea bytes
+-          (make-ea :qword :base rank
++          (make-ea :qword
++                   :index rank :scale (ash 1 (- n-word-bytes n-fixnum-tag-bits))
+                    :disp (+ (* (1+ array-dimensions-offset) n-word-bytes)
+                             lowtag-mask)))
+     (inst and bytes (lognot lowtag-mask))
+@@ -38,7 +39,7 @@
+                               :disp (fixnumize (1- array-dimensions-offset))))
+     (inst shl header n-widetag-bits)
+     (inst or  header type)
+-    (inst shr header (1- n-lowtag-bits))
++    (inst shr header n-fixnum-tag-bits)
+     (pseudo-atomic
+      (allocation result bytes node)
+      (inst lea result (make-ea :qword :base result :disp other-pointer-lowtag))
+@@ -120,7 +121,7 @@
+     (let ((error (generate-error-code vop 'invalid-array-index-error
+                                       array bound index))
+           (index (if (sc-is index immediate)
+-                   (fixnumize (tn-value index))
++                   (fixnumize (tn-value index)) ;; FIXME: might not be a 32 bit immediate
+                    index)))
+       (inst cmp bound index)
+       ;; We use below-or-equal even though it's an unsigned test,
+@@ -353,14 +354,11 @@
+   (:arg-types simple-array-single-float positive-fixnum
+               (:constant (constant-displacement other-pointer-lowtag
+                                                 4 vector-data-offset)))
+-  (:temporary (:sc unsigned-reg) dword-index)
+   (:results (value :scs (single-reg)))
+   (:result-types single-float)
+   (:generator 5
+-   (move dword-index index)
+-   #!+#.(cl:if (cl:<= sb!vm:word-shift sb!vm:n-fixnum-tag-bits) '(and) '(or))
+-   (inst shr dword-index (1+ (- sb!vm:n-fixnum-tag-bits sb!vm:word-shift)))
+-   (inst movss value (make-ea-for-float-ref object dword-index offset 4))))
++    (inst movss value (make-ea-for-float-ref object index offset 4
++                                             :scale (ash 1 (- 2 n-fixnum-tag-bits))))))
+ 
+ (define-vop (data-vector-ref-c-with-offset/simple-array-single-float)
+   (:note "inline array access")
+@@ -388,14 +386,12 @@
+               (:constant (constant-displacement other-pointer-lowtag
+                                                 4 vector-data-offset))
+                single-float)
+-  (:temporary (:sc unsigned-reg) dword-index)
+   (:results (result :scs (single-reg)))
+   (:result-types single-float)
+   (:generator 5
+-   (move dword-index index)
+-   #!+#.(cl:if (cl:<= sb!vm:word-shift sb!vm:n-fixnum-tag-bits) '(and) '(or))
+-   (inst shr dword-index (1+ (- sb!vm:n-fixnum-tag-bits sb!vm:word-shift)))
+-   (inst movss (make-ea-for-float-ref object dword-index offset 4) value)
++   (inst movss (make-ea-for-float-ref object index offset 4
++                                      :scale (ash 1 (- 2 n-fixnum-tag-bits)))
++         value)
+    (move result value)))
+ 
+ (define-vop (data-vector-set-c-with-offset/simple-array-single-float)
+diff --git a/src/compiler/x86-64/c-call.lisp b/src/compiler/x86-64/c-call.lisp
+index d90427f..62427b9 100644
+--- a/src/compiler/x86-64/c-call.lisp
++++ b/src/compiler/x86-64/c-call.lisp
+@@ -482,7 +482,7 @@
+                (alien-type-= #.(parse-alien-type 'system-area-pointer nil)
+                              result-type))
+            (inst mov rax [rsp]))
+-          ((or (alien-single-float-type-p result-type)
++          ((or (alien-single-float-type-p result-type)  ;; This is probably wrong.
+                (alien-double-float-type-p result-type))
+            (inst movq xmm0 [rsp]))
+           ((alien-void-type-p result-type))
+diff --git a/src/compiler/x86-64/call.lisp b/src/compiler/x86-64/call.lisp
+index a5a600a..78db699 100644
+--- a/src/compiler/x86-64/call.lisp
++++ b/src/compiler/x86-64/call.lisp
+@@ -735,7 +735,7 @@
+                               (noise))
+                    '((if (zerop nargs)
+                          (zeroize rcx)
+-                       (inst mov rcx (fixnumize nargs)))))
++                         (inst mov rcx (fixnumize nargs)))))
+                ,@(cond ((eq return :tail)
+                         '(;; Python has figured out what frame we should
+                           ;; return to so might as well use that clue.
+@@ -1163,7 +1163,7 @@
+                                 :disp n-word-bytes))))
+ 
+ (define-vop (more-arg)
+-    (:translate sb!c::%more-arg)
++  (:translate sb!c::%more-arg)
+   (:policy :fast-safe)
+   (:args (object :scs (descriptor-reg) :to (:result 1))
+          (index :scs (any-reg) :to (:result 1) :target value))
+@@ -1247,7 +1247,7 @@
+   (:result-types t tagged-num)
+   (:note "more-arg-context")
+   (:generator 5
+-    (move count supplied)
++    (move count supplied) ;; FIXME: suboptimal
+     ;; SP at this point points at the last arg pushed.
+     ;; Point to the first more-arg, not above it.
+     (inst lea context (make-ea :qword :base rsp-tn
+diff --git a/src/compiler/x86-64/cell.lisp b/src/compiler/x86-64/cell.lisp
+index caf86d7..b61c422 100644
+--- a/src/compiler/x86-64/cell.lisp
++++ b/src/compiler/x86-64/cell.lisp
+@@ -529,7 +529,7 @@
+   (:result-types unsigned-num)
+   (:generator 5
+     (loadw tmp object 0 instance-pointer-lowtag)
+-    (inst shr tmp n-widetag-bits)
++    (inst shr tmp n-widetag-bits)    ;; FIXME: suboptimal
+     (inst shl tmp n-fixnum-tag-bits)
+     (inst sub tmp index)
+     (inst mov value (make-ea-for-raw-slot object tmp :scale (ash 1 (- word-shift n-fixnum-tag-bits))))))
+diff --git a/src/compiler/x86-64/debug.lisp b/src/compiler/x86-64/debug.lisp
+index 5f720fe..9446737 100644
+--- a/src/compiler/x86-64/debug.lisp
++++ b/src/compiler/x86-64/debug.lisp
+@@ -43,7 +43,9 @@
+     (move temp offset)
+     (inst neg temp)
+     (inst mov result
+-          (make-ea :qword :base sap :disp (frame-byte-offset 0) :index temp))))
++          (make-ea :qword :base sap :disp (frame-byte-offset 0)
++                   :index temp
++                   :scale (ash 1 (- word-shift n-fixnum-tag-bits))))))
+ 
+ (define-vop (read-control-stack-c)
+   (:translate stack-ref)
+@@ -71,7 +73,9 @@
+     (move temp offset)
+     (inst neg temp)
+     (inst mov
+-          (make-ea :qword :base sap :disp (frame-byte-offset 0) :index temp)
++          (make-ea :qword :base sap :disp (frame-byte-offset 0)
++                   :index temp
++                   :scale (ash 1 (- word-shift n-fixnum-tag-bits)))
+           value)
+     (move result value)))
+ 
+@@ -101,7 +105,7 @@
+       (loadw temp thing 0 lowtag)
+       (inst shr temp n-widetag-bits)
+       (inst jmp :z bogus)
+-      (inst shl temp (1- (integer-length n-word-bytes)))
++      (inst shl temp (1- word-shift))
+       (unless (= lowtag other-pointer-lowtag)
+         (inst add temp (- lowtag other-pointer-lowtag)))
+       (move code thing)
+diff --git a/src/compiler/x86-64/move.lisp b/src/compiler/x86-64/move.lisp
+index c2c76b5..c81e87b 100644
+--- a/src/compiler/x86-64/move.lisp
++++ b/src/compiler/x86-64/move.lisp
+@@ -266,7 +266,7 @@
+                    :from (:argument 0) :to (:result 0) :target y) eax)
+   (:generator 4
+     (move eax x)
+-    (inst test al-tn 7)                 ; a symbolic constant for this
++    (inst test al-tn fixnum-tag-mask)   ; a symbolic constant for this
+     (inst jmp :z FIXNUM)                ; would be nice
+     (loadw y eax bignum-digits-offset other-pointer-lowtag)
+     (inst jmp DONE)
+@@ -346,7 +346,7 @@
+   (:generator 20
+     (aver (not (location= x y)))
+     (let ((done (gen-label)))
+-      (inst mov y #.(ash (1- (ash 1 (1+ n-fixnum-tag-bits)))
++      (inst mov y #.(ash (1- (ash 1 (1+ n-fixnum-tag-bits))) ;; FIXME: can just test MSB
+                          (- n-word-bits n-fixnum-tag-bits 1)))
+       ;; The assembly routines test the sign flag from this one, so if
+       ;; you change stuff here, make sure the sign flag doesn't get
+diff --git a/src/compiler/x86-64/nlx.lisp b/src/compiler/x86-64/nlx.lisp
+index 4cc02fd..70bb788 100644
+--- a/src/compiler/x86-64/nlx.lisp
++++ b/src/compiler/x86-64/nlx.lisp
+@@ -187,7 +187,7 @@
+ (define-vop (nlx-entry-multiple)
+   (:args (top)
+          (source)
+-         (count :target rcx))
++         (count :target rcx))   ; tagged fixnum
+   ;; Again, no SC restrictions for the args, 'cause the loading would
+   ;; happen before the entry label.
+   (:info label)
+@@ -212,7 +212,7 @@
+     (inst sub rdi n-word-bytes)
+     (move rcx count)                    ; fixnum words == bytes
+     (move num rcx)
+-    (inst shr rcx word-shift)           ; word count for <rep movs>
++    (inst shr rcx n-fixnum-tag-bits)           ; word count for <rep movs>
+     ;; If we got zero, we be done.
+     (inst jrcxz DONE)
+     ;; Copy them down.
+diff --git a/src/compiler/x86-64/system.lisp b/src/compiler/x86-64/system.lisp
+index ce91fb4..a1d7e80 100644
+--- a/src/compiler/x86-64/system.lisp
++++ b/src/compiler/x86-64/system.lisp
+@@ -40,11 +40,11 @@
+     (inst jmp :e FUNCTION-PTR)
+ 
+     ;; Pick off structures and list pointers.
+-    (inst test al-tn 1)
++    (inst test al-tn 1) ;; FIXME: is that right?
+     (inst jmp :ne DONE)
+ 
+     ;; Pick off fixnums.
+-    (inst and al-tn 7)
++    (inst and al-tn fixnum-tag-mask)
+     (inst jmp :e DONE)
+ 
+     ;; must be an other immediate
+@@ -122,7 +122,7 @@
+   (:generator 6
+     (move eax data)
+     (inst shl eax (- n-widetag-bits n-fixnum-tag-bits))
+-    (inst mov al-tn (make-ea :byte :base x :disp (- other-pointer-lowtag)))
++    (inst mov al-tn (make-ea :byte :base x :disp (- other-pointer-lowtag))) ; FIXME: suboptimal...
+     (storew eax x 0 other-pointer-lowtag)
+     (move res x)))
+ 
+@@ -135,8 +135,8 @@
+     (move res ptr)
+     ;; Mask the lowtag, and shift the whole address into a positive
+     ;; fixnum.
+-    (inst and res (lognot lowtag-mask))
+-    (inst shr res 1)))
++    (inst shr res 1)
++    (inst and res (lognot fixnum-tag-mask))))
+ 
+ (define-vop (make-other-immediate-type)
+   (:args (val :scs (any-reg descriptor-reg) :target res)
+diff --git a/src/compiler/x86-64/type-vops.lisp b/src/compiler/x86-64/type-vops.lisp
+index d8e49e0..10d47d3 100644
+--- a/src/compiler/x86-64/type-vops.lisp
++++ b/src/compiler/x86-64/type-vops.lisp
+@@ -23,7 +23,7 @@
+                         :disp (frame-byte-offset (tn-offset value))))
+               (t
+                value))
+-        sb!vm::fixnum-tag-mask))
++        fixnum-tag-mask))
+ 
+ (defun %test-fixnum (value target not-p)
+   (generate-fixnum-test value)

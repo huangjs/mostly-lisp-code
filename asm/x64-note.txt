@@ -1,0 +1,8 @@
+Unlike in IA32, however, there is no frame pointer register; register
+%rbp is available for use as a general-purpose register.
+
+some arithmetic instructions make special use of registers %rax and
+%rdx.
+
+
+

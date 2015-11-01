@@ -1,0 +1,42 @@
+Span supports a message-passing OO system on top of CLOS.
+
+To declare a class:
+
+(defmsgclass class-name
+	     (parent*)
+	     (slot-specifier*)
+      [option | method-definition | slot-definition]*)
+
+class-name: symbol naming the class
+parent: symbol naming a parent class.
+slot-specifier: slot-name | (slot-name [[slot-option]])
+slot-name: symbol
+slot-option: {:reader reader-function-name}* | 
+             {:writer writer-function-name}* | 
+             {:accessor reader-function-name}* | 
+             {:allocation allocation-type} | 
+             {:initarg initarg-name}* | 
+             {:initform form} | 
+             {:type type-specifier} | 
+             {:documentation string} 
+function-name: {symbol | (setf symbol)}
+
+(directly from the CLHS)
+
+option: :public |
+        :private |
+        (:self name-self)
+
+slot-definition: (slot-name :public access-specifier
+		            :private access-specifier
+			    :name message-name)
+
+access-specifier: :rw | :r | :w
+
+method-definition: (name (argument*) body)
+
+Note that every msgclass is also a CLOS class over which you can
+define CLOS generic functions.
+
+:self defaults to self, and methods are private by default.
+Only slots and public methods are inherited.

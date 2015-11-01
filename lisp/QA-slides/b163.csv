@@ -1,0 +1,15 @@
+Viral Family,Envelope,RNA Structure,Capsid Symmetry,Medical Importance
+Picornaviruses,No,SS + linear,Icosahedral,"Poliovirus––polio-Salk/Sabin vaccines–– \\ IPV/OPV \\ Echovirus––aseptic meningitis \\ Rhinovirus––“common cold” \\ Coxsackievirus––aseptic meningitis \\ herpangina––febrile pharyngitis \\ hand, foot, and mouth disease \\ myocarditis \\ HAV––acute viral hepatitis"
+Caliciviruses,No,SS + linear,Icosahedral,HEV \\ Norwalk virus––viral gastroenteritis
+Reoviruses,No,DS linear 10–12 segments,Icosahedral (double),Reovirus––Colorado tick fever  Rotavirus––#1 cause of fatal diarrhea in children
+Flaviviruses,Yes,SS + linear,Icosahedral,HCV\\ Yellow fever*\\ Dengue*\\ St. Louis encephalitis*\\ West Nile virus*
+Togaviruses,Yes,SS + linear,Icosahedral,Rubella (German measles)\\ Eastern equine encephalitis*\\ Western equine encephalitis*
+Retroviruses,Yes,SS + linear,Icosahedral,Have reverse transcriptase\\ HIV––AIDS\\ HTLV––T-cell leukemia
+Coronaviruses,Yes,SS + linear,Helical,Coronavirus––“common cold” and SARS
+Orthomyxoviruses,Yes,SS − linear 8 segments,Helical,Influenza virus
+Paramyxoviruses,Yes,SS − linear Nonsegmented,Helical,PaRaMyxovirus: \\ Parainfluenza––croup\\ RSV––bronchiolitis in babies; Rx––ribavirin\\ Rubeola (Measles)\\ Mumps
+Rhabdoviruses,Yes,SS − linear,Helical,Rabies
+Filoviruses,Yes,SS − linear,Helical,Ebola/Marburg hemorrhagic fever––often fatal!
+Arenaviruses,Yes,SS − circular,Helical,LCV––lymphocytic choriomeningitis\\ Lassa fever encephalitis––spread by mice
+Bunyaviruses,Yes,SS − circular 3 segments,Helical,"California encephalitis*\\ Sandfly/Rift Valley fevers\\ Crimean-Congo hemorrhagic fever*\\ Hantavirus––hemorrhagic fever, pneumonia"
+Deltavirus,Yes,SS − circular,Helical,HDV

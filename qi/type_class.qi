@@ -1,0 +1,351 @@
+
+
+(define abs
+X -> (ABS X))
+
+(define signum
+X -> (if (== 0 X) 0
+         (if (< X 0) -1 1)))
+
+(newfuntype abs (number --> number))
+(newfuntype signum (number --> number))
+
+
+(tc +)
+
+
+
+(datatype typeclass
+
+(subtype B A); X : B;
+ _____________________
+
+X : A;
+
+
+_____________________
+(subtype integer number);
+
+_____________________
+(subtype float number);
+
+
+if(float? X)
+___
+X : float;
+
+
+if(integer? X)
+___
+X : integer;
+
+___
+(integer? X) : verified >> X : integer;
+
+___
+(float? X) : verified >> X : float;
+
+if(element? X [+ - * ])
+A : integer;
+B : integer;
+___
+(X A B) : integer;
+
+if(element? X [abs signum])
+A : integer;
+____
+(X A) : integer;
+
+if(element? X [abs signum])
+A : float;
+____
+(X A) : float;
+
+
+if(element? X [+ - *])
+A : float;
+B : number;
+___
+(X A B) : float;
+
+if(element? X [+ - *])
+B : float;
+A : number;
+___
+(X A B) : float;
+
+
+
+
+Equal    : (A --> (A --> boolean));
+NotEqual : (A --> (A --> boolean));
+===
+(@p mkeq (@p Equal NotEqual)) : (eq A);
+
+Subclass : (eq A);
+Plus   : (A --> (A --> A));
+Minus  : (A --> (A --> A));
+Mult   : (A --> (A --> A));
+Neg    : (A --> A);
+Abs    : (A --> A);
+SigNum : (A --> A);
+FromInteger : (integer --> A);
+===
+(@p
+Subclass
+(@p mknum (@p Plus 
+          (@p Minus
+          (@p Mult
+          (@p Neg
+	  (@p Abs
+	  (@p SigNum FromInteger)))))))) : (num A);
+
+)
+
+
+
+(define equal-integer
+{integer --> integer --> boolean  }
+X Y -> (== X Y))
+
+(define notequal-integer
+{integer --> integer --> boolean  }
+X Y -> (not (== X Y)))
+
+(define plus-integer
+{ integer --> integer --> integer }
+X Y -> (+ X Y))
+
+(define minus-integer
+{ integer --> integer --> integer }
+X Y -> (- X Y))
+
+(define mult-integer
+{ integer --> integer --> integer }
+X Y -> (* X Y))
+
+(define neg-integer
+{ integer --> integer }
+X -> (- 0 X))
+
+(define abs-integer
+{ integer --> integer}
+X -> (abs X))
+
+(define signum-integer
+{ integer --> integer }
+X -> (signum X))
+
+(define frominteger-integer
+{ integer --> integer }
+X -> X)
+
+(define instance-eq-integer
+{ A --> (eq integer) }
+_ -> (@p mkeq  (@p equal-integer notequal-integer)))
+
+(define instance-num-integer
+{ A --> (num integer) }
+_ -> 
+(@p
+(instance-eq-integer 0)
+(@p mknum (@p plus-integer 
+          (@p minus-integer
+          (@p mult-integer
+          (@p neg-integer
+	  (@p abs-integer
+	  (@p signum-integer frominteger-integer)))))))) )
+
+
+
+
+(define equal-float
+{float --> float --> boolean  }
+X Y -> (== X Y))
+
+(define notequal-float
+{float --> float --> boolean  }
+X Y -> (not (== X Y)))
+
+
+(define plus-float
+{ float --> float --> float }
+X Y -> (+ X Y))
+
+(define minus-float
+{ float --> float --> float }
+X Y -> (- X Y))
+
+(define mult-float
+{ float --> float --> float }
+X Y -> (* X Y))
+
+(define neg-float
+{ float --> float }
+X -> (- 0 X))
+
+(define abs-float
+{ float --> float}
+X -> (abs X))
+
+(define signum-float
+{ float --> float }
+X -> (signum X))
+
+(define frominteger-float
+{ integer --> float }
+X -> (* X 1.0))
+
+(define instance-eq-float
+{ A --> (eq float) }
+_ -> (@p mkeq  (@p equal-float notequal-float)))
+
+(define instance-num-float
+{ A --> (num float) }
+_ -> 
+(@p
+(instance-eq-float 0)
+(@p mknum (@p plus-float 
+          (@p minus-float
+          (@p mult-float
+          (@p neg-float
+	  (@p abs-float
+	  (@p signum-float frominteger-float)))))))) )
+
+
+
+
+(define num_to_eq
+{(num N) --> (eq N)}
+(@p
+(@p mkeq  (@p E Ne))
+(@p mknum (@p _
+          (@p _
+          (@p _
+          (@p _
+	  (@p _
+	  (@p _ _)))))))) -> (@p mkeq  (@p E Ne)))
+
+
+
+(define class_equal
+{ (eq N) --> N --> N --> boolean }
+(@p mkeq  (@p Equal _))  
+X Y -> (Equal X Y))
+
+
+(define class_notequal
+{ (eq N) --> N --> N --> boolean }
+(@p mkeq  (@p _ NotEqual))
+X Y -> (NotEqual X Y))
+
+
+
+(define class_*
+{ (num N) --> N -->  N --> N  }
+(@p
+_
+(@p mknum (@p Plus 
+          (@p Minus
+          (@p Mult
+          (@p Neg
+	  (@p Abs
+	  (@p SigNum FromInteger))))))))
+
+X Y -> (Mult X Y))
+
+(define class_+
+{ (num N) --> N -->  N --> N  }
+(@p
+_
+(@p mknum (@p Plus 
+          (@p Minus
+          (@p Mult
+          (@p Neg
+	  (@p Abs
+	  (@p SigNum FromInteger))))))))
+
+X Y -> (Plus X Y))
+
+
+(define class_-
+{ (num N) --> N -->  N --> N  }
+(@p
+_
+(@p mknum (@p Plus 
+          (@p Minus
+          (@p Mult
+          (@p Neg
+	  (@p Abs
+	  (@p SigNum FromInteger))))))))
+X Y -> (Minus X Y))
+
+
+(define class_neg
+{ (num N) --> N --> N  }
+(@p
+_
+(@p mknum (@p Plus 
+          (@p Minus
+          (@p Mult
+          (@p Neg
+	  (@p Abs
+	  (@p SigNum FromInteger))))))))
+X -> (Neg X))
+
+
+(define class_abs
+{ (num N) --> N --> N  }
+(@p
+_
+(@p mknum (@p Plus 
+          (@p Minus
+          (@p Mult
+          (@p Neg
+	  (@p Abs
+	  (@p SigNum FromInteger))))))))
+X -> (Abs X ))
+
+
+(define class_signum
+{ (num N) --> N --> N  }
+(@p
+_
+(@p mknum (@p Plus 
+          (@p Minus
+          (@p Mult
+          (@p Neg
+	  (@p Abs
+	  (@p SigNum FromInteger))))))))
+X -> (SigNum X))
+
+
+(define class_frominteger
+{ (num N) --> integer --> N  }
+(@p
+_
+(@p mknum (@p Plus 
+          (@p Minus
+          (@p Mult
+          (@p Neg
+	  (@p Abs
+	  (@p SigNum FromInteger))))))))
+X -> (FromInteger X))
+
+
+(define square
+{ (num N) --> N --> N }
+D X -> (class_* D X X))
+
+
+
+(define sumsquares
+{ (num N) --> N --> N }
+D X -> (class_+ D (square D X)
+                (square D X)))
+
+
+
+(define istwo?
+{ (num N) --> N --> boolean }
+D X -> (class_equal (num_to_eq D) (class_frominteger D 2) X))

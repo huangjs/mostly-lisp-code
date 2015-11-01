@@ -1,0 +1,58 @@
+(tc +)
+
+(datatype len
+
+  _________
+  (N is N);
+
+  if (number? M)
+  let M+1 (+ M 1)
+  (N is M+1);
+  ___________
+  ((- N 1) is M);
+
+  (N is 0);
+  ___________
+  [] : (len A N);
+
+  X : A; Y : (len A (- N 1));
+  =================
+  [X | Y] : (len A N);)
+
+
+
+(define add-rows
+  {(len number N) --> (len number N) --> (len number N)}
+    R R -> R where (empty? R)
+    [N1 | N1s] [N2 | N2s]
+    -> [(+ N1 N2) | (add-rows-copy N1s N2s)])
+
+(define add-rows-copy
+  {(len number N) --> (len number N) --> (len number N)}
+    R R -> R where (empty? R)
+    [N1 | N1s] [N2 | N2s] -> [(+ N1 N2) | (add-rows N1s N2s)])
+
+(datatype matrix
+
+   (M is 0);
+   ____________________
+   [] : (matrix A M N);
+
+   R : (len A N);
+   Rs : (matrix A (- M 1) N);
+   ==================
+   [R | Rs] : (matrix A M N);)
+
+(define add-matrices
+  {(matrix number M N) --> (matrix number M N)
+       --> (matrix number M N)}
+   M M -> M          where (empty? M)
+   [R1 | R1s] [R2 | R2s]
+   -> [(add-rows R1 R2) | (add-matrices-copy R1s R2s)])
+
+(define add-matrices-copy
+  {(matrix number M N) --> (matrix number M N)
+     --> (matrix number M N)}
+   M M -> M          where (empty? M)
+   [R1 | R1s] [R2 | R2s]
+  -> [(add-rows R1 R2) | (add-matrices R1s R2s)]) 

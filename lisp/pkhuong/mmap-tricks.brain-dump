@@ -1,0 +1,217 @@
+Unorganised notes on using various mmap tricks for generational GCs.
+Mostly revolves around dirty bit tracking, or exploiting fork for copy on write.
+
+http://people.csail.mit.edu/sukhaj
+
+fbsd: kinfo_getvmmap
+(similar, only per-object [mapping] info)
+
+Darwin: Only per-mapping refcount :\ (look at vmmap output)
+http://developer.apple.com/library/mac/#documentation/Darwin/Conceptual/KernelProgramming/About/About.html
+http://developer.apple.com/library/mac/#documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html
+http://www.opensource.apple.com/
+
+to work per region: 
+http://www.opensource.apple.com/source/xnu/xnu-792.13.8/osfmk/man/vm_region.html?txt
+
+http://flylib.com/books/en/3.126.1.90/1/
+http://document-program.blogspot.com/2009/11/section-87-using-mach-vm-interfaces.html
+https://llvm.org/svn/llvm-project/lldb/trunk/source/Plugins/Process/MacOSX-User/source/MacOSX/MachVMRegion.cpp
+http://lists.apple.com/archives/darwin-kernel/2007/Jun/msg00056.html
+
+#include <stdio.h>
+#include <sys/wait.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <mach/mach.h>
+#include <mach/mach_vm.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <assert.h>
+
+
+#define OUT_ON_MACH_ERROR(msg, retval) \
+    if (kr != KERN_SUCCESS) { mach_error(msg ":" , kr); goto out; }
+
+#define FIRST_UINT32(addr) (*((uint32_t *)(addr)))
+
+static mach_vm_address_t page_shared; // fully shared
+static mach_vm_address_t page_cow;    // shared copy-on-write
+
+kern_return_t
+get_object_id(mach_vm_address_t offset, int *obj_id, int *ref_count)
+{
+    kern_return_t     kr;
+    mach_port_t       unused;
+    mach_vm_size_t    size = (mach_vm_size_t)vm_page_size;
+    mach_vm_address_t address = offset;
+
+    vm_region_top_info_data_t info;
+    mach_msg_type_number_t    count = VM_REGION_TOP_INFO_COUNT;
+
+    kr = mach_vm_region(mach_task_self(), &address, &size, VM_REGION_TOP_INFO,
+                        (vm_region_info_t)&info, &count, &unused);
+    if (kr == KERN_SUCCESS) {
+        *obj_id = info.obj_id;
+        *ref_count = info.ref_count;
+    } else return kr;
+
+    //printf("ref_count: %i\n", *ref_count);
+
+    // also works, but ref_count is on a per-object basis...
+/* kern_return_t mach_vm_page_query */
+/* ( */
+/*      vm_map_t target_map, */
+/*      mach_vm_offset_t offset, */
+/*      integer_t *disposition, */
+/*      integer_t *ref_count */
+/* ); */
+
+    return kr;
+}
+
+void
+peek_at_some_memory(const char *who, const char *msg)
+{
+    int obj_id, ref_count;
+    kern_return_t kr;
+
+    kr = get_object_id(page_shared, &obj_id, &ref_count);
+    printf("%-12s%-8s%-10x%-12x%-10d%s\n",
+           who, "SHARED", FIRST_UINT32(page_shared), obj_id, ref_count, msg);
+
+    kr = get_object_id(page_cow, &obj_id, &ref_count);
+    printf("%-12s%-8s%-10x%-12x%-10d%s\n",
+           who, "COW", FIRST_UINT32(page_cow), obj_id, ref_count, msg);
+
+    kr = get_object_id(page_cow+(mach_vm_size_t)vm_page_size, &obj_id, &ref_count);
+    printf("%-12s%-8s%-10x%-12x%-10d%s\n",
+           who, "COW+", FIRST_UINT32(page_cow+(mach_vm_size_t)vm_page_size), obj_id, ref_count, msg);
+
+    kr = get_object_id(page_cow+(mach_vm_size_t)vm_page_size*2, &obj_id, &ref_count);
+    printf("%-12s%-8s%-10x%-12x%-10d%s\n",
+           who, "COW+", FIRST_UINT32(page_cow+(mach_vm_size_t)vm_page_size*2), obj_id, ref_count, msg);
+
+    kr = get_object_id(page_cow+(mach_vm_size_t)vm_page_size*3, &obj_id, &ref_count);
+    printf("%-12s%-8s%-10x%-12x%-10d%s\n",
+           who, "COW+", FIRST_UINT32(page_cow+(mach_vm_size_t)vm_page_size*3), obj_id, ref_count, msg);
+}
+
+void
+child_process(void)
+{
+    peek_at_some_memory("child", "before touching any memory");
+    FIRST_UINT32(page_shared) = (unsigned int)0xFEEDF00D;
+    FIRST_UINT32(page_cow)    = (unsigned int)0xBADDF00D;
+    peek_at_some_memory("child", "after writing to memory");
+
+    exit(0);
+}
+
+int
+main(void)
+{
+    kern_return_t  kr;
+    int            status;
+    mach_port_t    mytask = mach_task_self();
+    mach_vm_size_t size = (mach_vm_size_t)vm_page_size;
+
+    int fd = open("/dev/zero", O_RDONLY);
+
+    kr = mach_vm_allocate(mytask, &page_shared, size, VM_FLAGS_ANYWHERE);
+    OUT_ON_MACH_ERROR("vm_allocate", kr);
+
+    kr = mach_vm_allocate(mytask, &page_cow, size*4, VM_FLAGS_ANYWHERE);
+    OUT_ON_MACH_ERROR("vm_allocate", kr);
+
+    /* page_cow = mmap(NULL, size*4, PROT_READ | PROT_WRITE, */
+    /*                 MAP_PRIVATE | MAP_ANON, -1, 0); */
+    /* assert((void*)page_cow != MAP_FAILED); */
+
+    kr = mach_vm_inherit(mytask, page_shared, size, VM_INHERIT_SHARE);
+    OUT_ON_MACH_ERROR("vm_inherit(VM_INHERIT_SHARE)", kr);
+
+    kr = mach_vm_inherit(mytask, page_cow, size*4, VM_INHERIT_COPY);
+    OUT_ON_MACH_ERROR("vm_inherit(VM_INHERIT_COPY)", kr);
+
+    FIRST_UINT32(page_shared) = (unsigned int)0xAAAAAAAA;
+    FIRST_UINT32(page_cow)    = (unsigned int)0xBBBBBBBB;
+    FIRST_UINT32(page_cow+vm_page_size*2)    = (unsigned int)0xCCCCCCCC;
+
+    printf("%-12s%-8s%-10s%-12s%-10s%s\n",
+           "Process", "Page", "Contents", "VM Object", "Refcount", "Event");
+
+    peek_at_some_memory("parent", "before forking");
+
+    if (fork() == 0)
+        child_process(); // this will also exit the child
+    wait(&status);
+
+    peek_at_some_memory("parent", "after child is done");
+
+out:
+    mach_vm_deallocate(mytask, page_shared, size);
+    mach_vm_deallocate(mytask, page_cow, size);
+
+    exit(0);
+}
+
+
+
+Solaris: /proc/<pid>/pagedata http://manpages.unixforum.co.uk/man-pages/unix/solaris-10-11_06/4/proc-man-page.html
+Linux: 
+
+ /proc/self/pagemap : page -> pfn
+ /proc/kpageflags   : pfn -> metadata
+ /proc/kpagecount   : pfn -> refcount
+
+Faster to let Linux COW than to try and catch segv and mprotect! Get snapshot for free (:
+ GC: fork process, use pipe to communicate.
+ MVCC: mmap file, use metadata to track reads and writes, and get snapshot!
+
+Linux, MAP_ANON:
+
+reading from virgin page: 1050 c
+writing to   virgin page: 3800 c
+
+reading from loaded page: 24 c
+writing to   loaded page: 4340 c
+
+reading from written page: 24 c
+writing to   written page: 150 c
+
+writing to   virgin  prot page: 8600 c
+writing to   loaded  prot page: 9380 c
+writing to   written prot page: 6950 c
+
+Linux, mmapped (ramfs, or in-cache) pages:
+
+reading from virgin page: 1600 c
+writing to   virgin page: 5200 c
+
+reading from loaded page: 24 c
+writing to   loaded page: 5000 c
+
+reading from written page: 24 c
+writing to   written page: 150 c
+
+writing to   virgin  prot page: 10000 c
+writing to   loaded  prot page: 10000 c
+writing to   written prot page: 7300  c
+
+OS X, MAP_ANON:
+
+reading from virgin page: 9500 c
+writing to   virgin page: 9700 c
+
+reading from loaded page: 300 c
+writing to   loaded page: 600 c
+
+reading from written page: 300 c
+writing to   written page: 100 c
+
+
+writing to   virgin  prot page: 90000 c
+writing to   loaded  prot page: 100000 c
+writing to   written prot page: 100000 c
+

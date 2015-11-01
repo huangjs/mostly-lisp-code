@@ -1,0 +1,292 @@
+diff --git a/src/assembly/x86-64/alloc.lisp b/src/assembly/x86-64/alloc.lisp
+index 68a8ce3..a0ed525 100644
+--- a/src/assembly/x86-64/alloc.lisp
++++ b/src/assembly/x86-64/alloc.lisp
+@@ -86,7 +86,9 @@
+               ((:temp other descriptor-reg ,other-offset)
+                (:temp target descriptor-reg ,target-offset))
+             (let ((get-tls-index-lock (gen-label))
+-                  (release-tls-index-lock (gen-label)))
++                  (release-tls-index-lock (gen-label))
++                  (alloc-new-tls-index (gen-label))
++                  (store-tls-index (gen-label)))
+               (pseudo-atomic
+                ;; Save OTHER & push the symbol. RAX is either one of the two.
+                (inst push other)
+@@ -98,21 +100,51 @@
+                (inst cmpxchg (make-ea-for-symbol-value *tls-index-lock*) target)
+                (inst jmp :ne get-tls-index-lock)
+                ;; The symbol is now in OTHER.
+-               (inst pop other)
++               (inst mov other (make-ea :qword :base rsp-tn))
+                ;; Now with the lock held, see if the symbol's tls index has been
+                ;; set in the meantime.
+                (loadw target other symbol-tls-index-slot other-pointer-lowtag)
+                (inst or target target)
+                (inst jmp :ne release-tls-index-lock)
+-               ;; Allocate a new tls-index.
++               ;; try and get a tls index from the free list
++               (load-symbol-value target *tls-index-free-list*)
++               (inst cmp target nil-value)
++               (inst jmp :e alloc-new-tls-index)
++
++               ;; pop the index in TARGET
++               (loadw other target cons-cdr-slot list-pointer-lowtag)
++               (loadw target target cons-car-slot list-pointer-lowtag)
++               (store-symbol-value other *tls-index-free-list*)
++               ;; and restore OTHER to the symbol
++               (inst mov other (make-ea :qword :base rsp-tn))
++               (inst jmp store-tls-index)
++
++               ;; Allocate a new tls index.
++               (emit-label alloc-new-tls-index)
+                (load-symbol-value target *free-tls-index*)
+                (let ((error (generate-error-code nil 'tls-exhausted-error)))
+                  (inst cmp target (fixnumize tls-size))
+                  (inst jmp :ge error))
+                (inst add (make-ea-for-symbol-value *free-tls-index*)
+                      (fixnumize 1))
++               ;; finally store the tls index in the symbol
++               ;; and in the table
++               (emit-label store-tls-index)
+                (storew target other symbol-tls-index-slot other-pointer-lowtag)
++               (let ((table-allocated (gen-label)))
++                 (load-symbol-value other *tls-index-symbol-table*)
++                 (inst test other other)
++                 (inst jmp :nz table-allocated)
++                 (allocation other (* n-word-bytes (+ 2 tls-size)) nil nil other-pointer-lowtag)
++                 (storew simple-array-unsigned-byte-64-widetag other 0 other-pointer-lowtag)
++                 (storew (fixnumize tls-size) other vector-length-slot other-pointer-lowtag)
++                 (store-symbol-value other *tls-index-symbol-table*)
++                 (emit-label table-allocated))
+                (emit-label release-tls-index-lock)
++               (load-symbol-value other *tls-index-symbol-table*)
++               (inst add other (- (* n-word-bytes vector-data-offset) other-pointer-lowtag))
++               (inst add other target)
++               (inst pop (make-ea :qword :base other))
+                (store-symbol-value 0 *tls-index-lock*)
+                ;; Restore OTHER.
+                (inst pop other))
+diff --git a/src/assembly/x86/alloc.lisp b/src/assembly/x86/alloc.lisp
+index 030d002..ab1e6e5 100644
+--- a/src/assembly/x86/alloc.lisp
++++ b/src/assembly/x86/alloc.lisp
+@@ -94,7 +94,9 @@
+               ((:temp other descriptor-reg ,other-offset)
+                (:temp target descriptor-reg ,target-offset))
+             (let ((get-tls-index-lock (gen-label))
+-                  (release-tls-index-lock (gen-label)))
++                  (release-tls-index-lock (gen-label))
++                  (alloc-new-tls-index (gen-label))
++                  (store-tls-index (gen-label)))
+               (pseudo-atomic
+                ;; Save OTHER & push the symbol. EAX is either one of the two.
+                (inst push other)
+@@ -106,21 +108,52 @@
+                (inst cmpxchg (make-ea-for-symbol-value *tls-index-lock*) target)
+                (inst jmp :ne get-tls-index-lock)
+                ;; The symbol is now in OTHER.
+-               (inst pop other)
++               (inst mov other (make-ea :dword :base esp-tn))
+                ;; Now with the lock held, see if the symbol's tls index has been
+                ;; set in the meantime.
+                (loadw target other symbol-tls-index-slot other-pointer-lowtag)
+                (inst or target target)
+                (inst jmp :ne release-tls-index-lock)
++               ;; try and get a tls-index from the free list
++               (load-symbol-value target *tls-index-free-list*)
++               (inst cmp target nil-value)
++               (inst jmp :e alloc-new-tls-index)
++               ;; pop the index in TARGET
++               (loadw other target cons-cdr-slot list-pointer-lowtag)
++               (loadw target target cons-car-slot list-pointer-lowtag)
++               (store-symbol-value other *tls-index-free-list*)
++               ;; and restore OTHER to the symbol
++               (inst mov other (make-ea :dword :base esp-tn))
++               (inst jmp store-tls-index)
++
+                ;; Allocate a new tls-index.
++               (emit-label alloc-new-tls-index)
+                (load-symbol-value target *free-tls-index*)
+                (let ((error (generate-error-code nil 'tls-exhausted-error)))
+                  (inst cmp target (fixnumize tls-size))
+                  (inst jmp :ge error))
+                (inst add (make-ea-for-symbol-value *free-tls-index*)
+                      (fixnumize 1))
++
++               ;; finally store the tls index in the symbol
++               ;; and in the table
++               (emit-label store-tls-index)
+                (storew target other symbol-tls-index-slot other-pointer-lowtag)
++               (let ((table-allocated (gen-label)))
++                 (load-symbol-value other *tls-index-symbol-table*)
++                 (inst test other other)
++                 (inst jmp :nz table-allocated)
++                 (allocation other (* n-word-bytes (+ 2 tls-size)) nil nil other-pointer-lowtag)
++                 (storew simple-array-unsigned-byte-32-widetag other 0 other-pointer-lowtag)
++                 (storew (fixnumize tls-size) other vector-length-slot other-pointer-lowtag)
++                 (store-symbol-value other *tls-index-symbol-table*)
++                 (emit-label table-allocated))
++
+                (emit-label release-tls-index-lock)
++               (load-symbol-value other *tls-index-symbol-table*)
++               (inst add other (- (* n-word-bytes vector-data-offset) other-pointer-lowtag))
++               (inst add other target)
++               (inst pop (make-ea :dword :base other))
+                (store-symbol-value 0 *tls-index-lock*)
+                ;; Restore OTHER.
+                (inst pop other))
+diff --git a/src/compiler/generic/genesis.lisp b/src/compiler/generic/genesis.lisp
+index 843cc73..657e653 100644
+--- a/src/compiler/generic/genesis.lisp
++++ b/src/compiler/generic/genesis.lisp
+@@ -1273,6 +1273,12 @@ core and return a descriptor to it."
+ 
+   (cold-set '*!initial-layouts* (cold-list-all-layouts))
+ 
++  #!+(and sb-thread
++          (or x86 x86-64))
++  (progn
++    (cold-set 'sb!vm::*tls-index-free-list* *nil-descriptor*)
++    (cold-set 'sb!vm::*tls-index-symbol-table* (make-fixnum-descriptor 0)))
++
+   (/show "dumping packages" (mapcar #'car *cold-package-symbols*))
+   (let ((initial-symbols *nil-descriptor*))
+     (dolist (cold-package-symbols-entry *cold-package-symbols*)
+diff --git a/src/compiler/x86-64/parms.lisp b/src/compiler/x86-64/parms.lisp
+index 6913f59..ff6b21b 100644
+--- a/src/compiler/x86-64/parms.lisp
++++ b/src/compiler/x86-64/parms.lisp
+@@ -176,6 +176,8 @@
+      #!+sb-thread *stop-for-gc-pending*
+ 
+      #!+sb-thread *free-tls-index*
++     #!+sb-thread *tls-index-symbol-table*
++     #!+sb-thread *tls-index-free-list*
+      #!+sb-thread *tls-index-lock*
+ 
+      *allocation-pointer*
+diff --git a/src/compiler/x86/parms.lisp b/src/compiler/x86/parms.lisp
+index ff801c5..69a4f0f 100644
+--- a/src/compiler/x86/parms.lisp
++++ b/src/compiler/x86/parms.lisp
+@@ -329,6 +329,8 @@
+      *pseudo-atomic-bits*
+      #!+sb-thread *stop-for-gc-pending*
+      #!+sb-thread *free-tls-index*
++     #!+sb-thread *tls-index-symbol-table*
++     #!+sb-thread *tls-index-free-list*
+      #!+sb-thread *tls-index-lock*
+ 
+      *allocation-pointer*
+diff --git a/src/runtime/dynbind.c b/src/runtime/dynbind.c
+index 77dfd88..45bd10c 100644
+--- a/src/runtime/dynbind.c
++++ b/src/runtime/dynbind.c
+@@ -23,6 +23,7 @@
+ #include "genesis/binding.h"
+ #include "genesis/thread.h"
+ #include "genesis/static-symbols.h"
++#include "genesis/vector.h"
+ 
+ #if defined(BINDING_STACK_POINTER)
+ #define GetBSP() ((struct binding *)SymbolValue(BINDING_STACK_POINTER,thread))
+@@ -40,6 +41,8 @@ void bind_variable(lispobj symbol, lispobj value, void *th)
+     SetBSP(binding+1);
+ #ifdef LISP_FEATURE_SB_THREAD
+     {
++        lispobj symbol_table;
++        struct vector * symbol_table_vector;
+         struct symbol *sym=(struct symbol *)native_pointer(symbol);
+         if(!sym->tls_index) {
+             lispobj *tls_index_lock=
+@@ -54,6 +57,17 @@ void bind_variable(lispobj symbol, lispobj value, void *th)
+                 if(fixnum_value(sym->tls_index)>=TLS_SIZE) {
+                     lose("Thread local storage exhausted.");
+                 }
++#if defined(LISP_FEATURE_X86) || defined(LISP_FEATURE_X86_64)
++                symbol_table = SymbolValue(TLS_INDEX_SYMBOL_TABLE, 0);
++                if (is_lisp_pointer(symbol_table)) {
++                    symbol_table_vector
++                        = (struct vector*)native_pointer(symbol_table);
++                    symbol_table_vector->data[fixnum_value(sym->tls_index)]
++                        = symbol;
++                }
++#else
++#warning "tls-index recycling should be implemented in bind_variable too."
++#endif
+             }
+             release_spinlock(tls_index_lock);
+             clear_pseudo_atomic_atomic(th);
+diff --git a/src/runtime/gencgc.c b/src/runtime/gencgc.c
+index 08facdd..f17fc4e 100644
+--- a/src/runtime/gencgc.c
++++ b/src/runtime/gencgc.c
+@@ -284,6 +284,57 @@ page_index_t last_free_page;
+ static pthread_mutex_t free_pages_lock = PTHREAD_MUTEX_INITIALIZER;
+ #endif
+ 
++#ifdef LISP_FEATURE_SB_THREAD
++#if defined(LISP_FEATURE_X86) || defined(LISP_FEATURE_X86_64)
++inline static boolean
++forwarding_pointer_p(lispobj *pointer) {
++    lispobj first_word=*pointer;
++    return (first_word == 0x01);
++}
++
++static inline lispobj *
++forwarding_pointer_value(lispobj *pointer) {
++    return (lispobj *) ((pointer_sized_uint_t) pointer[1]);
++}
++
++void scan_tls_index_symbol_table()
++{
++        lispobj symbol_table, * symbol_table_data;
++        unsigned long i, nindices;
++        symbol_table = SymbolValue(TLS_INDEX_SYMBOL_TABLE, 0);
++        if (!is_lisp_pointer(symbol_table))
++                return;
++
++        symbol_table_data
++                = ((struct vector *)native_pointer(symbol_table))->data;
++        nindices = fixnum_value(SymbolValue(FREE_TLS_INDEX, 0));
++        /* see thread.c:create_thread_struct */
++        for (i = MAX_INTERRUPTS+sizeof(struct thread)/sizeof(lispobj);
++             i < nindices;
++             i++) {
++                lispobj value, *pointed_to;
++                value = symbol_table_data[i];
++                if (!(is_lisp_pointer(value) &&from_space_p(value)))
++                        continue;
++
++                pointed_to = (lispobj *)native_pointer(value);
++                if (forwarding_pointer_p(pointed_to)) {
++                        symbol_table_data[i] =
++                                (lispobj)LOW_WORD(forwarding_pointer_value(pointed_to));
++                } else {
++                        symbol_table_data[i] = 0;
++                        lispobj cons = alloc_cons(make_fixnum(i),
++                                                  SymbolValue(TLS_INDEX_FREE_LIST, 0));
++                        SetSymbolValue(TLS_INDEX_FREE_LIST, cons, 0);
++                }
++        }
++}
++#else
++void scan_tls_index_symbol_table() {}
++#warning "Should tls-index recycling be reimplemented here?"
++#endif
++#endif
++
+ 
+ /*
+  * miscellaneous heap functions
+@@ -4111,6 +4162,9 @@ garbage_collect_generation(generation_index_t generation, int raise)
+ 
+     scan_weak_hash_tables();
+     scan_weak_pointers();
++#ifdef LISP_FEATURE_SB_THREAD
++    scan_tls_index_symbol_table();
++#endif
+ 
+     /* Flush the current regions, updating the tables. */
+     gc_alloc_update_all_page_tables();

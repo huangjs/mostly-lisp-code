@@ -1,0 +1,50 @@
+(cl:defpackage "CA.PVK.TRIVIAL-MATCH"
+  (:use #:cl)
+  (:export #:match #:fail))
+
+(cl:in-package "CA.PVK.TRIVIAL-MATCH")
+
+(defun compute-matcher (input-name pattern clause &optional block-name)
+  (labels ((inner (to-match vars)
+	     "to-match: list of (var-name -> pattern)"
+	     (if (null to-match)
+		 `(return-from ,block-name
+		    (let ,vars
+		      ,@clause))
+		 (destructuring-bind (var-name pattern)
+		     (first to-match)
+		   (cond ((eq pattern t)    (inner (rest to-match) vars))
+			 ((null pattern)    `(when (null ,var-name)
+					       ,(inner (rest to-match) vars)))
+			 ((symbolp pattern) (inner (rest to-match)
+						   (cons (list pattern var-name)
+							 vars)))
+			 ((or (atom pattern)
+			      (eq (car pattern)
+				  'quote))    `(when (equal ,var-name ,pattern)
+			      ,(inner (rest to-match) vars)))
+			 (t                 (let ((car-name (gensym "CAR"))
+						  (cdr-name (gensym "CDR")))
+					      `(when (consp ,var-name)
+						 (let (,@ (unless (eq t (car pattern))
+							    (list `(,car-name (car ,var-name))))
+						       ,@ (unless (eq t (cdr pattern))
+							    (list `(,cdr-name (cdr ,var-name)))))
+						   ,(inner (list* (list car-name (car pattern))
+								  (list cdr-name (cdr pattern))
+								  (rest to-match))
+							   vars))))))))))
+    (inner (list (list input-name pattern)) nil)))
+
+(defmacro match ((to-match &key (tag 'fail) (fail `(throw ',tag nil)) (block (gensym "BLOCK-NAME")))
+		 &body pattern-clauses)
+  (let ((name (gensym "TO-MATCH")))
+    `(let ((,name ,to-match))
+       (block ,block
+	 ,@ (mapcar (lambda (pattern-clause)
+		     (compute-matcher name
+				      (first pattern-clause)
+				      (rest pattern-clause)
+				      block))
+		   pattern-clauses)
+	 ,fail))))

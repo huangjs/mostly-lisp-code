@@ -1,0 +1,47 @@
+- Turn on type checking
+
+(tc +)
+
+7
+a
+[1.0 2.0]
+[1 a]
+(@p 1 a)
+(* 7 8)
+(* 7 a)
+
+
+- Functions and closures
+
+(define double
+    {number --> number}
+    X -> (* X 2))
+
+(+ 1)
+
+((+ 1) 2)
+
+(define plus
+    {number --> number --> number}
+    0 X -> X
+    X Y -> (+ 1 (plus (- X 1) Y)))
+
+
+- Polytypes
+
+(define identity
+    X -> X)
+
+[]
+
+(= 6 6)
+(= a a)
+(= 6 a)
+
+(== 6 a)
+
+=
+==
+
+
+

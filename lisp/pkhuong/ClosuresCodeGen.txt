@@ -1,0 +1,271 @@
+* Tasks
+
+
+* Notes
+
+
+_Closures for Code Generation_
+
+(Based on 'Using closures for code generation', 
+  Marc Feeley & Guy Lapalme, DIRO, Universite de Montreal)
+
+In [url] Psykotic presented a small partial evaluator (program
+specialiser) for a call-by-value lambda calculus. I want to present a
+related approach to building compilers in languages that support
+closures as first-class values.
+
+First, let's build a function that will let us use the host language's
+support for closures to simplify renaming. Every expression is
+transformed in a expression that rebuilds itself (via list), except
+for binding expression, which become closures (lambdas). I could use a
+simple pattern matching macro, but I don't think the code suffers that
+much by doing without.
+
+(defun hoasify (expr)
+  "Note that I'd usually use objects to do my dispatch, but
+   it would make things less clear to non-CLers."
+  (if (atom expr)  ;;variable or constant
+      expr            ;;let the host's environment handle it!
+      (case (first expr) ;;dispatch on the head of the expression
+	((if)             (destructuring-bind (if condition then else)
+			      expr
+			    (declare (ignore if))
+			    `(list 'if ,(hoasify condition) ;;comma means eval and insert
+				       ,(hoasify then)
+				       ,(hoasify else))))
+
+	((lambda)         (destructuring-bind (lambda (var) body)
+			      expr
+			    (declare (ignore lambda))
+			    `(list 'lambda (lambda (,var)
+					     ,(hoasify body)))))
+
+	((let)            (destructuring-bind (let (var value) body)  ;;we even have the luxury of let! -_^
+			      expr
+			    (declare (ignore let))
+			    `(list 'let ,(hoasify value)
+				      (lambda (,var)
+					,(hoasify body)))))
+
+	((cons)           (destructuring-bind (cons a b) ;;easier to make it a special form.
+			      expr
+			    (declare (ignore cons))
+			    `(list 'cons ,(hoasify a) ,(hoasify b))))
+	((car)            (destructuring-bind (car value)
+			      expr
+			    (declare (ignore car))
+			    `(list 'car ,(hoasify value))))
+	((cdr)            (destructuring-bind (cdr value)
+			      expr
+			    (declare (ignore cdr))
+			    `(list 'cdr ,(hoasify value))))
+	(otherwise        (destructuring-bind (fun arg)
+			      expr
+			    `(list 'call ,(hoasify fun)
+				         ,(hoasify arg))))))) ;; ,@ means eval and splice the resulting list in.
+
+REPL> (hoasify '(lambda (a) (cons a a)))
+(LIST 'LAMBDA (LAMBDA (A) (LIST 'CONS A A)))
+REPL> (eval *)
+(LAMBDA #<FUNCTION (LAMBDA #) {AAF408D}>) ;;the second element will
+                                 ;;let the host handle the renaming
+REPL> (funcall (second *) 23) ;;let's tell it to rewrite its argument
+                              ;;with `23'
+(CONS 23 23)
+
+
+In CL, a simple interpreter for a small call-by-value language could be:
+
+(defun interpreter (expr env-vals env-length)
+  "expr: Expression to evaluate
+   env-vals: list of values for the (lexical) environment
+   env-length: number of entries in env-length
+
+   No need to store the variables' names in the environment, since
+   hoasify lets the host language do the renaming. 
+   Values and functions share the same namespace."
+  (if (atom expr)
+      expr ;;self-evaluating
+      (ecase (car expr)
+	((if)         (destructuring-bind (if cond then else)
+			  expr
+			(declare (ignore if))
+			(if (interpreter cond env-vals env-length)
+			    (interpreter then env-vals env-length)
+			    (interpreter else env-vals env-length))))
+	((lambda)    (destructuring-bind (lambda renamer)
+			 expr
+		       (declare (ignore lambda))
+		       `(%closure ,env-vals ,env-length
+				  ,(funcall renamer `(%var ,(1+ env-length))))))
+	((let)        (destructuring-bind (let value-expr renamer)
+			  expr
+			(declare (ignore let))
+			(let ((value (interpreter value-expr
+						  env-vals
+						  env-length)))
+			  (interpreter (funcall renamer `(%var ,(1+ env-length)))
+				       (cons value env-vals)
+				       (1+ env-length)))))
+	((cons)      (destructuring-bind (cons a b)
+			 expr
+		       (declare (ignore cons))
+		       (cons (interpreter a env-vals env-length)
+			     (interpreter b env-vals env-length))))
+	((car)       (destructuring-bind (car value-expr)
+			 expr
+		       (declare (ignore car))
+		       (car (interpreter value-expr env-vals env-length))))
+	((cdr)       (destructuring-bind (cdr value-expr)
+			 expr
+		       (declare (ignore cdr))
+		       (cdr (interpreter value-expr env-vals env-length))))
+	((%var)      (destructuring-bind (%var offset)
+			 expr
+		       (declare (ignore %var))
+		       (nth (- env-length offset) env-vals)))
+	((call)      (destructuring-bind (call fn-expr arg-expr)
+			 expr
+		       (declare (ignore call))
+		       (let ((closure (interpreter fn-expr  env-vals env-length))
+			     (arg     (interpreter arg-expr env-vals env-length)))
+			 (assert (eq (first closure) '%closure))
+			 (destructuring-bind (%closure env-vals env-length expr)
+			     closure
+			   (declare (ignore %closure))
+			   (interpreter expr
+					(cons arg env-vals)
+					(1+ env-length)))))))))
+
+REPL> (hoasify '((lambda (a) (cons a a)) 23))
+(LIST 'CALL (LIST 'LAMBDA (LAMBDA (A) (LIST 'CONS A A))) 23)
+REPL> (eval *)
+(CALL (LAMBDA #<FUNCTION # {BCDA0BD}>) 23)
+REPL> (interpreter * nil 0) ;;initial environment: no entry, length 0.
+(23 . 23)
+
+So, we have a simple interpreter. However, a lot of the work (e.g. the
+dispatching) does not need to be done at runtime. On closer examination,
+it appears that only env-vals isn't known at compile-time. Instead of
+returning values, let's return closures that, when given the environment,
+compute the right value.
+
+(defun compiler (expr env-length)
+  (if (atom expr)
+      (lambda (env-vals)
+	(declare (ignore env-vals))  ;;self-evaluating
+	expr)
+      (ecase (car expr)
+	((if)         (destructuring-bind (if cond then else)
+			  expr
+			(declare (ignore if))
+			(let ((cond-closure (compiler cond env-length))
+			      (then-closure (compiler then env-length))
+			      (else-closure (compiler else env-length)))
+			  (lambda (env-vals)
+			    (if (funcall cond-closure env-vals)
+				(funcall then-closure env-vals)
+				(funcall else-closure env-vals))))))
+	((lambda)    (destructuring-bind (lambda renamer)
+			 expr
+		       (declare (ignore lambda))
+		       (let ((compiled-body (compiler (funcall renamer `(%var ,(1+ env-length)))
+						      (1+ env-length))))
+			 (lambda (env-vals)
+			   `(%closure ,env-vals ,compiled-body)))))
+	((let)        (destructuring-bind (let value-expr renamer)
+			  expr
+			(declare (ignore let))
+			(let ((value-closure (compiler value-expr
+						       env-length))
+			      (body-closure  (compiler (funcall renamer `(%var ,(1+ env-length)))
+						       (1+ env-length))))
+			  (lambda (env-vals)
+			    (funcall body-closure (cons (funcall value-closure env-vals)
+							env-vals))))))
+	((cons)      (destructuring-bind (cons a b)
+			 expr
+		       (declare (ignore cons))
+		       (let ((a-closure (compiler a env-length))
+			     (b-closure (compiler b env-length)))
+			 (lambda (env-vals)
+			   (cons (funcall a-closure env-vals)
+				 (funcall b-closure env-vals))))))
+	((car)       (destructuring-bind (car value-expr)
+			 expr
+		       (declare (ignore car))
+		       (let ((value-closure (compiler value-expr env-length)))
+			 (lambda (env-vals)
+			   (car (funcall value-closure env-vals))))))
+	((cdr)       (destructuring-bind (cdr value-expr)
+			 expr
+		       (declare (ignore cdr))
+		       (let ((value-closure (compiler value-expr env-length)))
+			 (lambda (env-vals)
+			   (cdr (funcall value-closure env-vals))))))
+	((%var)      (destructuring-bind (%var offset)
+			 expr
+		       (declare (ignore %var))
+		       (let ((posn (- env-length offset)))
+			 (lambda (env-vals)
+			   (nth posn env-vals)))))
+	((call)      (destructuring-bind (call fn-expr arg-expr)
+			 expr
+		       (declare (ignore call))
+		       (let ((closure-closure (compiler fn-expr  env-length))
+			     (arg-closure     (compiler arg-expr env-length)))
+			 (lambda (env-vals)
+			   (let ((value (funcall arg-closure env-vals)))
+			     (destructuring-bind (%closure env-vals body)
+				 (funcall closure-closure env-vals)
+			       (assert (eq %closure '%closure))
+			       (funcall body (cons value env-vals)))))))))))
+
+REPL> (hoasify '((lambda (a) (cons a a)) 23))
+(LIST 'CALL (LIST 'LAMBDA (LAMBDA (A) (LIST 'CONS A A))) 23)
+REPL> (eval *)
+(CALL (LAMBDA #<FUNCTION # {BD3918D}>) 23)
+REPL> (compiler * 0) ;;initial environment is of length 0
+#<CLOSURE (LAMBDA (ENV-VALS)) {A9A98FD}>
+REPL> (funcall * nil) ;;initial environment: empty
+(23 . 23)
+
+The transformation from interpreter to compiler is relatively
+straightforward:
+1. Separate static (known at compile-time) and dynamic (only known at
+   runtime) inputs to the interpreter
+2. For every call to the interpreter, instead call the compiler,
+   *outside the returned closure* (or else it'll be compiled... when the
+   closure is executed)
+3. Move all the dynamic computation inside the returned closure.
+
+There are several advantages to this approach, when compared to a
+simple interpreter. Obviously, we managed to make sure to only do some
+of the work once, at compile-time (mostly that of walking the source
+code). However, by knowing that the compiler only has to do its work
+once, we can also do clever optimisations; for an interpreter, the
+overhead is usually too high for them to be worth it. For example, we
+can detect when a lambda is directly applied and can thus be
+transformed into a let, when the code is building a literal list
+(which can be built once, by the compiler), convert multiplication by
+a known integer into shift and adds, etc. Code isn't always
+interpreted concretely; often, code transformation or analysis
+(e.g. control flow analysis) can be very cleanly expressed as an
+interpretation of the code in a different, more abstract domain. In
+that context, a simple slightly optimising compiler makes a lot of
+sense: the optimisations are often domain specific, and we may run the
+same body of code multiple times, with different inputs. 
+
+Finally, I use offsets from the last element of the environment to
+denote values. This is because I intended to use random access lists
+instead of lists for the environment (they have lookup in min{lg size,
+index}), but it's completely orthogonal to the topic of the article. I
+also explicitly return an interpreted closure object instead of a host
+closure to make it easier to follow what happens. It is possible to
+hide the fact that we have an interpreted closure object by moving the
+part of the `call' closures that calls the body of the interpreted
+closure with an updated environment, and producing a closure that
+accepts only the new entry in the environment. Consider these two
+improvements as exercises left to the reader ;)
+
+

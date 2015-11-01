@@ -1,0 +1,14 @@
+;; Use closures.
+
+;; eg. a function with two continuations
+
+(f <arg> (/. X (do-this)) (/. Y (do-that)))
+
+(define f
+  X Closure1 Closure2 -> (if (my-test X)
+                             (call-continuation Closure1)
+                             (call-continuation Closure2)))
+
+(define call-continuation
+  \ Pass dummy argument to closure to activate it\
+    Closure -> (Closure _)) 

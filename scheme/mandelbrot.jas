@@ -1,0 +1,1073 @@
+(module
+  me
+  procedure
+  ()
+  (declare
+    (me (class (public) "mandelbrot"))
+    (super (class () "bigloo.procedure"))
+    (obj (class () "java.lang.Object"))
+    (string (class () "java.lang.String"))
+    (getbytes
+      (method string () (vector byte) "getBytes"))
+    (concat
+      (method string () string "concat" string))
+    (throwable (class () "java.lang.Throwable"))
+    (runtimeexception
+      (class () "java.lang.RuntimeException"))
+    (myname
+      (field me
+             (public static)
+             string
+             "__the_module_name__"))
+    (init (method me (public) void "<init>"))
+    (super-init
+      (method super (public) void "<init>"))
+    (clinit
+      (method me (public static) void "<clinit>"))
+    (funcall0 (method me (public) obj "funcall0"))
+    (funcall1
+      (method me (public) obj "funcall1" obj))
+    (funcall2
+      (method me (public) obj "funcall2" obj obj))
+    (funcall3
+      (method me (public) obj "funcall3" obj obj obj))
+    (funcall4
+      (method
+        me
+        (public)
+        obj
+        "funcall4"
+        obj
+        obj
+        obj
+        obj))
+    (apply (method me (public) obj "apply" obj))
+    (main (method
+            me
+            (public static)
+            void
+            "main"
+            (vector string)))
+    (dlopen
+      (method
+        me
+        (public static)
+        void
+        "bigloo_dlopen_init"))
+    (procedure (class () "bigloo.procedure"))
+    (procenv (field procedure () (vector obj) "env"))
+    (procarity (field procedure () int "arity"))
+    (procindex (field procedure () int "index"))
+    (pfuncall4
+      (method
+        procedure
+        ()
+        obj
+        "funcall4"
+        obj
+        obj
+        obj
+        obj))
+    (pfuncall3
+      (method procedure () obj "funcall3" obj obj obj))
+    (pfuncall2
+      (method procedure () obj "funcall2" obj obj))
+    (pfuncall1
+      (method procedure () obj "funcall1" obj))
+    (pfuncall0 (method procedure () obj "funcall0"))
+    (papply
+      (method procedure (public) obj "apply" obj))
+    (unspecified (class () "bigloo.unspecified"))
+    (*unspecified*
+      (field unspecified () unspecified "unspecified"))
+    (nil (class () "bigloo.nil"))
+    (*nil* (field nil (static) nil "nil"))
+    (eof (class () "bigloo.eof"))
+    (*eof* (field eof () eof "eof"))
+    (optional (class () "bigloo.optional"))
+    (*optional*
+      (field optional () optional "optional"))
+    (rest (class () "bigloo.rest"))
+    (*rest* (field rest () rest "rest"))
+    (key (class () "bigloo.key"))
+    (*key* (field key () key "key"))
+    (bbool (class () "bigloo.bbool"))
+    (faux (field bbool (static) bbool "faux"))
+    (vrai (field bbool (static) bbool "vrai"))
+    (cell (class () "bigloo.cell"))
+    (init_cell (method cell () void "<init>" obj))
+    (ccar (field cell () obj "car"))
+    (pair (class () "bigloo.pair"))
+    (cdr (field pair () obj "cdr"))
+    (car (field pair () obj "car"))
+    (init_pair
+      (method pair () void "<init>" obj obj))
+    (cons (method pair () pair "cons" obj obj))
+    (bgldynamic (class () "bigloo.bgldynamic"))
+    (extended_pair (class () "bigloo.extended_pair"))
+    (cer (field extended_pair () obj "cer"))
+    (init_extended_pair
+      (method extended_pair () void "<init>"))
+    (bchar (class () "bigloo.bchar"))
+    (bchar_value (field bchar () byte "value"))
+    (bchar_allocated
+      (field bchar () (vector bchar) "allocated"))
+    (bint (class () "bigloo.bint"))
+    (bint_value (field bint () int "value"))
+    (bucs2 (class () "bigloo.bucs2"))
+    (init_bucs2 (method bucs2 () void "<init>" char))
+    (bllong (class () "bigloo.bllong"))
+    (belong (class () "bigloo.belong"))
+    (bignum (class () "bigloo.bignum"))
+    (real (class () "bigloo.real"))
+    (real_value (field real () double "value"))
+    (bexception (class () "bigloo.bexception"))
+    (symbol (class () "bigloo.symbol"))
+    (symbol_string
+      (field symbol () (vector byte) "string"))
+    (exit (class () "bigloo.exit"))
+    (object (class () "bigloo.object"))
+    (widening (field object () obj "widening"))
+    (header (field object () int "header"))
+    (output-port (class () "bigloo.output_port"))
+    (input-port (class () "bigloo.input_port"))
+    (binary-port (class () "bigloo.binary_port"))
+    (s8vector (class () "class bigloo.s8vector"))
+    (u8vector (class () "class bigloo.u8vector"))
+    (s16vector (class () "class bigloo.s16vector"))
+    (u16vector (class () "class bigloo.u16vector"))
+    (s32vector (class () "class bigloo.s32vector"))
+    (u32vector (class () "class bigloo.u32vector"))
+    (s64vector (class () "class bigloo.s64vector"))
+    (u64vector (class () "class bigloo.u64vector"))
+    (f32vector (class () "class bigloo.f32vector"))
+    (f64vector (class () "class bigloo.f64vector"))
+    (mutex (class () "bigloo.mutex"))
+    (foreign (class () "bigloo.foreign"))
+    (make_vector0
+      (method foreign () (vector obj) "make_vector0"))
+    (make_vector1
+      (method
+        foreign
+        ()
+        (vector obj)
+        "make_vector1"
+        obj))
+    (make_vector2
+      (method
+        foreign
+        ()
+        (vector obj)
+        "make_vector2"
+        obj
+        obj))
+    (make_vector3
+      (method
+        foreign
+        ()
+        (vector obj)
+        "make_vector3"
+        obj
+        obj
+        obj))
+    (make_vector4
+      (method
+        foreign
+        ()
+        (vector obj)
+        "make_vector4"
+        obj
+        obj
+        obj
+        obj))
+    (make_vector5
+      (method
+        foreign
+        ()
+        (vector obj)
+        "make_vector5"
+        obj
+        obj
+        obj
+        obj
+        obj))
+    (list_to_vector
+      (method
+        foreign
+        ()
+        (vector obj)
+        "list_to_vector"
+        obj))
+    (listargv
+      (method
+        foreign
+        ()
+        obj
+        "listargv"
+        (vector string)))
+    (fail (method
+            foreign
+            ()
+            runtimeexception
+            "fail"
+            obj
+            obj
+            obj))
+    (internalerror
+      (method
+        foreign
+        ()
+        void
+        "internalerror"
+        throwable))
+    (double_to_real
+      (method foreign () real "DOUBLE_TO_REAL" double))
+    (elong_to_belong
+      (method foreign () belong "ELONG_TO_BELONG" long))
+    (llong_to_bllong
+      (method foreign () bllong "LLONG_TO_BLLONG" long))
+    (jumpexit
+      (method foreign () obj "jumpexit" obj obj))
+    (debug_handler
+      (method
+        foreign
+        ()
+        obj
+        "debug_handler"
+        bexception
+        exit))
+    (java_exception_handler
+      (method
+        foreign
+        ()
+        obj
+        "java_exception_handler"
+        throwable
+        exit))
+    (setexit (method foreign () obj "setexit"))
+    (bgl_string_to_bignum
+      (method
+        foreign
+        ()
+        bignum
+        "bgl_string_to_bignum"
+        string))
+    (f_me_bgl_mainzd2envzd2
+      (field me
+             (public static)
+             procedure
+             "BgL_mainzd2envzd2"))
+    (f_me_string1412
+      (field me
+             (private static)
+             (vector byte)
+             "string1412"))
+    (f_me_string1411
+      (field me
+             (private static)
+             (vector byte)
+             "string1411"))
+    (f_me_string1410
+      (field me
+             (private static)
+             (vector byte)
+             "string1410"))
+    (f_me_bgl_requirezd2initializa7ationz75zzmandelbrotz00
+      (field me
+             (private static)
+             obj
+             "BGl_requirezd2initializa7ationz75zzmandelbrotz00"))
+    (f_me_bgl_za2cflagsza2z00
+      (field me
+             (private static)
+             (vector byte)
+             "BgL_za2cflagsza2z00"))
+    (m_mandelbrot_bigloo_main
+      (method me (public static) obj "bigloo_main" obj))
+    (m_mandelbrot__main
+      (method
+        me
+        (private static)
+        obj
+        "_main"
+        procedure
+        obj))
+    (m_mandelbrot_module-initialization
+      (method
+        me
+        (public static)
+        obj
+        "BgL_modulezd2initializa7ationz75"
+        int
+        (vector byte)))
+    (m_mandelbrot_library-modules-init
+      (method
+        me
+        (private static)
+        obj
+        "BgL_libraryzd2moduleszd2initz00"))
+    (m_mandelbrot_generic-init
+      (method
+        me
+        (private static)
+        obj
+        "BgL_genericzd2initzd2"))
+    (m_mandelbrot_method-init
+      (method
+        me
+        (private static)
+        obj
+        "BgL_methodzd2initzd2"))
+    (m_mandelbrot_toplevel-init
+      (method
+        me
+        (private static)
+        obj
+        "BgL_toplevelzd2initzd2"))
+    (c_bigloo.runtime.llib.param
+      (class () "bigloo.runtime.Llib.param"))
+    (m___param_bigloo-initialized!
+      (method
+        c_bigloo.runtime.llib.param
+        (static)
+        obj
+        "BgL_bigloozd2initializa7edz12z67"))
+    (c_bigloo.pair (class () "bigloo.pair"))
+    (m_mandelbrot_main
+      (method
+        me
+        (public static)
+        obj
+        "main"
+        c_bigloo.pair))
+    (c_bigloo.foreign (class () "bigloo.foreign"))
+    (m_foreign_%exit
+      (method
+        c_bigloo.foreign
+        (static)
+        obj
+        "BIGLOO_EXIT"
+        obj))
+    (c_bigloo.runtime.ieee.fixnum
+      (class () "bigloo.runtime.Ieee.fixnum"))
+    (m___r4_numbers_6_5_fixnum_module-initialization
+      (method
+        c_bigloo.runtime.ieee.fixnum
+        (static)
+        obj
+        "BgL_modulezd2initializa7ationz75"
+        int
+        (vector byte)))
+    (c_bigloo.runtime.ieee.output
+      (class () "bigloo.runtime.Ieee.output"))
+    (m___r4_output_6_10_3_module-initialization
+      (method
+        c_bigloo.runtime.ieee.output
+        (static)
+        obj
+        "BgL_modulezd2initializa7ationz75"
+        int
+        (vector byte)))
+    (c_bigloo.runtime.ieee.number
+      (class () "bigloo.runtime.Ieee.number"))
+    (m___r4_numbers_6_5_module-initialization
+      (method
+        c_bigloo.runtime.ieee.number
+        (static)
+        obj
+        "BgL_modulezd2initializa7ationz75"
+        int
+        (vector byte)))
+    (c_bigloo.runtime.read.reader
+      (class () "bigloo.runtime.Read.reader"))
+    (m___reader_module-initialization
+      (method
+        c_bigloo.runtime.read.reader
+        (static)
+        obj
+        "BgL_modulezd2initializa7ationz75"
+        int
+        (vector byte)))
+    (c_bigloo.bint (class () "bigloo.bint"))
+    (m_foreign_$long->bint
+      (method
+        c_bigloo.foreign
+        (static)
+        c_bigloo.bint
+        "BINT"
+        int))
+    (m___r4_numbers_6_5_string->number
+      (method
+        c_bigloo.runtime.ieee.number
+        (static)
+        obj
+        "BgL_stringzd2ze3numberz31"
+        obj
+        obj))
+    (m_mandelbrot_mandelbrot
+      (method
+        me
+        (private static)
+        boolean
+        "mandelbrot"
+        int))
+    (m_foreign_$current-dynamic-env
+      (method
+        c_bigloo.foreign
+        (static)
+        bgldynamic
+        "BGL_CURRENT_DYNAMIC_ENV"))
+    (m_foreign_c-current-output-port
+      (method
+        c_bigloo.foreign
+        (static)
+        output-port
+        "getCurrentOutputPort"
+        bgldynamic))
+    (m_foreign_$display-string
+      (method
+        c_bigloo.foreign
+        (static)
+        obj
+        "display_string"
+        (vector byte)
+        output-port))
+    (m_foreign_$display-char
+      (method
+        c_bigloo.foreign
+        (static)
+        obj
+        "display_char"
+        int
+        output-port))
+    (m_foreign_$int->bint
+      (method
+        c_bigloo.foreign
+        (static)
+        c_bigloo.bint
+        "BINT"
+        int))
+    (m___r4_output_6_10_3_display-2
+      (method
+        c_bigloo.runtime.ieee.output
+        (static)
+        obj
+        "BgL_displayzd22zd2"
+        obj
+        output-port))
+    (m_foreign_$long->ubyte
+      (method
+        c_bigloo.foreign
+        (static)
+        byte
+        "LONG_TO_UBYTE"
+        int))
+    (m_foreign_c-integer->char
+      (method
+        c_bigloo.foreign
+        (static)
+        int
+        "INT_TO_CHAR"
+        int))
+    (m_foreign_$set-mvalues-number!
+      (method
+        c_bigloo.foreign
+        (static)
+        int
+        "BGL_MVALUES_NUMBER_SET"
+        int))
+    (m_foreign_$set-mvalues-val!
+      (method
+        c_bigloo.foreign
+        (static)
+        obj
+        "BGL_MVALUES_VAL_SET"
+        int
+        obj))
+    (m___r4_numbers_6_5_fixnum_modulo
+      (method
+        c_bigloo.runtime.ieee.fixnum
+        (static)
+        obj
+        "modulo"
+        obj
+        obj))
+    (m_foreign_c-bitlsh
+      (method
+        c_bigloo.foreign
+        (static)
+        int
+        "BITLSH"
+        int
+        int))
+    (m_foreign_$ubyte->int
+      (method
+        c_bigloo.foreign
+        (static)
+        int
+        "UBYTE_TO_INT"
+        byte))
+    (m_foreign_$get-mvalues-val
+      (method
+        c_bigloo.foreign
+        (static)
+        obj
+        "BGL_MVALUES_VAL"
+        int))
+    (m_foreign_$bint->ubyte
+      (method
+        c_bigloo.foreign
+        (static)
+        byte
+        "BINT_TO_UBYTE"
+        c_bigloo.bint)))
+  (fields
+    myname
+    f_me_bgl_za2cflagsza2z00
+    f_me_bgl_requirezd2initializa7ationz75zzmandelbrotz00
+    f_me_string1410
+    f_me_string1411
+    f_me_string1412
+    f_me_bgl_mainzd2envzd2)
+  (sourcefile "mandelbrot.scm")
+  (sde "mandelbrot.scm" "mandelbrot.scm")
+  (method
+    main
+    (argv)
+    ()
+    (handler from catch catch throwable)
+    from
+    (aload argv)
+    (invokestatic listargv)
+    (invokestatic m_mandelbrot_bigloo_main)
+    (pop)
+    (return)
+    catch
+    (invokestatic internalerror)
+    (return))
+  (method
+    init
+    (this)
+    ()
+    (aload this)
+    (invokespecial super-init)
+    (return))
+  (method
+    funcall1
+    (this g1416)
+    ()
+    (aload this)
+    (aload g1416)
+    (aload this)
+    (getfield procindex)
+    (tableswitch err 0 l0)
+    err
+    (invokespecial pfuncall1)
+    (areturn)
+    l0
+    (invokestatic m_mandelbrot__main)
+    (areturn))
+  (method
+    apply
+    (this l)
+    ()
+    (aload this)
+    (aload this)
+    (getfield procindex)
+    (tableswitch err 0 l0)
+    err
+    (aload l)
+    (invokespecial papply)
+    (areturn)
+    l0
+    (aload l)
+    (checkcast pair)
+    (getfield car)
+    (invokestatic m_mandelbrot__main)
+    (areturn))
+  (method
+    clinit
+    ()
+    ()
+    (ldc "mandelbrot")
+    (putstatic myname)
+    (new me)
+    (dup)
+    (invokespecial init)
+    (dup)
+    (iconst_0)
+    (putfield procindex)
+    (dup)
+    (iconst_1)
+    (putfield procarity)
+    (putstatic f_me_bgl_mainzd2envzd2)
+    (ldc " ")
+    (invokevirtual getbytes)
+    (putstatic f_me_string1412)
+    (ldc "P4 ")
+    (invokevirtual getbytes)
+    (putstatic f_me_string1411)
+    (ldc "-Wall -O3 -fomit-frame-pointer -mfpmath=sse -mtune=core2 -lm")
+    (invokevirtual getbytes)
+    (putstatic f_me_string1410)
+    (return))
+  (method
+    dlopen
+    ()
+    ()
+    (iconst_0)
+    (aconst_null)
+    (invokestatic m_mandelbrot_module-initialization)
+    (pop)
+    (return))
+  (method
+    m_mandelbrot_module-initialization
+    (p0 p1)
+    ()
+    l0
+    (getstatic
+      f_me_bgl_requirezd2initializa7ationz75zzmandelbrotz00)
+    (getstatic faux)
+    (if_acmpne l2)
+    l1
+    (getstatic *unspecified*)
+    (areturn)
+    l2
+    (getstatic faux)
+    (putstatic
+      f_me_bgl_requirezd2initializa7ationz75zzmandelbrotz00)
+    (invokestatic m_mandelbrot_library-modules-init)
+    (pop)
+    (invokestatic m_mandelbrot_generic-init)
+    (pop)
+    (invokestatic m_mandelbrot_method-init)
+    (pop)
+    (invokestatic m_mandelbrot_toplevel-init)
+    (pop)
+    (getstatic *unspecified*)
+    (areturn))
+  (method
+    m_mandelbrot_bigloo_main
+    (p0)
+    ()
+    l0
+    (iconst_0)
+    (ldc "mandelbrot")
+    (invokevirtual getbytes)
+    (invokestatic m_mandelbrot_module-initialization)
+    (pop)
+    (invokestatic m___param_bigloo-initialized!)
+    (pop)
+    (aload p0)
+    (checkcast c_bigloo.pair)
+    (invokestatic m_mandelbrot_main)
+    (invokestatic m_foreign_%exit)
+    (areturn))
+  (method
+    m_mandelbrot_library-modules-init
+    ()
+    ()
+    l0
+    (iconst_0)
+    (ldc "mandelbrot")
+    (invokevirtual getbytes)
+    (invokestatic
+      m___r4_numbers_6_5_fixnum_module-initialization)
+    (pop)
+    (iconst_0)
+    (ldc "mandelbrot")
+    (invokevirtual getbytes)
+    (invokestatic
+      m___r4_output_6_10_3_module-initialization)
+    (pop)
+    (iconst_0)
+    (ldc "mandelbrot")
+    (invokevirtual getbytes)
+    (invokestatic
+      m___r4_numbers_6_5_module-initialization)
+    (pop)
+    (iconst_0)
+    (ldc "mandelbrot")
+    (invokevirtual getbytes)
+    (invokestatic m___reader_module-initialization)
+    (pop)
+    (getstatic *unspecified*)
+    (areturn))
+  (method
+    m_mandelbrot_toplevel-init
+    ()
+    ()
+    l0
+    (getstatic f_me_string1410)
+    (putstatic f_me_bgl_za2cflagsza2z00)
+    (getstatic *unspecified*)
+    (areturn))
+  (method
+    m_mandelbrot_main
+    (p0)
+    ()
+    l0
+    (aload p0)
+    (getfield cdr)
+    (checkcast c_bigloo.pair)
+    (getfield car)
+    (bipush 10)
+    (invokestatic m_foreign_$long->bint)
+    (invokestatic m___r4_numbers_6_5_string->number)
+    (checkcast c_bigloo.bint)
+    (getfield bint_value)
+    (invokestatic m_mandelbrot_mandelbrot)
+    (ifeq i1414)
+    (getstatic vrai)
+    (goto i1415)
+    i1414
+    (getstatic faux)
+    i1415
+    (areturn))
+  (method
+    m_mandelbrot__main
+    (p0 p1)
+    ()
+    l0
+    (aload p1)
+    (checkcast c_bigloo.pair)
+    (invokestatic m_mandelbrot_main)
+    (areturn))
+  (method
+    m_mandelbrot_mandelbrot
+    (p0)
+    (v1 v2
+        v3
+        v4
+        v5
+        v6
+        v7
+        v8
+        v9
+        v10
+        v11
+        v12
+        v13
+        v14
+        v15
+        v16
+        _
+        v17
+        _
+        v18
+        _
+        v19
+        _
+        v20
+        v21
+        _
+        v22
+        _
+        v23
+        _
+        v24
+        _
+        v25
+        v26
+        _
+        v27
+        _
+        v28)
+    l0
+    (bipush 50)
+    (istore v1)
+    (invokestatic m_foreign_$current-dynamic-env)
+    (invokestatic m_foreign_c-current-output-port)
+    (astore v2)
+    (getstatic f_me_string1411)
+    (aload v2)
+    (invokestatic m_foreign_$display-string)
+    (pop)
+    (bipush 10)
+    (aload v2)
+    (invokestatic m_foreign_$display-char)
+    (pop)
+    (invokestatic m_foreign_$current-dynamic-env)
+    (invokestatic m_foreign_c-current-output-port)
+    (astore v3)
+    (iload p0)
+    (invokestatic m_foreign_$int->bint)
+    (aload v3)
+    (invokestatic m___r4_output_6_10_3_display-2)
+    (pop)
+    (getstatic f_me_string1412)
+    (aload v3)
+    (invokestatic m_foreign_$display-string)
+    (pop)
+    (iload p0)
+    (invokestatic m_foreign_$int->bint)
+    (aload v3)
+    (invokestatic m___r4_output_6_10_3_display-2)
+    (pop)
+    (bipush 10)
+    (aload v3)
+    (invokestatic m_foreign_$display-char)
+    (pop)
+    (iconst_0)
+    (invokestatic m_foreign_$long->ubyte)
+    (istore v4)
+    (iconst_0)
+    (invokestatic m_foreign_$long->ubyte)
+    (istore v5)
+    (iconst_0)
+    (istore v6)
+    (goto l17)
+    l1
+    (iload v4)
+    (istore v7)
+    (iload v5)
+    (istore v8)
+    (iconst_0)
+    (istore v9)
+    (goto l15)
+    l2
+    (iload v11)
+    (invokestatic m_foreign_c-integer->char)
+    (istore v10)
+    (getstatic bchar_allocated)
+    (iload v10)
+    (sipush 255)
+    (iand)
+    (aaload)
+    (invokestatic m_foreign_$current-dynamic-env)
+    (invokestatic m_foreign_c-current-output-port)
+    (invokestatic m___r4_output_6_10_3_display-2)
+    (pop)
+    (iconst_2)
+    (invokestatic m_foreign_$set-mvalues-number!)
+    (pop)
+    (iconst_1)
+    (iconst_0)
+    (invokestatic m_foreign_$long->bint)
+    (invokestatic m_foreign_$set-mvalues-val!)
+    (pop)
+    (iconst_0)
+    (istore v12)
+    (goto l14)
+    l3
+    (iload v11)
+    (iload p0)
+    (invokestatic m_foreign_$int->bint)
+    (bipush 8)
+    (invokestatic m_foreign_$long->bint)
+    (invokestatic m___r4_numbers_6_5_fixnum_modulo)
+    (checkcast c_bigloo.bint)
+    (getfield bint_value)
+    (bipush 8)
+    (isub)
+    (invokestatic m_foreign_c-bitlsh)
+    (invokestatic m_foreign_c-integer->char)
+    (istore v13)
+    (getstatic bchar_allocated)
+    (iload v13)
+    (sipush 255)
+    (iand)
+    (aaload)
+    (invokestatic m_foreign_$current-dynamic-env)
+    (invokestatic m_foreign_c-current-output-port)
+    (invokestatic m___r4_output_6_10_3_display-2)
+    (pop)
+    (iconst_2)
+    (invokestatic m_foreign_$set-mvalues-number!)
+    (pop)
+    (iconst_1)
+    (iconst_0)
+    (invokestatic m_foreign_$long->bint)
+    (invokestatic m_foreign_$set-mvalues-val!)
+    (pop)
+    (iconst_0)
+    (istore v12)
+    (goto l14)
+    l4
+    (iload v15)
+    (iconst_1)
+    (invokestatic m_foreign_c-bitlsh)
+    (iconst_0)
+    (ior)
+    (istore v14)
+    (goto l11)
+    l5
+    (ldc2_w 2.0)
+    (iload v9)
+    (i2d)
+    (iload p0)
+    (i2d)
+    (ddiv)
+    (dmul)
+    (ldc2_w 1.5)
+    (dsub)
+    (dstore v16)
+    (ldc2_w 2.0)
+    (iload v6)
+    (i2d)
+    (iload p0)
+    (i2d)
+    (ddiv)
+    (dmul)
+    (dconst_1)
+    (dsub)
+    (dstore v17)
+    (dconst_0)
+    (dstore v18)
+    (dconst_0)
+    (dstore v19)
+    (iconst_0)
+    (istore v20)
+    (goto l7)
+    l6
+    (dload v19)
+    (dload v19)
+    (dmul)
+    (dstore v21)
+    (dload v21)
+    (dload v18)
+    (dload v18)
+    (dmul)
+    (dsub)
+    (dload v16)
+    (dadd)
+    (dstore v22)
+    (ldc2_w 2.0)
+    (dload v19)
+    (dload v18)
+    (dmul)
+    (dmul)
+    (dload v17)
+    (dadd)
+    (dstore v18)
+    (dload v22)
+    (dstore v19)
+    (iload v20)
+    (iconst_1)
+    (iadd)
+    (istore v20)
+    l7
+    (iload v20)
+    (iload v1)
+    (if_icmpge l9)
+    l8
+    (dload v19)
+    (dload v19)
+    (dmul)
+    (dstore v23)
+    (dload v23)
+    (dload v18)
+    (dload v18)
+    (dmul)
+    (dadd)
+    (dstore v24)
+    (dload v24)
+    (ldc2_w 2.0)
+    (ldc2_w 2.0)
+    (dmul)
+    (dcmpg)
+    (ifle l6)
+    l9
+    (iload v8)
+    (invokestatic m_foreign_$ubyte->int)
+    (istore v25)
+    (iload v7)
+    (invokestatic m_foreign_$ubyte->int)
+    (istore v15)
+    (dload v19)
+    (dload v19)
+    (dmul)
+    (dstore v26)
+    (dload v26)
+    (dload v18)
+    (dload v18)
+    (dmul)
+    (dadd)
+    (dstore v27)
+    (dload v27)
+    (ldc2_w 2.0)
+    (ldc2_w 2.0)
+    (dmul)
+    (dcmpg)
+    (ifgt l4)
+    l10
+    (iload v15)
+    (iconst_1)
+    (invokestatic m_foreign_c-bitlsh)
+    (iconst_1)
+    (ior)
+    (istore v14)
+    l11
+    (iload v14)
+    (istore v11)
+    (iload v25)
+    (iconst_1)
+    (iadd)
+    (istore v28)
+    (iload v28)
+    (bipush 8)
+    (if_icmpeq l2)
+    l12
+    (iload v9)
+    (iload p0)
+    (iconst_1)
+    (isub)
+    (if_icmpeq l3)
+    l13
+    (iconst_2)
+    (invokestatic m_foreign_$set-mvalues-number!)
+    (pop)
+    (iconst_1)
+    (iload v11)
+    (invokestatic m_foreign_$int->bint)
+    (invokestatic m_foreign_$set-mvalues-val!)
+    (pop)
+    (iload v28)
+    (istore v12)
+    l14
+    (iconst_1)
+    (invokestatic m_foreign_$get-mvalues-val)
+    (checkcast c_bigloo.bint)
+    (invokestatic m_foreign_$bint->ubyte)
+    (istore v7)
+    (iload v12)
+    (invokestatic m_foreign_$long->ubyte)
+    (istore v8)
+    (iload v9)
+    (iconst_1)
+    (iadd)
+    (istore v9)
+    l15
+    (iload v9)
+    (iload p0)
+    (if_icmplt l5)
+    l16
+    (iload v7)
+    (istore v4)
+    (iload v8)
+    (istore v5)
+    (iload v6)
+    (iconst_1)
+    (iadd)
+    (istore v6)
+    l17
+    (iload v6)
+    (iload p0)
+    (if_icmplt l1)
+    l18
+    (iconst_1)
+    (ireturn))
+  (method
+    m_mandelbrot_generic-init
+    ()
+    ()
+    l0
+    (getstatic *unspecified*)
+    (areturn))
+  (method
+    m_mandelbrot_method-init
+    ()
+    ()
+    l0
+    (getstatic *unspecified*)
+    (areturn)))

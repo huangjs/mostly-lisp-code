@@ -1,0 +1,32 @@
+Span is a young functional language. However, it also supports
+message-passing obiect orientation and side-effects. It also aims
+to be as Unix-friendly as possible. A span statement looks like:
+
+{a r= {name counter other ->
+              (if (zerop counter)
+                  (kill other)
+                (progn
+                  (format t "~A ~A~%" name counter)
+                  (a name (1- counter) other)))}
+  in uid = {` a 'a 100 nil}
+     in {` a 'b 3 uid}
+        (next-task)} ; must start the scheduling loop explicitly.
+
+The output is:
+
+A 100
+B 3
+A 99
+B 2
+A 98
+B 1
+A 97
+T
+
+It looks a bit like lisp. In fact, it is a set of extensions to Common
+Lisp that should work on most standard compliant implementation.
+The current document describe mostly language-level features, but 
+the focus is now mostly on including libraries to have a more
+"batteries included" experience. While span is still very incomplete,
+we wanted to release something runnable quickly, and then see where
+it goes.

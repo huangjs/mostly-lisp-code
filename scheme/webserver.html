@@ -1,0 +1,2309 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+ <head>
+  <title>bglmem: ./webserver</title>
+  <link href="/usr/local/lib/bigloo/3.2a/bmem/bmem.css" rel="stylesheet" type="text/css"></link>
+  <style type="text/css">
+   div.profile td#gc1 {
+    cursor: help;
+    background: #6a5acd;
+   }
+   div.profile td#gc0 {
+    cursor: help;
+    background: #eeeeee;
+   }
+   div.profile td#function7 {
+    cursor: help;
+    background: #be55d7;
+   }
+   div.profile td#function6 {
+    cursor: help;
+    background: #00dd00;
+   }
+   div.profile td#function5 {
+    cursor: help;
+    background: #007fff;
+   }
+   div.profile td#function4 {
+    cursor: help;
+    background: #ff00ff;
+   }
+   div.profile td#function3 {
+    cursor: help;
+    background: #008b00;
+   }
+   div.profile td#function2 {
+    cursor: help;
+    background: #ffc125;
+   }
+   div.profile td#function1 {
+    cursor: help;
+    background: #6a5acd;
+   }
+   div.profile td#function0 {
+    cursor: help;
+    background: #ff0000;
+   }
+   div.profile td#type0 {
+    cursor: help;
+    background: #ff0000;
+   }
+   div.profile td#type1 {
+    cursor: help;
+    background: #6a5acd;
+   }
+   div.profile td#type2 {
+    cursor: help;
+    background: #ffc125;
+   }
+   div.profile td#type3 {
+    cursor: help;
+    background: #008b00;
+   }
+   div.profile td#type4 {
+    cursor: help;
+    background: #ff00ff;
+   }
+   div.profile td#type5 {
+    cursor: help;
+    background: #007fff;
+   }
+   div.profile td#type6 {
+    cursor: help;
+    background: #00dd00;
+   }
+   div.profile td#type7 {
+    cursor: help;
+    background: #be55d7;
+   }
+   div.profile td#type8 {
+    cursor: help;
+    background: #ffba08;
+   }
+   div.profile td#type9 {
+    cursor: help;
+    background: #7924cf;
+   }
+   div.profile td#type10 {
+    cursor: help;
+    background: #51ff9e;
+   }
+   div.profile td#type11 {
+    cursor: help;
+    background: #ff3030;
+   }
+   div.profile td#type12 {
+    cursor: help;
+    background: #c71486;
+   }
+   div.profile td#type13 {
+    cursor: help;
+    background: #ff34b6;
+   }
+   div.profile td#type14 {
+    cursor: help;
+    background: #efd3ef;
+   }
+   div.profile td#type15 {
+    cursor: help;
+    background: #ff7d00;
+   }
+   div.profile td#type16 {
+    cursor: help;
+    background: #b6ef38;
+   }
+   div.profile td#type17 {
+    cursor: help;
+    background: #6959cf;
+   }
+   div.profile td#type18 {
+    cursor: help;
+    background: #d72096;
+   }
+   div.profile td#type19 {
+    cursor: help;
+    background: #ff8271;
+   }
+   div.profile td#type20 {
+    cursor: help;
+    background: #00ddd0;
+   }
+   div.profile td#type21 {
+    cursor: help;
+    background: #70dd00;
+   }
+   div.profile td#type22 {
+    cursor: help;
+    background: #ff0000;
+   }
+   div.profile td#type23 {
+    cursor: help;
+    background: #6a5acd;
+   }
+   div.profile td#type24 {
+    cursor: help;
+    background: #ffc125;
+   }
+   div.profile td#type25 {
+    cursor: help;
+    background: #008b00;
+   }
+   div.profile td#type26 {
+    cursor: help;
+    background: #ff00ff;
+   }
+   div.profile td#type27 {
+    cursor: help;
+    background: #007fff;
+   }
+   div.profile td#type28 {
+    cursor: help;
+    background: #00dd00;
+   }
+   div.profile td#type29 {
+    cursor: help;
+    background: #be55d7;
+   }
+   div.profile td#type30 {
+    cursor: help;
+    background: #ffba08;
+   }
+   div.profile td#type31 {
+    cursor: help;
+    background: #7924cf;
+   }
+   div.profile td#type32 {
+    cursor: help;
+    background: #51ff9e;
+   }
+   div.profile td#type33 {
+    cursor: help;
+    background: #ff3030;
+   }
+   div.profile td#type34 {
+    cursor: help;
+    background: #c71486;
+   }
+   div.profile td#type100 {
+    cursor: help;
+    background: #c71486;
+   }
+   div.profile td#type101 {
+    cursor: help;
+    background: #ff34b6;
+   }
+   div.profile td#type102 {
+    cursor: help;
+    background: #efd3ef;
+   }
+   div.profile td#type103 {
+    cursor: help;
+    background: #ff7d00;
+   }
+   div.profile td#type104 {
+    cursor: help;
+    background: #b6ef38;
+   }
+   div.profile td#type105 {
+    cursor: help;
+    background: #6959cf;
+   }
+   div.profile td#type106 {
+    cursor: help;
+    background: #d72096;
+   }
+   div.profile td#type107 {
+    cursor: help;
+    background: #ff8271;
+   }
+   div.profile td#type108 {
+    cursor: help;
+    background: #00ddd0;
+   }
+   div.profile td#type109 {
+    cursor: help;
+    background: #70dd00;
+   }
+   div.profile td#type110 {
+    cursor: help;
+    background: #ff0000;
+   }
+   div.profile td#type111 {
+    cursor: help;
+    background: #6a5acd;
+   }
+   div.profile td#type112 {
+    cursor: help;
+    background: #ffc125;
+   }
+   div.profile td#type113 {
+    cursor: help;
+    background: #008b00;
+   }
+   div.profile td#type114 {
+    cursor: help;
+    background: #ff00ff;
+   }
+   div.profile td#type115 {
+    cursor: help;
+    background: #007fff;
+   }
+   div.profile td#type116 {
+    cursor: help;
+    background: #00dd00;
+   }
+   div.profile td#type117 {
+    cursor: help;
+    background: #be55d7;
+   }
+   div.profile td#type118 {
+    cursor: help;
+    background: #ffba08;
+   }
+   div.profile td#type119 {
+    cursor: help;
+    background: #7924cf;
+   }
+   div.profile td#type120 {
+    cursor: help;
+    background: #51ff9e;
+   }
+   div.profile td#type121 {
+    cursor: help;
+    background: #ff3030;
+   }
+   div.profile td#type122 {
+    cursor: help;
+    background: #c71486;
+   }
+   div.profile td#type123 {
+    cursor: help;
+    background: #ff34b6;
+   }
+   div.profile td#type124 {
+    cursor: help;
+    background: #efd3ef;
+   }
+   div.profile td#type125 {
+    cursor: help;
+    background: #ff7d00;
+   }
+   div.profile td#type126 {
+    cursor: help;
+    background: #b6ef38;
+   }
+   div.profile td#type127 {
+    cursor: help;
+    background: #6959cf;
+   }
+   div.profile td#type128 {
+    cursor: help;
+    background: #d72096;
+   }
+   div.profile td#type129 {
+    cursor: help;
+    background: #ff8271;
+   }
+   div.profile td#type130 {
+    cursor: help;
+    background: #00ddd0;
+   }
+   div.profile td#type131 {
+    cursor: help;
+    background: #70dd00;
+   }
+   div.profile td#type132 {
+    cursor: help;
+    background: #ff0000;
+   }
+   div.profile td#type133 {
+    cursor: help;
+    background: #6a5acd;
+   }
+   div.profile td#type134 {
+    cursor: help;
+    background: #ffc125;
+   }
+  </style>
+ </head>
+ <body id="main" class="hop">
+  <div class="bglmem">
+   <table frame="1px solid black" width="100%">
+    <colgroup width="20%">
+    </colgroup>
+    <colgroup width="80%">
+    </colgroup>
+    <tr>
+     <td valign="top" align="left">
+      <div id="left" class="hop-margin">
+       <h1>Bglmem0.3</h1>
+       <h2>Contents</h2>
+       <div class="contents">
+        <ul class="hop-verticalbox">
+         <li>
+          <a href="#gcs">Garbage Collections</a>
+         </li>
+         <li>
+          <a href="#functions">Functions</a>
+         </li>
+         <li>
+          <a href="#types">Types</a>
+         </li>
+         <li>
+          <a href="#threads">Threads</a>
+         </li>
+        </ul></div>
+       <h2>Legends</h2>
+       <div class="profile">
+        <div class="legend">
+         <table caption="Gcs" cellpadding="2px" cellspacing="10px" width="90%" class="gc-legend">
+          <caption>Gcs</caption>
+          <colgroup width="10px">
+          </colgroup>
+          <colgroup width="97%">
+          </colgroup>
+          <tr>
+           <td id="gc1" class="sample"> </td>
+           <td>gc #1</td>
+          </tr>
+         </table></div></div>
+       <br></br>
+       <div class="profile">
+        <div class="legend">
+         <table caption="Functions" cellpadding="2px" cellspacing="10px" width="90%" class="function-legend">
+          <caption>Functions</caption>
+          <colgroup width="10px">
+          </colgroup>
+          <colgroup width="97%">
+          </colgroup>
+          <tr>
+           <td id="function3" class="sample"> </td>
+           <td>
+            <div class="function-ident">$socket-accept</div>
+           </td>
+          </tr>
+          <tr>
+           <td id="function2" class="sample"> </td>
+           <td>
+            <div class="function-ident">&amp;foo</div>
+           </td>
+          </tr>
+          <tr>
+           <td id="function5" class="sample"> </td>
+           <td>
+            <div class="function-ident">&amp;thread1000</div>
+           </td>
+          </tr>
+          <tr>
+           <td id="function1" class="sample"> </td>
+           <td>
+            <div class="function-ident">handle-request</div>
+           </td>
+          </tr>
+          <tr>
+           <td id="function6" class="sample"> </td>
+           <td>
+            <div class="function-ident">main</div>
+           </td>
+          </tr>
+          <tr>
+           <td id="function0" class="sample"> </td>
+           <td>
+            <div class="function-ident">socket-print</div>
+           </td>
+          </tr>
+          <tr>
+           <td id="function4" class="sample"> </td>
+           <td>
+            <div class="function-ident">start-server</div>
+           </td>
+          </tr>
+          <tr>
+           <td id="function7" class="sample"> </td>
+           <td>
+            <div class="function-ident">unknown_function</div>
+           </td>
+          </tr>
+         </table></div></div>
+       <br></br>
+       <div class="profile">
+        <div class="legend">
+         <table caption="Types" cellpadding="2px" cellspacing="10px" width="90%" class="type-legend">
+          <caption>Types</caption>
+          <colgroup width="10px">
+          </colgroup>
+          <colgroup width="97%">
+          </colgroup>
+          <tr>
+           <td id="type29" class="sample"> </td>
+           <td>%dynamic-env</td>
+          </tr>
+          <tr>
+           <td id="type28" class="sample"> </td>
+           <td>%native-thread</td>
+          </tr>
+          <tr>
+           <td id="type118" class="sample"> </td>
+           <td>&amp;access-control-exception</td>
+          </tr>
+          <tr>
+           <td id="type101" class="sample"> </td>
+           <td>&amp;condition</td>
+          </tr>
+          <tr>
+           <td id="type103" class="sample"> </td>
+           <td>&amp;error</td>
+          </tr>
+          <tr>
+           <td id="type120" class="sample"> </td>
+           <td>&amp;eval-warning</td>
+          </tr>
+          <tr>
+           <td id="type102" class="sample"> </td>
+           <td>&amp;exception</td>
+          </tr>
+          <tr>
+           <td id="type122" class="sample"> </td>
+           <td>&amp;http-error</td>
+          </tr>
+          <tr>
+           <td id="type125" class="sample"> </td>
+           <td>&amp;http-redirection</td>
+          </tr>
+          <tr>
+           <td id="type123" class="sample"> </td>
+           <td>&amp;http-redirection-error</td>
+          </tr>
+          <tr>
+           <td id="type124" class="sample"> </td>
+           <td>&amp;http-status-error</td>
+          </tr>
+          <tr>
+           <td id="type109" class="sample"> </td>
+           <td>&amp;io-closed-error</td>
+          </tr>
+          <tr>
+           <td id="type105" class="sample"> </td>
+           <td>&amp;io-error</td>
+          </tr>
+          <tr>
+           <td id="type110" class="sample"> </td>
+           <td>&amp;io-file-not-found-error</td>
+          </tr>
+          <tr>
+           <td id="type113" class="sample"> </td>
+           <td>&amp;io-malformed-url-error</td>
+          </tr>
+          <tr>
+           <td id="type111" class="sample"> </td>
+           <td>&amp;io-parse-error</td>
+          </tr>
+          <tr>
+           <td id="type106" class="sample"> </td>
+           <td>&amp;io-port-error</td>
+          </tr>
+          <tr>
+           <td id="type107" class="sample"> </td>
+           <td>&amp;io-read-error</td>
+          </tr>
+          <tr>
+           <td id="type114" class="sample"> </td>
+           <td>&amp;io-sigpipe-error</td>
+          </tr>
+          <tr>
+           <td id="type115" class="sample"> </td>
+           <td>&amp;io-timeout-error</td>
+          </tr>
+          <tr>
+           <td id="type112" class="sample"> </td>
+           <td>&amp;io-unknown-host-error</td>
+          </tr>
+          <tr>
+           <td id="type108" class="sample"> </td>
+           <td>&amp;io-write-error</td>
+          </tr>
+          <tr>
+           <td id="type116" class="sample"> </td>
+           <td>&amp;process-exception</td>
+          </tr>
+          <tr>
+           <td id="type117" class="sample"> </td>
+           <td>&amp;security-exception</td>
+          </tr>
+          <tr>
+           <td id="type132" class="sample"> </td>
+           <td>&amp;thread-error</td>
+          </tr>
+          <tr>
+           <td id="type104" class="sample"> </td>
+           <td>&amp;type-error</td>
+          </tr>
+          <tr>
+           <td id="type119" class="sample"> </td>
+           <td>&amp;warning</td>
+          </tr>
+          <tr>
+           <td id="type31" class="sample"> </td>
+           <td>atomic byte</td>
+          </tr>
+          <tr>
+           <td id="type20" class="sample"> </td>
+           <td>binary-port</td>
+          </tr>
+          <tr>
+           <td id="type30" class="sample"> </td>
+           <td>byte</td>
+          </tr>
+          <tr>
+           <td id="type13" class="sample"> </td>
+           <td>cell</td>
+          </tr>
+          <tr>
+           <td id="type27" class="sample"> </td>
+           <td>char *</td>
+          </tr>
+          <tr>
+           <td id="type6" class="sample"> </td>
+           <td>custom</td>
+          </tr>
+          <tr>
+           <td id="type12" class="sample"> </td>
+           <td>date</td>
+          </tr>
+          <tr>
+           <td id="type25" class="sample"> </td>
+           <td>elong</td>
+          </tr>
+          <tr>
+           <td id="type21" class="sample"> </td>
+           <td>epair</td>
+          </tr>
+          <tr>
+           <td id="type18" class="sample"> </td>
+           <td>foreign</td>
+          </tr>
+          <tr>
+           <td id="type33" class="sample"> </td>
+           <td>hostent</td>
+          </tr>
+          <tr>
+           <td id="type121" class="sample"> </td>
+           <td>huft</td>
+          </tr>
+          <tr>
+           <td id="type10" class="sample"> </td>
+           <td>input-port</td>
+          </tr>
+          <tr>
+           <td id="type7" class="sample"> </td>
+           <td>keyword</td>
+          </tr>
+          <tr>
+           <td id="type26" class="sample"> </td>
+           <td>llong</td>
+          </tr>
+          <tr>
+           <td id="type128" class="sample"> </td>
+           <td>nothread</td>
+          </tr>
+          <tr>
+           <td id="type129" class="sample"> </td>
+           <td>nothread-backend</td>
+          </tr>
+          <tr>
+           <td id="type100" class="sample"> </td>
+           <td>object</td>
+          </tr>
+          <tr>
+           <td id="type5" class="sample"> </td>
+           <td>opaque</td>
+          </tr>
+          <tr>
+           <td id="type11" class="sample"> </td>
+           <td>output-port</td>
+          </tr>
+          <tr>
+           <td id="type19" class="sample"> </td>
+           <td>output-string-port</td>
+          </tr>
+          <tr>
+           <td id="type0" class="sample"> </td>
+           <td>pair</td>
+          </tr>
+          <tr>
+           <td id="type34" class="sample"> </td>
+           <td>port-timeout</td>
+          </tr>
+          <tr>
+           <td id="type3" class="sample"> </td>
+           <td>procedure</td>
+          </tr>
+          <tr>
+           <td id="type24" class="sample"> </td>
+           <td>procedure-light</td>
+          </tr>
+          <tr>
+           <td id="type17" class="sample"> </td>
+           <td>process</td>
+          </tr>
+          <tr>
+           <td id="type131" class="sample"> </td>
+           <td>pthread</td>
+          </tr>
+          <tr>
+           <td id="type130" class="sample"> </td>
+           <td>pthread-backend</td>
+          </tr>
+          <tr>
+           <td id="type16" class="sample"> </td>
+           <td>real</td>
+          </tr>
+          <tr>
+           <td id="type32" class="sample"> </td>
+           <td>realloc4 byte</td>
+          </tr>
+          <tr>
+           <td id="type14" class="sample"> </td>
+           <td>socket</td>
+          </tr>
+          <tr>
+           <td id="type9" class="sample"> </td>
+           <td>stack</td>
+          </tr>
+          <tr>
+           <td id="type1" class="sample"> </td>
+           <td>string</td>
+          </tr>
+          <tr>
+           <td id="type15" class="sample"> </td>
+           <td>struct</td>
+          </tr>
+          <tr>
+           <td id="type8" class="sample"> </td>
+           <td>symbol</td>
+          </tr>
+          <tr>
+           <td id="type134" class="sample"> </td>
+           <td>terminated-thread-exception</td>
+          </tr>
+          <tr>
+           <td id="type127" class="sample"> </td>
+           <td>thread</td>
+          </tr>
+          <tr>
+           <td id="type126" class="sample"> </td>
+           <td>thread-backend</td>
+          </tr>
+          <tr>
+           <td id="type23" class="sample"> </td>
+           <td>tstruct</td>
+          </tr>
+          <tr>
+           <td id="type22" class="sample"> </td>
+           <td>tvector</td>
+          </tr>
+          <tr>
+           <td id="type4" class="sample"> </td>
+           <td>ucs2-string</td>
+          </tr>
+          <tr>
+           <td id="type133" class="sample"> </td>
+           <td>uncaught-exception</td>
+          </tr>
+          <tr>
+           <td id="type2" class="sample"> </td>
+           <td>vector</td>
+          </tr>
+         </table></div></div></div>
+     </td>
+     <td valign="top" align="left">
+      <div class="hop-title">./webserver</div>
+      <div class="hop-page">
+       <h1>Garbage collections</h1>
+       <a name="gcs"></a>
+       <table width="100%">
+        <tr>
+         <td valign="top">
+          <div class="profile">
+           <table caption="Gc (functions)" cellpadding="0" cellspacing="10" width="100%" class="gc-function">
+            <caption>Gc (functions)</caption>
+            <colgroup width="8%">
+            </colgroup>
+            <colgroup span="100" width="6">
+            </colgroup>
+            <colgroup width="20%">
+            </colgroup>
+            <thead>
+             <tr>
+              <th valign="bottom" align="center">gc</th>
+              <th colspan="100"></th>
+              <th valign="bottom" align="center">memory</th>
+             </tr>
+            </thead>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="gc1"> </td>
+                <td align="left" class="legend">1</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="5" title="unknown_function: 235k (11%)" id="function7"> </td>
+             <td colspan="23" title="start-server: 986k (46%)" id="function4"> </td>
+             <td colspan="9" title="$socket-accept: 384k (18%)" id="function3"> </td>
+             <td colspan="3" title="&amp;foo: 164k (7%)" id="function2"> </td>
+             <td colspan="6" title="handle-request: 284k (13%)" id="function1"> </td>
+             <td title="socket-print: 62k (2%)" id="function0"> </td>
+             <td colspan="53" title="heap size: 4160k" id="gc0"> </td>
+             <td align="left" class="size">50% (2119k/4160k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td></td>
+             <td align="right" colspan="100" class="olegend">overall allocated memory:</td>
+             <td align="left" class="osize">2119KB (2.0MB)</td>
+            </tr>
+           </table></div>
+         </td>
+         <td valign="top">
+          <div class="profile">
+           <table caption="Gc (types)" cellpadding="0" cellspacing="10" width="100%" class="gc-function">
+            <caption>Gc (types)</caption>
+            <colgroup width="8%">
+            </colgroup>
+            <colgroup span="100" width="6">
+            </colgroup>
+            <colgroup width="20%">
+            </colgroup>
+            <thead>
+             <tr>
+              <th valign="bottom" align="center">gc</th>
+              <th colspan="100"></th>
+              <th valign="bottom" align="center">memory</th>
+             </tr>
+            </thead>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="gc1"> </td>
+                <td align="left" class="legend">1</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="9" title="pair (18%)" id="type0"> </td>
+             <td colspan="9" title="string (18%)" id="type1"> </td>
+             <td colspan="7" title="procedure (14%)" id="type3"> </td>
+             <td title="symbol (2%)" id="type8"> </td>
+             <td colspan="3" title="input-port (7%)" id="type10"> </td>
+             <td colspan="3" title="output-port (6%)" id="type11"> </td>
+             <td colspan="2" title="socket (4%)" id="type14"> </td>
+             <td colspan="7" title="%dynamic-env (15%)" id="type29"> </td>
+             <td colspan="5" title="byte (10%)" id="type30"> </td>
+             <td colspan="54" title="heap size: 4160k" id="gc0"> </td>
+             <td align="left" class="size">50% (2119k/4160k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+           </table></div>
+         </td>
+        </tr>
+       </table>
+       <br></br>
+       <h1>Functions</h1>
+       <a name="functions"></a>
+       <ul class="verticalbox">
+        <table width="100%">
+         <tr>
+          <td valign="top">
+           <div class="profile">
+            <table caption="Direct allocations (gc)" cellpadding="0" cellspacing="10" width="100%" class="function-gc-direct">
+             <caption>Direct allocations (gc)</caption>
+             <colgroup width="20%">
+             </colgroup>
+             <colgroup span="100" width="6">
+             </colgroup>
+             <colgroup width="15%">
+             </colgroup>
+             <thead>
+              <tr>
+               <th valign="bottom" align="center">functions</th>
+               <th colspan="100"></th>
+               <th valign="bottom" align="center">memory</th>
+              </tr>
+             </thead>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function4"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">start-server</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="46" title="gc 1: 986k (100%)" id="gc1"> </td>
+              <td colspan="54" class="empty"> </td>
+              <td align="left" class="size">46% (986k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function3"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">$socket-accept</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="18" title="gc 1: 384k (100%)" id="gc1"> </td>
+              <td colspan="82" class="empty"> </td>
+              <td align="left" class="size">18% (384k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function1"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">handle-request</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="13" title="gc 1: 284k (100%)" id="gc1"> </td>
+              <td colspan="87" class="empty"> </td>
+              <td align="left" class="size">13% (284k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function7"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">unknown_function</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="11" title="gc 1: 235k (100%)" id="gc1"> </td>
+              <td colspan="89" class="empty"> </td>
+              <td align="left" class="size">11% (235k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function2"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">&amp;foo</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="7" title="gc 1: 164k (100%)" id="gc1"> </td>
+              <td colspan="93" class="empty"> </td>
+              <td align="left" class="size">7% (164k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function0"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">socket-print</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="2" title="gc 1: 62k (100%)" id="gc1"> </td>
+              <td colspan="98" class="empty"> </td>
+              <td align="left" class="size">2% (62k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+            </table></div>
+          </td>
+          <td valign="top">
+           <div class="profile">
+            <table caption="Cumulative allocations (gc)" cellpadding="0" cellspacing="10" width="100%" class="function-gc-cumulative">
+             <caption>Cumulative allocations (gc)</caption>
+             <colgroup width="20%">
+             </colgroup>
+             <colgroup span="100" width="6">
+             </colgroup>
+             <colgroup width="15%">
+             </colgroup>
+             <thead>
+              <tr>
+               <th valign="bottom" align="center">functions</th>
+               <th colspan="100"></th>
+               <th valign="bottom" align="center">memory</th>
+              </tr>
+             </thead>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function7"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">unknown_function</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="100" title="gc 1: 2119k (100%)" id="gc1"> </td>
+              <td align="left" class="size">100% (2119k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function5"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">&amp;thread1000</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="64" title="gc 1: 1371k (100%)" id="gc1"> </td>
+              <td colspan="36" class="empty"> </td>
+              <td align="left" class="size">64% (1371k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function4"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">start-server</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="64" title="gc 1: 1370k (100%)" id="gc1"> </td>
+              <td colspan="36" class="empty"> </td>
+              <td align="left" class="size">64% (1370k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function2"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">&amp;foo</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="24" title="gc 1: 511k (100%)" id="gc1"> </td>
+              <td colspan="76" class="empty"> </td>
+              <td align="left" class="size">24% (511k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function3"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">$socket-accept</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="18" title="gc 1: 384k (100%)" id="gc1"> </td>
+              <td colspan="82" class="empty"> </td>
+              <td align="left" class="size">18% (384k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function1"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">handle-request</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="16" title="gc 1: 347k (100%)" id="gc1"> </td>
+              <td colspan="84" class="empty"> </td>
+              <td align="left" class="size">16% (347k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function0"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">socket-print</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="2" title="gc 1: 62k (100%)" id="gc1"> </td>
+              <td colspan="98" class="empty"> </td>
+              <td align="left" class="size">2% (62k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+            </table></div>
+          </td>
+         </tr>
+        </table>
+        <table width="100%">
+         <tr>
+          <td valign="top">
+           <div class="profile">
+            <table caption="Direct allocations (size)" cellpadding="0" cellspacing="10" width="100%" class="function-type-direct">
+             <caption>Direct allocations (size)</caption>
+             <colgroup width="20%">
+             </colgroup>
+             <colgroup span="100" width="6">
+             </colgroup>
+             <colgroup width="15%">
+             </colgroup>
+             <thead>
+              <tr>
+               <th valign="bottom" align="center">functions</th>
+               <th colspan="100"></th>
+               <th valign="bottom" align="center">memory</th>
+              </tr>
+             </thead>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function4"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">start-server</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="5" title="pair: 125k (12%)" id="type0"> </td>
+              <td colspan="9" title="string: 211k (21%)" id="type1"> </td>
+              <td colspan="4" title="procedure: 101k (10%)" id="type3"> </td>
+              <td colspan="15" title="%dynamic-env: 328k (33%)" id="type29"> </td>
+              <td colspan="10" title="byte: 219k (22%)" id="type30"> </td>
+              <td colspan="57" class="empty"> </td>
+              <td align="left" class="size">46% (986k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function3"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">$socket-accept</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="6" title="input-port: 148k (38%)" id="type10"> </td>
+              <td colspan="6" title="output-port: 133k (34%)" id="type11"> </td>
+              <td colspan="4" title="socket: 86k (22%)" id="type14"> </td>
+              <td colspan="84" class="empty"> </td>
+              <td align="left" class="size">18% (384k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function1"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">handle-request</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="6" title="pair: 140k (49%)" id="type0"> </td>
+              <td colspan="6" title="string: 143k (50%)" id="type1"> </td>
+              <td colspan="88" class="empty"> </td>
+              <td align="left" class="size">13% (284k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function7"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">unknown_function</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="4" title="pair: 82k (44%)" id="type0"> </td>
+              <td title="string: 18k (9%)" id="type1"> </td>
+              <td colspan="3" title="symbol: 62k (33%)" id="type8"> </td>
+              <td colspan="92" class="empty"> </td>
+              <td align="left" class="size">11% (235k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function2"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">&amp;foo</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="6" title="procedure: 148k (90%)" id="type3"> </td>
+              <td colspan="94" class="empty"> </td>
+              <td align="left" class="size">7% (164k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function0"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">socket-print</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td title="procedure: 46k (75%)" id="type3"> </td>
+              <td colspan="99" class="empty"> </td>
+              <td align="left" class="size">2% (62k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+            </table></div>
+          </td>
+          <td valign="top">
+           <div class="profile">
+            <table caption="Indirect allocations (size)" cellpadding="0" cellspacing="10" width="100%" class="function-type-indirect">
+             <caption>Indirect allocations (size)</caption>
+             <colgroup width="20%">
+             </colgroup>
+             <colgroup span="100" width="6">
+             </colgroup>
+             <colgroup width="15%">
+             </colgroup>
+             <thead>
+              <tr>
+               <th valign="bottom" align="center">functions</th>
+               <th colspan="100"></th>
+               <th valign="bottom" align="center">memory</th>
+              </tr>
+             </thead>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function7"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">unknown_function</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="18" title="pair: 379k (18%)" id="type0"> </td>
+              <td colspan="18" title="string: 390k (18%)" id="type1"> </td>
+              <td colspan="14" title="procedure: 297k (14%)" id="type3"> </td>
+              <td colspan="2" title="symbol: 62k (2%)" id="type8"> </td>
+              <td colspan="7" title="input-port: 149k (7%)" id="type10"> </td>
+              <td colspan="6" title="output-port: 133k (6%)" id="type11"> </td>
+              <td colspan="4" title="socket: 86k (4%)" id="type14"> </td>
+              <td colspan="15" title="%dynamic-env: 329k (15%)" id="type29"> </td>
+              <td colspan="10" title="byte: 224k (10%)" id="type30"> </td>
+              <td colspan="6" class="empty"> </td>
+              <td align="left" class="size">100% (2119k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function5"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">&amp;thread1000</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="5" title="pair: 125k (9%)" id="type0"> </td>
+              <td colspan="10" title="string: 227k (16%)" id="type1"> </td>
+              <td colspan="4" title="procedure: 101k (7%)" id="type3"> </td>
+              <td colspan="6" title="input-port: 148k (10%)" id="type10"> </td>
+              <td colspan="6" title="output-port: 133k (9%)" id="type11"> </td>
+              <td colspan="4" title="socket: 86k (6%)" id="type14"> </td>
+              <td colspan="15" title="%dynamic-env: 328k (23%)" id="type29"> </td>
+              <td colspan="10" title="byte: 219k (15%)" id="type30"> </td>
+              <td colspan="40" class="empty"> </td>
+              <td align="left" class="size">64% (1371k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function4"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">start-server</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="5" title="pair: 125k (9%)" id="type0"> </td>
+              <td colspan="10" title="string: 227k (16%)" id="type1"> </td>
+              <td colspan="4" title="procedure: 101k (7%)" id="type3"> </td>
+              <td colspan="6" title="input-port: 148k (10%)" id="type10"> </td>
+              <td colspan="6" title="output-port: 133k (9%)" id="type11"> </td>
+              <td colspan="4" title="socket: 86k (6%)" id="type14"> </td>
+              <td colspan="15" title="%dynamic-env: 328k (23%)" id="type29"> </td>
+              <td colspan="10" title="byte: 219k (15%)" id="type30"> </td>
+              <td colspan="40" class="empty"> </td>
+              <td align="left" class="size">64% (1370k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function2"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">&amp;foo</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="8" title="pair: 172k (33%)" id="type0"> </td>
+              <td colspan="6" title="string: 143k (28%)" id="type1"> </td>
+              <td colspan="9" title="procedure: 195k (38%)" id="type3"> </td>
+              <td colspan="77" class="empty"> </td>
+              <td align="left" class="size">24% (511k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function3"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">$socket-accept</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="6" title="input-port: 148k (38%)" id="type10"> </td>
+              <td colspan="6" title="output-port: 133k (34%)" id="type11"> </td>
+              <td colspan="4" title="socket: 86k (22%)" id="type14"> </td>
+              <td colspan="84" class="empty"> </td>
+              <td align="left" class="size">18% (384k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function1"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">handle-request</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="7" title="pair: 156k (45%)" id="type0"> </td>
+              <td colspan="6" title="string: 143k (41%)" id="type1"> </td>
+              <td colspan="2" title="procedure: 46k (13%)" id="type3"> </td>
+              <td colspan="85" class="empty"> </td>
+              <td align="left" class="size">16% (347k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function0"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">socket-print</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td title="procedure: 46k (75%)" id="type3"> </td>
+              <td colspan="99" class="empty"> </td>
+              <td align="left" class="size">2% (62k)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+            </table></div>
+          </td>
+         </tr>
+        </table>
+        <table width="100%">
+         <tr>
+          <td valign="top">
+           <div class="profile">
+            <table caption="Direct allocations (occurrence)" cellpadding="0" cellspacing="10" width="100%" class="function-type-direct">
+             <caption>Direct allocations (occurrence)</caption>
+             <colgroup width="20%">
+             </colgroup>
+             <colgroup span="100" width="6">
+             </colgroup>
+             <colgroup width="15%">
+             </colgroup>
+             <thead>
+              <tr>
+               <th valign="bottom" align="center">functions</th>
+               <th colspan="100"></th>
+               <th valign="bottom" align="center">memory</th>
+              </tr>
+             </thead>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function4"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">start-server</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="16" title="pair: 8017 (53%)" id="type0"> </td>
+              <td colspan="4" title="string: 2004 (13%)" id="type1"> </td>
+              <td colspan="4" title="procedure: 2004 (13%)" id="type3"> </td>
+              <td colspan="2" title="%dynamic-env: 1002 (6%)" id="type29"> </td>
+              <td colspan="4" title="byte: 2004 (13%)" id="type30"> </td>
+              <td colspan="70" class="empty"> </td>
+              <td align="left" class="size">31% (15031)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function1"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">handle-request</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="18" title="pair: 9013 (64%)" id="type0"> </td>
+              <td colspan="10" title="string: 5010 (35%)" id="type1"> </td>
+              <td colspan="72" class="empty"> </td>
+              <td align="left" class="size">29% (14023)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function7"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">unknown_function</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="10" title="pair: 5260 (59%)" id="type0"> </td>
+              <td colspan="2" title="string: 1214 (13%)" id="type1"> </td>
+              <td colspan="3" title="symbol: 1588 (18%)" id="type8"> </td>
+              <td colspan="85" class="empty"> </td>
+              <td align="left" class="size">18% (8796)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function2"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">&amp;foo</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="2" title="pair: 1002 (25%)" id="type0"> </td>
+              <td colspan="6" title="procedure: 3006 (75%)" id="type3"> </td>
+              <td colspan="92" class="empty"> </td>
+              <td align="left" class="size">8% (4008)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function3"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">$socket-accept</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="2" title="string: 1002 (25%)" id="type1"> </td>
+              <td colspan="2" title="input-port: 1002 (25%)" id="type10"> </td>
+              <td colspan="2" title="output-port: 1002 (25%)" id="type11"> </td>
+              <td colspan="2" title="socket: 1002 (25%)" id="type14"> </td>
+              <td colspan="92" class="empty"> </td>
+              <td align="left" class="size">8% (4008)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function0"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">socket-print</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="2" title="pair: 1001 (50%)" id="type0"> </td>
+              <td colspan="2" title="procedure: 1001 (50%)" id="type3"> </td>
+              <td colspan="96" class="empty"> </td>
+              <td align="left" class="size">4% (2002)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+            </table></div>
+          </td>
+          <td valign="top">
+           <div class="profile">
+            <table caption="Indirect allocations (occurrence)" cellpadding="0" cellspacing="10" width="100%" class="function-type-indirect">
+             <caption>Indirect allocations (occurrence)</caption>
+             <colgroup width="20%">
+             </colgroup>
+             <colgroup span="100" width="6">
+             </colgroup>
+             <colgroup width="15%">
+             </colgroup>
+             <thead>
+              <tr>
+               <th valign="bottom" align="center">functions</th>
+               <th colspan="100"></th>
+               <th valign="bottom" align="center">memory</th>
+              </tr>
+             </thead>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function7"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">unknown_function</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="50" title="pair: 24302 (50%)" id="type0"> </td>
+              <td colspan="19" title="string: 9231 (19%)" id="type1"> </td>
+              <td colspan="12" title="procedure: 6017 (12%)" id="type3"> </td>
+              <td colspan="3" title="symbol: 1588 (3%)" id="type8"> </td>
+              <td colspan="2" title="input-port: 1005 (2%)" id="type10"> </td>
+              <td colspan="2" title="output-port: 1002 (2%)" id="type11"> </td>
+              <td colspan="2" title="socket: 1003 (2%)" id="type14"> </td>
+              <td colspan="2" title="%dynamic-env: 1003 (2%)" id="type29"> </td>
+              <td colspan="4" title="byte: 2099 (4%)" id="type30"> </td>
+              <td colspan="4" class="empty"> </td>
+              <td align="left" class="size">100% (47888)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function2"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">&amp;foo</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="22" title="pair: 11016 (54%)" id="type0"> </td>
+              <td colspan="10" title="string: 5010 (25%)" id="type1"> </td>
+              <td colspan="8" title="procedure: 4007 (20%)" id="type3"> </td>
+              <td colspan="60" class="empty"> </td>
+              <td align="left" class="size">41% (20033)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function5"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">&amp;thread1000</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="16" title="pair: 8018 (42%)" id="type0"> </td>
+              <td colspan="6" title="string: 3006 (15%)" id="type1"> </td>
+              <td colspan="4" title="procedure: 2007 (10%)" id="type3"> </td>
+              <td colspan="2" title="input-port: 1002 (5%)" id="type10"> </td>
+              <td colspan="2" title="output-port: 1002 (5%)" id="type11"> </td>
+              <td colspan="2" title="socket: 1002 (5%)" id="type14"> </td>
+              <td colspan="2" title="%dynamic-env: 1002 (5%)" id="type29"> </td>
+              <td colspan="4" title="byte: 2004 (10%)" id="type30"> </td>
+              <td colspan="62" class="empty"> </td>
+              <td align="left" class="size">39% (19043)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function4"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">start-server</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="16" title="pair: 8017 (42%)" id="type0"> </td>
+              <td colspan="6" title="string: 3006 (15%)" id="type1"> </td>
+              <td colspan="4" title="procedure: 2004 (10%)" id="type3"> </td>
+              <td colspan="2" title="input-port: 1002 (5%)" id="type10"> </td>
+              <td colspan="2" title="output-port: 1002 (5%)" id="type11"> </td>
+              <td colspan="2" title="socket: 1002 (5%)" id="type14"> </td>
+              <td colspan="2" title="%dynamic-env: 1002 (5%)" id="type29"> </td>
+              <td colspan="4" title="byte: 2004 (10%)" id="type30"> </td>
+              <td colspan="62" class="empty"> </td>
+              <td align="left" class="size">39% (19039)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function1"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">handle-request</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="20" title="pair: 10014 (62%)" id="type0"> </td>
+              <td colspan="10" title="string: 5010 (31%)" id="type1"> </td>
+              <td colspan="2" title="procedure: 1001 (6%)" id="type3"> </td>
+              <td colspan="68" class="empty"> </td>
+              <td align="left" class="size">33% (16025)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function3"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">$socket-accept</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="2" title="string: 1002 (25%)" id="type1"> </td>
+              <td colspan="2" title="input-port: 1002 (25%)" id="type10"> </td>
+              <td colspan="2" title="output-port: 1002 (25%)" id="type11"> </td>
+              <td colspan="2" title="socket: 1002 (25%)" id="type14"> </td>
+              <td colspan="92" class="empty"> </td>
+              <td align="left" class="size">8% (4008)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+             <tr>
+              <td class="color-item">
+               <table class="color-item">
+                <colgroup width="10px">
+                </colgroup>
+                <colgroup>
+                </colgroup>
+                <tr>
+                 <td id="function0"> </td>
+                 <td align="left" class="legend">
+                  <div class="function-ident">socket-print</div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+              <td colspan="2" title="pair: 1001 (50%)" id="type0"> </td>
+              <td colspan="2" title="procedure: 1001 (50%)" id="type3"> </td>
+              <td colspan="96" class="empty"> </td>
+              <td align="left" class="size">4% (2002)</td>
+             </tr>
+             <tr>
+              <td colspan="102"></td>
+             </tr>
+            </table></div>
+          </td>
+         </tr>
+        </table>
+       </ul>
+       <br></br>
+       <h1>Types</h1>
+       <a name="types"></a>
+       <table width="100%">
+        <tr>
+         <td valign="top">
+          <div class="profile">
+           <table caption="Type (functions)" cellpadding="0" cellspacing="10" width="100%" class="type-function">
+            <caption>Type (functions)</caption>
+            <colgroup width="15%">
+            </colgroup>
+            <colgroup span="100" width="6">
+            </colgroup>
+            <colgroup width="20%">
+            </colgroup>
+            <thead>
+             <tr>
+              <th valign="bottom" align="center">type</th>
+              <th colspan="100"></th>
+              <th valign="bottom" align="center">memory</th>
+             </tr>
+            </thead>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type1"> </td>
+                <td align="left" class="legend">string</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="9" title="start-server: 211k (54%)" id="function4"> </td>
+             <td colspan="6" title="handle-request: 143k (36%)" id="function1"> </td>
+             <td colspan="85" class="empty"> </td>
+             <td align="left" class="size">18% (390k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type0"> </td>
+                <td align="left" class="legend">pair</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="3" title="unknown_function: 82k (21%)" id="function7"> </td>
+             <td colspan="5" title="start-server: 125k (32%)" id="function4"> </td>
+             <td colspan="6" title="handle-request: 140k (37%)" id="function1"> </td>
+             <td colspan="86" class="empty"> </td>
+             <td align="left" class="size">17% (379k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type29"> </td>
+                <td align="left" class="legend">%dynamic-env</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="15" title="start-server: 328k (99%)" id="function4"> </td>
+             <td colspan="85" class="empty"> </td>
+             <td align="left" class="size">15% (329k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type3"> </td>
+                <td align="left" class="legend">procedure</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="4" title="start-server: 101k (34%)" id="function4"> </td>
+             <td colspan="7" title="&amp;foo: 148k (49%)" id="function2"> </td>
+             <td colspan="2" title="socket-print: 46k (15%)" id="function0"> </td>
+             <td colspan="87" class="empty"> </td>
+             <td align="left" class="size">14% (297k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type30"> </td>
+                <td align="left" class="legend">byte</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="10" title="start-server: 219k (97%)" id="function4"> </td>
+             <td colspan="90" class="empty"> </td>
+             <td align="left" class="size">10% (224k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type10"> </td>
+                <td align="left" class="legend">input-port</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="7" title="$socket-accept: 148k (99%)" id="function3"> </td>
+             <td colspan="93" class="empty"> </td>
+             <td align="left" class="size">7% (149k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type11"> </td>
+                <td align="left" class="legend">output-port</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="6" title="$socket-accept: 133k (100%)" id="function3"> </td>
+             <td colspan="94" class="empty"> </td>
+             <td align="left" class="size">6% (133k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type14"> </td>
+                <td align="left" class="legend">socket</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="4" title="$socket-accept: 86k (99%)" id="function3"> </td>
+             <td colspan="96" class="empty"> </td>
+             <td align="left" class="size">4% (86k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type8"> </td>
+                <td align="left" class="legend">symbol</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="2" title="unknown_function: 62k (100%)" id="function7"> </td>
+             <td colspan="98" class="empty"> </td>
+             <td align="left" class="size">2% (62k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+           </table></div>
+         </td>
+         <td valign="top">
+          <div class="profile">
+           <table caption="Type (gcs)" cellpadding="0" cellspacing="10" width="100%" class="type-function">
+            <caption>Type (gcs)</caption>
+            <colgroup width="10%">
+            </colgroup>
+            <colgroup span="100" width="6">
+            </colgroup>
+            <colgroup width="20%">
+            </colgroup>
+            <thead>
+             <tr>
+              <th valign="bottom" align="center">type</th>
+              <th colspan="100"></th>
+              <th valign="bottom" align="center">memory</th>
+             </tr>
+            </thead>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type1"> </td>
+                <td align="left" class="legend">string</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="18" title="gc 1 (100%)" id="gc1"> </td>
+             <td colspan="82" class="empty"> </td>
+             <td align="left" class="size">18% (390k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type0"> </td>
+                <td align="left" class="legend">pair</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="17" title="gc 1 (100%)" id="gc1"> </td>
+             <td colspan="83" class="empty"> </td>
+             <td align="left" class="size">17% (379k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type29"> </td>
+                <td align="left" class="legend">%dynamic-env</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="15" title="gc 1 (100%)" id="gc1"> </td>
+             <td colspan="85" class="empty"> </td>
+             <td align="left" class="size">15% (329k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type3"> </td>
+                <td align="left" class="legend">procedure</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="14" title="gc 1 (100%)" id="gc1"> </td>
+             <td colspan="86" class="empty"> </td>
+             <td align="left" class="size">14% (297k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type30"> </td>
+                <td align="left" class="legend">byte</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="10" title="gc 1 (100%)" id="gc1"> </td>
+             <td colspan="90" class="empty"> </td>
+             <td align="left" class="size">10% (224k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type10"> </td>
+                <td align="left" class="legend">input-port</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="7" title="gc 1 (100%)" id="gc1"> </td>
+             <td colspan="93" class="empty"> </td>
+             <td align="left" class="size">7% (149k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type11"> </td>
+                <td align="left" class="legend">output-port</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="6" title="gc 1 (100%)" id="gc1"> </td>
+             <td colspan="94" class="empty"> </td>
+             <td align="left" class="size">6% (133k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type14"> </td>
+                <td align="left" class="legend">socket</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="4" title="gc 1 (100%)" id="gc1"> </td>
+             <td colspan="96" class="empty"> </td>
+             <td align="left" class="size">4% (86k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+            <tr>
+             <td class="color-item">
+              <table class="color-item">
+               <colgroup width="10px">
+               </colgroup>
+               <colgroup>
+               </colgroup>
+               <tr>
+                <td id="type8"> </td>
+                <td align="left" class="legend">symbol</td>
+               </tr>
+              </table>
+             </td>
+             <td colspan="2" title="gc 1 (100%)" id="gc1"> </td>
+             <td colspan="98" class="empty"> </td>
+             <td align="left" class="size">2% (62k)</td>
+            </tr>
+            <tr>
+             <td colspan="102"></td>
+            </tr>
+           </table></div>
+         </td>
+        </tr>
+       </table>
+       <br></br>
+       <h1>Threads information</h1>
+       <a name="threads"></a></div>
+     </td>
+    </tr>
+   </table></div>
+ </body>
+</html>

@@ -1,0 +1,45 @@
+<html>
+<body>
+
+<h1>Some portable CL packages</h1>
+
+<p><a href='templates-lisp.tar.gz'> Templates Lisp </a> A simple lispy
+  language compiled to C++ templates. Really a sexpy lambda-calculus
+  with a couple macros. A one night hack that should be cleaned up,
+  especially the renaming function. Allows one to write useful
+  templates via the out macro, which adds templated strings to the
+  defined template. </p>
+
+<p><a href='fitz.tar.gz'> Fitz </a> A parsing combinator library for
+  CL. Also includes an implementation of even lazy lists. Partial
+  documentation available at <a href='http://www.pvk.ca/tw/'>
+  http://www.pvk.ca </a>. Seems a bit slow to me. There are some easy
+  optimisation easy optimisation avenues, e.g. separating
+  frequently-accessed variables from the others to make accessing them
+  faster. Depends on <a href='http://www.cliki.net/genhash'> genhash
+  </a> and on <a href='http://common-lisp.net/project/cl-unification/'>
+  CL-UNIFICATION </a>, but only for a simple convenience combinator,
+  not in the kernel.</p>
+
+<p><a href='simple-match.tar.gz'> Simple Match </a> A simple pattern
+  matching macro built on top of destructuring bind. `'' marks
+  literals, `&rest' or `.' can be used to capture the tail of a list,
+  `&optional' is allowed. Multiple captures of the same variable are
+  checked for equality. Simplistic, catches errors thrown by
+  destructuring-bind to denote matching failure.</p>
+
+<p><del>
+  Codewalker A portable codewalker
+  (including macrolet and symbol-macrolet) for full Common Lisp.
+  Includes 2 examples: continuations in CL and allowing #'x as a
+  variable name denoting the lexical function x in let, let*, lambda,
+  defun and defgeneric. The examples depend on simple-match. More
+  documentation should be available in the near future. </p>
+</del>
+See <a href='span/'>Span</a>
+
+<p> Paul Khuong (pvk at same in canada) </p>
+
+<p> &nbsp;&nbsp;2006-08-18</p>
+</body>
+</html>

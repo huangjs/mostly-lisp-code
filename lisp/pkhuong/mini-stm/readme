@@ -1,0 +1,71 @@
+A lightweight, extensible, low-latency software transactional memory
+
+Unlike most Common Lisp STMs, this library doesn't try to hide
+anything.  Transactional values are explicit, there is no codewalking,
+and undoable operations must specify how they are to be rolled back if
+needed.
+
+The main mechanism for the STM is the seqlock, as described in
+"Transactional Mutex Locks" (TML), by Dalessandro, Dice, Scott, Shavit
+and Spear
+(http://www.cs.rochester.edu/u/scott/papers/2010_EuroPar_TML.pdf).
+
+To use that aspect of the STM, it suffices to wrap transaction in
+WITH-TRANSACTION (or to pass a thunk to CALL-WITH-TRANSACTION), while
+wrapping transaction reads in CHECK-READ, and calling ACQUIRE-WRITE
+before each transaction write (or any other side-effect); as a
+performance optimization, it usually helps to wrap bodies of
+transactional code in WITH-TRANSACTION-DATA.  As shown in TML, this
+should be enough to provide decent scaling on read-mostly workloads
+for shared-memory platforms.  Note that, unlike TML, the number of
+concurrent transactions is capped at 63.  While a bit arbitrary (it's
+an implementation detail for read-write spinlocks), this should be
+good enough for most machines on which this would be used.  If needed,
+it's not hard to bump the constant up.
+
+Given the TML scheme, locking, atomic operations or arbitrary code can
+be used to implement internal operations (e.g. reads and writes to a
+tree), without adapting them for the STM.  Externally visible reads
+and writes must still (obviously, this isn't magic) be wrapped in
+CHECK-READ and preceded by ACQUIRE-WRITE.  Moreover, once all shared
+references to an object have been eliminated (with transactional
+accesses), it's possible to write to that object without any
+instrumentation, and then later share it again (with transactional
+accesses).
+
+Regular transactional cell (cell.lisp) are thin wrappers around
+CHECK-READ and ACQUIRE-WRITE.
+
+In addition to supporting pretty much arbitrary internal (not shared
+or atomic) operations, the library can also be extended to execute and
+log user-defined operations, as in object-oriented STM.  Such
+user-defined operations (e.g. accesses to a hash table) can be based
+on locks or other blocking operations; however, any blocking must be
+bounded if (irrevocable-p) is false (abort-transaction should instead
+be used to retry the whole transaction).  Code to execute on
+transaction commits or rollback are stored in %actions% and in %locks%
+(see actions.lisp or cell.lisp).
+
+Some special attention was given to simplifying the implementation of
+such transactional objects.
+
+%thread-id% is a small (< 63) integer that represents an unique
+transaction id.  This is used to implement thread-local variables in
+define-thread-local-variable, for instance.  While special variables
+could work, define-thread-local-variable also allows one to use
+unboxed types without consing.
+
+*transaction-{init,rollback,end}-hooks*, are called before attempting
+to execute the first transaction, after rolling back a failed
+transaction, and after committing a transaction, but while %thread-id%
+is still bound to the right value.
+
+Read-write bytelocks (as described in "TLRW: Return of the Read-Write
+Lock", by Dice and Shavit,
+http://blogs.sun.com/dave/resource/Transact2009-TLRW-ByteLock-Feb6.pdf)
+can be used to implement the locking in an object.  See bytelock.lisp.
+
+In the current version, the only examples are two locked variants of
+the transactional mutable cell; one is protected with a spinlock, and
+the other with a read-write bytelock.
+

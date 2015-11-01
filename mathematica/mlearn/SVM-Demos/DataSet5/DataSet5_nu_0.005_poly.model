@@ -1,0 +1,14 @@
+svm_type nu_svc
+kernel_type polynomial
+degree 3
+gamma 0.5
+coef0 0
+nr_class 2
+total_sv 3
+rho 1.00202
+label 1 -1
+nr_sv 2 1
+SV
+21.77031105075564 1:0.840499 2:0.281478 
+36803.86678526553 1:-0.0264878 2:0.27404 
+-36825.63709631628 1:0.0206407 2:0.0295645 

@@ -1,0 +1,2599 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 6.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[    131970,       2589]
+NotebookOptionsPosition[    131487,       2568]
+NotebookOutlinePosition[    131824,       2583]
+CellTagsIndexPosition[    131781,       2580]
+WindowFrame->Normal
+ContainsDynamic->False*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"splitCuboid", "[", 
+    RowBox[{"Cuboid", "[", 
+     RowBox[{"p1_", ",", "p2_"}], "]"}], "]"}], ":=", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"dx", ",", "dy", ",", "dz"}], "}"}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"dx", ",", "dy", ",", "dz"}], "}"}], "=", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"p2", "-", "p1"}], ")"}], "/", "3"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"0", ",", "0", ",", "0"}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"dx", ",", "dy", ",", "dz"}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"0", ",", "0", ",", "dz"}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"dx", ",", "dy", ",", 
+             RowBox[{"2", " ", "dz"}]}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"0", ",", "0", ",", 
+             RowBox[{"2", " ", "dz"}]}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"dx", ",", "dy", ",", 
+             RowBox[{"3", " ", "dz"}]}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"0", ",", "dy", ",", "0"}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"dx", ",", 
+             RowBox[{"2", " ", "dy"}], ",", "dz"}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"0", ",", "dy", ",", 
+             RowBox[{"2", " ", "dz"}]}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"dx", ",", 
+             RowBox[{"2", " ", "dy"}], ",", 
+             RowBox[{"3", " ", "dz"}]}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"0", ",", 
+             RowBox[{"2", " ", "dy"}], ",", "0"}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"dx", ",", 
+             RowBox[{"3", " ", "dy"}], ",", "dz"}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"0", ",", 
+             RowBox[{"2", " ", "dy"}], ",", "dz"}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"dx", ",", 
+             RowBox[{"3", " ", "dy"}], ",", 
+             RowBox[{"2", " ", "dz"}]}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"0", ",", 
+             RowBox[{"2", " ", "dy"}], ",", 
+             RowBox[{"2", " ", "dz"}]}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"dx", ",", 
+             RowBox[{"3", " ", "dy"}], ",", 
+             RowBox[{"3", " ", "dz"}]}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"dx", ",", "0", ",", "0"}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"2", " ", "dx"}], ",", "dy", ",", "dz"}], "}"}]}]}], 
+         "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"dx", ",", "0", ",", 
+             RowBox[{"2", " ", "dz"}]}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"2", " ", "dx"}], ",", "dy", ",", 
+             RowBox[{"3", " ", "dz"}]}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"dx", ",", 
+             RowBox[{"2", " ", "dy"}], ",", "0"}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"2", " ", "dx"}], ",", 
+             RowBox[{"3", " ", "dy"}], ",", "dz"}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{"dx", ",", 
+             RowBox[{"2", " ", "dy"}], ",", 
+             RowBox[{"2", " ", "dz"}]}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"2", " ", "dx"}], ",", 
+             RowBox[{"3", " ", "dy"}], ",", 
+             RowBox[{"3", " ", "dz"}]}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"2", " ", "dx"}], ",", "0", ",", "0"}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"3", " ", "dx"}], ",", "dy", ",", "dz"}], "}"}]}]}], 
+         "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"2", " ", "dx"}], ",", "0", ",", "dz"}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"3", " ", "dx"}], ",", "dy", ",", 
+             RowBox[{"2", " ", "dz"}]}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"2", " ", "dx"}], ",", "0", ",", 
+             RowBox[{"2", " ", "dz"}]}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"3", " ", "dx"}], ",", "dy", ",", 
+             RowBox[{"3", " ", "dz"}]}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"2", " ", "dx"}], ",", "dy", ",", "0"}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"3", " ", "dx"}], ",", 
+             RowBox[{"2", " ", "dy"}], ",", "dz"}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"2", " ", "dx"}], ",", "dy", ",", 
+             RowBox[{"2", " ", "dz"}]}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"3", " ", "dx"}], ",", 
+             RowBox[{"2", " ", "dy"}], ",", 
+             RowBox[{"3", " ", "dz"}]}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"2", " ", "dx"}], ",", 
+             RowBox[{"2", " ", "dy"}], ",", "0"}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"3", " ", "dx"}], ",", 
+             RowBox[{"3", " ", "dy"}], ",", "dz"}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"2", " ", "dx"}], ",", 
+             RowBox[{"2", " ", "dy"}], ",", "dz"}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"3", " ", "dx"}], ",", 
+             RowBox[{"3", " ", "dy"}], ",", 
+             RowBox[{"2", " ", "dz"}]}], "}"}]}]}], "]"}], ",", 
+        RowBox[{"Cuboid", "[", 
+         RowBox[{
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"2", " ", "dx"}], ",", 
+             RowBox[{"2", " ", "dy"}], ",", 
+             RowBox[{"2", " ", "dz"}]}], "}"}]}], ",", 
+          RowBox[{"p1", "+", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"3", " ", "dx"}], ",", 
+             RowBox[{"3", " ", "dy"}], ",", 
+             RowBox[{"3", " ", "dz"}]}], "}"}]}]}], "]"}]}], "}"}]}]}], 
+    "]"}]}], "\n"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"MengerSponge", "[", "0", "]"}], "=", 
+  RowBox[{"Cuboid", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "1", ",", "1"}], "}"}]}], "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{"MengerSponge", "[", "n_Integer", "]"}], ":=", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", "prev", "}"}], ",", 
+    RowBox[{
+     RowBox[{"prev", "=", 
+      RowBox[{"MengerSponge", "[", 
+       RowBox[{"n", "-", "1"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"prev", "/.", 
+      RowBox[{"c_Cuboid", "\[RuleDelayed]", 
+       RowBox[{"splitCuboid", "[", "c", "]"}]}]}]}]}], "]"}]}]}], "Input"],
+
+Cell[BoxData[
+ RowBox[{"Cuboid", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0", ",", "0"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "1", ",", "1"}], "}"}]}], "]"}]], "Output",
+ CellChangeTimes->{3.392568847638826*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MengerSponge", "[", "2", "]"}], "//", "Graphics3D"}]], "Input"],
+
+Cell[BoxData[
+ Graphics3DBox[{{
+    CuboidBox[{0, 0, 0}, 
+     NCache[{Rational[1, 9], Rational[1, 9], Rational[1, 9]}, {
+      0.1111111111111111, 0.1111111111111111, 0.1111111111111111}]], 
+    CuboidBox[NCache[{0, 0, Rational[1, 9]}, {0, 0, 0.1111111111111111}], 
+     NCache[{Rational[1, 9], Rational[1, 9], Rational[2, 9]}, {
+      0.1111111111111111, 0.1111111111111111, 0.2222222222222222}]], 
+    CuboidBox[NCache[{0, 0, Rational[2, 9]}, {0, 0, 0.2222222222222222}], 
+     NCache[{Rational[1, 9], Rational[1, 9], Rational[1, 3]}, {
+      0.1111111111111111, 0.1111111111111111, 0.3333333333333333}]], 
+    CuboidBox[NCache[{0, Rational[1, 9], 0}, {0, 0.1111111111111111, 0}], 
+     NCache[{Rational[1, 9], Rational[2, 9], Rational[1, 9]}, {
+      0.1111111111111111, 0.2222222222222222, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{0, Rational[1, 9], Rational[2, 9]}, {
+      0, 0.1111111111111111, 0.2222222222222222}], 
+     NCache[{Rational[1, 9], Rational[2, 9], Rational[1, 3]}, {
+      0.1111111111111111, 0.2222222222222222, 0.3333333333333333}]], 
+    CuboidBox[NCache[{0, Rational[2, 9], 0}, {0, 0.2222222222222222, 0}], 
+     NCache[{Rational[1, 9], Rational[1, 3], Rational[1, 9]}, {
+      0.1111111111111111, 0.3333333333333333, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 9], Rational[1, 9]}, {
+      0, 0.2222222222222222, 0.1111111111111111}], 
+     NCache[{Rational[1, 9], Rational[1, 3], Rational[2, 9]}, {
+      0.1111111111111111, 0.3333333333333333, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 9], Rational[2, 9]}, {
+      0, 0.2222222222222222, 0.2222222222222222}], 
+     NCache[{Rational[1, 9], Rational[1, 3], Rational[1, 3]}, {
+      0.1111111111111111, 0.3333333333333333, 0.3333333333333333}]], 
+    CuboidBox[NCache[{Rational[1, 9], 0, 0}, {0.1111111111111111, 0, 0}], 
+     NCache[{Rational[2, 9], Rational[1, 9], Rational[1, 9]}, {
+      0.2222222222222222, 0.1111111111111111, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], 0, Rational[2, 9]}, {
+      0.1111111111111111, 0, 0.2222222222222222}], 
+     NCache[{Rational[2, 9], Rational[1, 9], Rational[1, 3]}, {
+      0.2222222222222222, 0.1111111111111111, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[2, 9], 0}, {
+      0.1111111111111111, 0.2222222222222222, 0}], 
+     NCache[{Rational[2, 9], Rational[1, 3], Rational[1, 9]}, {
+      0.2222222222222222, 0.3333333333333333, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[2, 9], Rational[2, 9]}, {
+      0.1111111111111111, 0.2222222222222222, 0.2222222222222222}], 
+     NCache[{Rational[2, 9], Rational[1, 3], Rational[1, 3]}, {
+      0.2222222222222222, 0.3333333333333333, 0.3333333333333333}]], 
+    CuboidBox[NCache[{Rational[2, 9], 0, 0}, {0.2222222222222222, 0, 0}], 
+     NCache[{Rational[1, 3], Rational[1, 9], Rational[1, 9]}, {
+      0.3333333333333333, 0.1111111111111111, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], 0, Rational[1, 9]}, {
+      0.2222222222222222, 0, 0.1111111111111111}], 
+     NCache[{Rational[1, 3], Rational[1, 9], Rational[2, 9]}, {
+      0.3333333333333333, 0.1111111111111111, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], 0, Rational[2, 9]}, {
+      0.2222222222222222, 0, 0.2222222222222222}], 
+     NCache[{Rational[1, 3], Rational[1, 9], Rational[1, 3]}, {
+      0.3333333333333333, 0.1111111111111111, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[1, 9], 0}, {
+      0.2222222222222222, 0.1111111111111111, 0}], 
+     NCache[{Rational[1, 3], Rational[2, 9], Rational[1, 9]}, {
+      0.3333333333333333, 0.2222222222222222, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[1, 9], Rational[2, 9]}, {
+      0.2222222222222222, 0.1111111111111111, 0.2222222222222222}], 
+     NCache[{Rational[1, 3], Rational[2, 9], Rational[1, 3]}, {
+      0.3333333333333333, 0.2222222222222222, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 9], 0}, {
+      0.2222222222222222, 0.2222222222222222, 0}], 
+     NCache[{Rational[1, 3], Rational[1, 3], Rational[1, 9]}, {
+      0.3333333333333333, 0.3333333333333333, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 9], Rational[1, 9]}, {
+      0.2222222222222222, 0.2222222222222222, 0.1111111111111111}], 
+     NCache[{Rational[1, 3], Rational[1, 3], Rational[2, 9]}, {
+      0.3333333333333333, 0.3333333333333333, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 9], Rational[2, 9]}, {
+      0.2222222222222222, 0.2222222222222222, 0.2222222222222222}], 
+     NCache[{Rational[1, 3], Rational[1, 3], Rational[1, 3]}, {
+      0.3333333333333333, 0.3333333333333333, 0.3333333333333333}]]}, {
+    CuboidBox[NCache[{0, 0, Rational[1, 3]}, {0, 0, 0.3333333333333333}], 
+     NCache[{Rational[1, 9], Rational[1, 9], Rational[4, 9]}, {
+      0.1111111111111111, 0.1111111111111111, 0.4444444444444444}]], 
+    CuboidBox[NCache[{0, 0, Rational[4, 9]}, {0, 0, 0.4444444444444444}], 
+     NCache[{Rational[1, 9], Rational[1, 9], Rational[5, 9]}, {
+      0.1111111111111111, 0.1111111111111111, 0.5555555555555556}]], 
+    CuboidBox[NCache[{0, 0, Rational[5, 9]}, {0, 0, 0.5555555555555556}], 
+     NCache[{Rational[1, 9], Rational[1, 9], Rational[2, 3]}, {
+      0.1111111111111111, 0.1111111111111111, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{0, Rational[1, 9], Rational[1, 3]}, {
+      0, 0.1111111111111111, 0.3333333333333333}], 
+     NCache[{Rational[1, 9], Rational[2, 9], Rational[4, 9]}, {
+      0.1111111111111111, 0.2222222222222222, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{0, Rational[1, 9], Rational[5, 9]}, {
+      0, 0.1111111111111111, 0.5555555555555556}], 
+     NCache[{Rational[1, 9], Rational[2, 9], Rational[2, 3]}, {
+      0.1111111111111111, 0.2222222222222222, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 9], Rational[1, 3]}, {
+      0, 0.2222222222222222, 0.3333333333333333}], 
+     NCache[{Rational[1, 9], Rational[1, 3], Rational[4, 9]}, {
+      0.1111111111111111, 0.3333333333333333, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 9], Rational[4, 9]}, {
+      0, 0.2222222222222222, 0.4444444444444444}], 
+     NCache[{Rational[1, 9], Rational[1, 3], Rational[5, 9]}, {
+      0.1111111111111111, 0.3333333333333333, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 9], Rational[5, 9]}, {
+      0, 0.2222222222222222, 0.5555555555555556}], 
+     NCache[{Rational[1, 9], Rational[1, 3], Rational[2, 3]}, {
+      0.1111111111111111, 0.3333333333333333, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], 0, Rational[1, 3]}, {
+      0.1111111111111111, 0, 0.3333333333333333}], 
+     NCache[{Rational[2, 9], Rational[1, 9], Rational[4, 9]}, {
+      0.2222222222222222, 0.1111111111111111, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], 0, Rational[5, 9]}, {
+      0.1111111111111111, 0, 0.5555555555555556}], 
+     NCache[{Rational[2, 9], Rational[1, 9], Rational[2, 3]}, {
+      0.2222222222222222, 0.1111111111111111, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[2, 9], Rational[1, 3]}, {
+      0.1111111111111111, 0.2222222222222222, 0.3333333333333333}], 
+     NCache[{Rational[2, 9], Rational[1, 3], Rational[4, 9]}, {
+      0.2222222222222222, 0.3333333333333333, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[2, 9], Rational[5, 9]}, {
+      0.1111111111111111, 0.2222222222222222, 0.5555555555555556}], 
+     NCache[{Rational[2, 9], Rational[1, 3], Rational[2, 3]}, {
+      0.2222222222222222, 0.3333333333333333, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], 0, Rational[1, 3]}, {
+      0.2222222222222222, 0, 0.3333333333333333}], 
+     NCache[{Rational[1, 3], Rational[1, 9], Rational[4, 9]}, {
+      0.3333333333333333, 0.1111111111111111, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], 0, Rational[4, 9]}, {
+      0.2222222222222222, 0, 0.4444444444444444}], 
+     NCache[{Rational[1, 3], Rational[1, 9], Rational[5, 9]}, {
+      0.3333333333333333, 0.1111111111111111, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], 0, Rational[5, 9]}, {
+      0.2222222222222222, 0, 0.5555555555555556}], 
+     NCache[{Rational[1, 3], Rational[1, 9], Rational[2, 3]}, {
+      0.3333333333333333, 0.1111111111111111, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[1, 9], Rational[1, 3]}, {
+      0.2222222222222222, 0.1111111111111111, 0.3333333333333333}], 
+     NCache[{Rational[1, 3], Rational[2, 9], Rational[4, 9]}, {
+      0.3333333333333333, 0.2222222222222222, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[1, 9], Rational[5, 9]}, {
+      0.2222222222222222, 0.1111111111111111, 0.5555555555555556}], 
+     NCache[{Rational[1, 3], Rational[2, 9], Rational[2, 3]}, {
+      0.3333333333333333, 0.2222222222222222, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 9], Rational[1, 3]}, {
+      0.2222222222222222, 0.2222222222222222, 0.3333333333333333}], 
+     NCache[{Rational[1, 3], Rational[1, 3], Rational[4, 9]}, {
+      0.3333333333333333, 0.3333333333333333, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 9], Rational[4, 9]}, {
+      0.2222222222222222, 0.2222222222222222, 0.4444444444444444}], 
+     NCache[{Rational[1, 3], Rational[1, 3], Rational[5, 9]}, {
+      0.3333333333333333, 0.3333333333333333, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 9], Rational[5, 9]}, {
+      0.2222222222222222, 0.2222222222222222, 0.5555555555555556}], 
+     NCache[{Rational[1, 3], Rational[1, 3], Rational[2, 3]}, {
+      0.3333333333333333, 0.3333333333333333, 0.6666666666666666}]]}, {
+    CuboidBox[NCache[{0, 0, Rational[2, 3]}, {0, 0, 0.6666666666666666}], 
+     NCache[{Rational[1, 9], Rational[1, 9], Rational[7, 9]}, {
+      0.1111111111111111, 0.1111111111111111, 0.7777777777777778}]], 
+    CuboidBox[NCache[{0, 0, Rational[7, 9]}, {0, 0, 0.7777777777777778}], 
+     NCache[{Rational[1, 9], Rational[1, 9], Rational[8, 9]}, {
+      0.1111111111111111, 0.1111111111111111, 0.8888888888888888}]], 
+    CuboidBox[NCache[{0, 0, Rational[8, 9]}, {0, 0, 0.8888888888888888}], 
+     NCache[{Rational[1, 9], Rational[1, 9], 1}, {
+      0.1111111111111111, 0.1111111111111111, 1}]], 
+    CuboidBox[
+     NCache[{0, Rational[1, 9], Rational[2, 3]}, {
+      0, 0.1111111111111111, 0.6666666666666666}], 
+     NCache[{Rational[1, 9], Rational[2, 9], Rational[7, 9]}, {
+      0.1111111111111111, 0.2222222222222222, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{0, Rational[1, 9], Rational[8, 9]}, {
+      0, 0.1111111111111111, 0.8888888888888888}], 
+     NCache[{Rational[1, 9], Rational[2, 9], 1}, {
+      0.1111111111111111, 0.2222222222222222, 1}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 9], Rational[2, 3]}, {
+      0, 0.2222222222222222, 0.6666666666666666}], 
+     NCache[{Rational[1, 9], Rational[1, 3], Rational[7, 9]}, {
+      0.1111111111111111, 0.3333333333333333, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 9], Rational[7, 9]}, {
+      0, 0.2222222222222222, 0.7777777777777778}], 
+     NCache[{Rational[1, 9], Rational[1, 3], Rational[8, 9]}, {
+      0.1111111111111111, 0.3333333333333333, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 9], Rational[8, 9]}, {
+      0, 0.2222222222222222, 0.8888888888888888}], 
+     NCache[{Rational[1, 9], Rational[1, 3], 1}, {
+      0.1111111111111111, 0.3333333333333333, 1}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], 0, Rational[2, 3]}, {
+      0.1111111111111111, 0, 0.6666666666666666}], 
+     NCache[{Rational[2, 9], Rational[1, 9], Rational[7, 9]}, {
+      0.2222222222222222, 0.1111111111111111, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], 0, Rational[8, 9]}, {
+      0.1111111111111111, 0, 0.8888888888888888}], 
+     NCache[{Rational[2, 9], Rational[1, 9], 1}, {
+      0.2222222222222222, 0.1111111111111111, 1}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[2, 9], Rational[2, 3]}, {
+      0.1111111111111111, 0.2222222222222222, 0.6666666666666666}], 
+     NCache[{Rational[2, 9], Rational[1, 3], Rational[7, 9]}, {
+      0.2222222222222222, 0.3333333333333333, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[2, 9], Rational[8, 9]}, {
+      0.1111111111111111, 0.2222222222222222, 0.8888888888888888}], 
+     NCache[{Rational[2, 9], Rational[1, 3], 1}, {
+      0.2222222222222222, 0.3333333333333333, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], 0, Rational[2, 3]}, {
+      0.2222222222222222, 0, 0.6666666666666666}], 
+     NCache[{Rational[1, 3], Rational[1, 9], Rational[7, 9]}, {
+      0.3333333333333333, 0.1111111111111111, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], 0, Rational[7, 9]}, {
+      0.2222222222222222, 0, 0.7777777777777778}], 
+     NCache[{Rational[1, 3], Rational[1, 9], Rational[8, 9]}, {
+      0.3333333333333333, 0.1111111111111111, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], 0, Rational[8, 9]}, {
+      0.2222222222222222, 0, 0.8888888888888888}], 
+     NCache[{Rational[1, 3], Rational[1, 9], 1}, {
+      0.3333333333333333, 0.1111111111111111, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[1, 9], Rational[2, 3]}, {
+      0.2222222222222222, 0.1111111111111111, 0.6666666666666666}], 
+     NCache[{Rational[1, 3], Rational[2, 9], Rational[7, 9]}, {
+      0.3333333333333333, 0.2222222222222222, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[1, 9], Rational[8, 9]}, {
+      0.2222222222222222, 0.1111111111111111, 0.8888888888888888}], 
+     NCache[{Rational[1, 3], Rational[2, 9], 1}, {
+      0.3333333333333333, 0.2222222222222222, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 9], Rational[2, 3]}, {
+      0.2222222222222222, 0.2222222222222222, 0.6666666666666666}], 
+     NCache[{Rational[1, 3], Rational[1, 3], Rational[7, 9]}, {
+      0.3333333333333333, 0.3333333333333333, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 9], Rational[7, 9]}, {
+      0.2222222222222222, 0.2222222222222222, 0.7777777777777778}], 
+     NCache[{Rational[1, 3], Rational[1, 3], Rational[8, 9]}, {
+      0.3333333333333333, 0.3333333333333333, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 9], Rational[8, 9]}, {
+      0.2222222222222222, 0.2222222222222222, 0.8888888888888888}], 
+     NCache[{Rational[1, 3], Rational[1, 3], 1}, {
+      0.3333333333333333, 0.3333333333333333, 1}]]}, {
+    CuboidBox[NCache[{0, Rational[1, 3], 0}, {0, 0.3333333333333333, 0}], 
+     NCache[{Rational[1, 9], Rational[4, 9], Rational[1, 9]}, {
+      0.1111111111111111, 0.4444444444444444, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{0, Rational[1, 3], Rational[1, 9]}, {
+      0, 0.3333333333333333, 0.1111111111111111}], 
+     NCache[{Rational[1, 9], Rational[4, 9], Rational[2, 9]}, {
+      0.1111111111111111, 0.4444444444444444, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{0, Rational[1, 3], Rational[2, 9]}, {
+      0, 0.3333333333333333, 0.2222222222222222}], 
+     NCache[{Rational[1, 9], Rational[4, 9], Rational[1, 3]}, {
+      0.1111111111111111, 0.4444444444444444, 0.3333333333333333}]], 
+    CuboidBox[NCache[{0, Rational[4, 9], 0}, {0, 0.4444444444444444, 0}], 
+     NCache[{Rational[1, 9], Rational[5, 9], Rational[1, 9]}, {
+      0.1111111111111111, 0.5555555555555556, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{0, Rational[4, 9], Rational[2, 9]}, {
+      0, 0.4444444444444444, 0.2222222222222222}], 
+     NCache[{Rational[1, 9], Rational[5, 9], Rational[1, 3]}, {
+      0.1111111111111111, 0.5555555555555556, 0.3333333333333333}]], 
+    CuboidBox[NCache[{0, Rational[5, 9], 0}, {0, 0.5555555555555556, 0}], 
+     NCache[{Rational[1, 9], Rational[2, 3], Rational[1, 9]}, {
+      0.1111111111111111, 0.6666666666666666, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{0, Rational[5, 9], Rational[1, 9]}, {
+      0, 0.5555555555555556, 0.1111111111111111}], 
+     NCache[{Rational[1, 9], Rational[2, 3], Rational[2, 9]}, {
+      0.1111111111111111, 0.6666666666666666, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{0, Rational[5, 9], Rational[2, 9]}, {
+      0, 0.5555555555555556, 0.2222222222222222}], 
+     NCache[{Rational[1, 9], Rational[2, 3], Rational[1, 3]}, {
+      0.1111111111111111, 0.6666666666666666, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[1, 3], 0}, {
+      0.1111111111111111, 0.3333333333333333, 0}], 
+     NCache[{Rational[2, 9], Rational[4, 9], Rational[1, 9]}, {
+      0.2222222222222222, 0.4444444444444444, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[1, 3], Rational[2, 9]}, {
+      0.1111111111111111, 0.3333333333333333, 0.2222222222222222}], 
+     NCache[{Rational[2, 9], Rational[4, 9], Rational[1, 3]}, {
+      0.2222222222222222, 0.4444444444444444, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[5, 9], 0}, {
+      0.1111111111111111, 0.5555555555555556, 0}], 
+     NCache[{Rational[2, 9], Rational[2, 3], Rational[1, 9]}, {
+      0.2222222222222222, 0.6666666666666666, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[5, 9], Rational[2, 9]}, {
+      0.1111111111111111, 0.5555555555555556, 0.2222222222222222}], 
+     NCache[{Rational[2, 9], Rational[2, 3], Rational[1, 3]}, {
+      0.2222222222222222, 0.6666666666666666, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[1, 3], 0}, {
+      0.2222222222222222, 0.3333333333333333, 0}], 
+     NCache[{Rational[1, 3], Rational[4, 9], Rational[1, 9]}, {
+      0.3333333333333333, 0.4444444444444444, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[1, 3], Rational[1, 9]}, {
+      0.2222222222222222, 0.3333333333333333, 0.1111111111111111}], 
+     NCache[{Rational[1, 3], Rational[4, 9], Rational[2, 9]}, {
+      0.3333333333333333, 0.4444444444444444, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[1, 3], Rational[2, 9]}, {
+      0.2222222222222222, 0.3333333333333333, 0.2222222222222222}], 
+     NCache[{Rational[1, 3], Rational[4, 9], Rational[1, 3]}, {
+      0.3333333333333333, 0.4444444444444444, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[4, 9], 0}, {
+      0.2222222222222222, 0.4444444444444444, 0}], 
+     NCache[{Rational[1, 3], Rational[5, 9], Rational[1, 9]}, {
+      0.3333333333333333, 0.5555555555555556, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[4, 9], Rational[2, 9]}, {
+      0.2222222222222222, 0.4444444444444444, 0.2222222222222222}], 
+     NCache[{Rational[1, 3], Rational[5, 9], Rational[1, 3]}, {
+      0.3333333333333333, 0.5555555555555556, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[5, 9], 0}, {
+      0.2222222222222222, 0.5555555555555556, 0}], 
+     NCache[{Rational[1, 3], Rational[2, 3], Rational[1, 9]}, {
+      0.3333333333333333, 0.6666666666666666, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[5, 9], Rational[1, 9]}, {
+      0.2222222222222222, 0.5555555555555556, 0.1111111111111111}], 
+     NCache[{Rational[1, 3], Rational[2, 3], Rational[2, 9]}, {
+      0.3333333333333333, 0.6666666666666666, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[5, 9], Rational[2, 9]}, {
+      0.2222222222222222, 0.5555555555555556, 0.2222222222222222}], 
+     NCache[{Rational[1, 3], Rational[2, 3], Rational[1, 3]}, {
+      0.3333333333333333, 0.6666666666666666, 0.3333333333333333}]]}, {
+    CuboidBox[
+     NCache[{0, Rational[1, 3], Rational[2, 3]}, {
+      0, 0.3333333333333333, 0.6666666666666666}], 
+     NCache[{Rational[1, 9], Rational[4, 9], Rational[7, 9]}, {
+      0.1111111111111111, 0.4444444444444444, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{0, Rational[1, 3], Rational[7, 9]}, {
+      0, 0.3333333333333333, 0.7777777777777778}], 
+     NCache[{Rational[1, 9], Rational[4, 9], Rational[8, 9]}, {
+      0.1111111111111111, 0.4444444444444444, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{0, Rational[1, 3], Rational[8, 9]}, {
+      0, 0.3333333333333333, 0.8888888888888888}], 
+     NCache[{Rational[1, 9], Rational[4, 9], 1}, {
+      0.1111111111111111, 0.4444444444444444, 1}]], 
+    CuboidBox[
+     NCache[{0, Rational[4, 9], Rational[2, 3]}, {
+      0, 0.4444444444444444, 0.6666666666666666}], 
+     NCache[{Rational[1, 9], Rational[5, 9], Rational[7, 9]}, {
+      0.1111111111111111, 0.5555555555555556, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{0, Rational[4, 9], Rational[8, 9]}, {
+      0, 0.4444444444444444, 0.8888888888888888}], 
+     NCache[{Rational[1, 9], Rational[5, 9], 1}, {
+      0.1111111111111111, 0.5555555555555556, 1}]], 
+    CuboidBox[
+     NCache[{0, Rational[5, 9], Rational[2, 3]}, {
+      0, 0.5555555555555556, 0.6666666666666666}], 
+     NCache[{Rational[1, 9], Rational[2, 3], Rational[7, 9]}, {
+      0.1111111111111111, 0.6666666666666666, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{0, Rational[5, 9], Rational[7, 9]}, {
+      0, 0.5555555555555556, 0.7777777777777778}], 
+     NCache[{Rational[1, 9], Rational[2, 3], Rational[8, 9]}, {
+      0.1111111111111111, 0.6666666666666666, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{0, Rational[5, 9], Rational[8, 9]}, {
+      0, 0.5555555555555556, 0.8888888888888888}], 
+     NCache[{Rational[1, 9], Rational[2, 3], 1}, {
+      0.1111111111111111, 0.6666666666666666, 1}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[1, 3], Rational[2, 3]}, {
+      0.1111111111111111, 0.3333333333333333, 0.6666666666666666}], 
+     NCache[{Rational[2, 9], Rational[4, 9], Rational[7, 9]}, {
+      0.2222222222222222, 0.4444444444444444, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[1, 3], Rational[8, 9]}, {
+      0.1111111111111111, 0.3333333333333333, 0.8888888888888888}], 
+     NCache[{Rational[2, 9], Rational[4, 9], 1}, {
+      0.2222222222222222, 0.4444444444444444, 1}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[5, 9], Rational[2, 3]}, {
+      0.1111111111111111, 0.5555555555555556, 0.6666666666666666}], 
+     NCache[{Rational[2, 9], Rational[2, 3], Rational[7, 9]}, {
+      0.2222222222222222, 0.6666666666666666, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[5, 9], Rational[8, 9]}, {
+      0.1111111111111111, 0.5555555555555556, 0.8888888888888888}], 
+     NCache[{Rational[2, 9], Rational[2, 3], 1}, {
+      0.2222222222222222, 0.6666666666666666, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[1, 3], Rational[2, 3]}, {
+      0.2222222222222222, 0.3333333333333333, 0.6666666666666666}], 
+     NCache[{Rational[1, 3], Rational[4, 9], Rational[7, 9]}, {
+      0.3333333333333333, 0.4444444444444444, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[1, 3], Rational[7, 9]}, {
+      0.2222222222222222, 0.3333333333333333, 0.7777777777777778}], 
+     NCache[{Rational[1, 3], Rational[4, 9], Rational[8, 9]}, {
+      0.3333333333333333, 0.4444444444444444, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[1, 3], Rational[8, 9]}, {
+      0.2222222222222222, 0.3333333333333333, 0.8888888888888888}], 
+     NCache[{Rational[1, 3], Rational[4, 9], 1}, {
+      0.3333333333333333, 0.4444444444444444, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[4, 9], Rational[2, 3]}, {
+      0.2222222222222222, 0.4444444444444444, 0.6666666666666666}], 
+     NCache[{Rational[1, 3], Rational[5, 9], Rational[7, 9]}, {
+      0.3333333333333333, 0.5555555555555556, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[4, 9], Rational[8, 9]}, {
+      0.2222222222222222, 0.4444444444444444, 0.8888888888888888}], 
+     NCache[{Rational[1, 3], Rational[5, 9], 1}, {
+      0.3333333333333333, 0.5555555555555556, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[5, 9], Rational[2, 3]}, {
+      0.2222222222222222, 0.5555555555555556, 0.6666666666666666}], 
+     NCache[{Rational[1, 3], Rational[2, 3], Rational[7, 9]}, {
+      0.3333333333333333, 0.6666666666666666, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[5, 9], Rational[7, 9]}, {
+      0.2222222222222222, 0.5555555555555556, 0.7777777777777778}], 
+     NCache[{Rational[1, 3], Rational[2, 3], Rational[8, 9]}, {
+      0.3333333333333333, 0.6666666666666666, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[5, 9], Rational[8, 9]}, {
+      0.2222222222222222, 0.5555555555555556, 0.8888888888888888}], 
+     NCache[{Rational[1, 3], Rational[2, 3], 1}, {
+      0.3333333333333333, 0.6666666666666666, 1}]]}, {
+    CuboidBox[NCache[{0, Rational[2, 3], 0}, {0, 0.6666666666666666, 0}], 
+     NCache[{Rational[1, 9], Rational[7, 9], Rational[1, 9]}, {
+      0.1111111111111111, 0.7777777777777778, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 3], Rational[1, 9]}, {
+      0, 0.6666666666666666, 0.1111111111111111}], 
+     NCache[{Rational[1, 9], Rational[7, 9], Rational[2, 9]}, {
+      0.1111111111111111, 0.7777777777777778, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 3], Rational[2, 9]}, {
+      0, 0.6666666666666666, 0.2222222222222222}], 
+     NCache[{Rational[1, 9], Rational[7, 9], Rational[1, 3]}, {
+      0.1111111111111111, 0.7777777777777778, 0.3333333333333333}]], 
+    CuboidBox[NCache[{0, Rational[7, 9], 0}, {0, 0.7777777777777778, 0}], 
+     NCache[{Rational[1, 9], Rational[8, 9], Rational[1, 9]}, {
+      0.1111111111111111, 0.8888888888888888, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{0, Rational[7, 9], Rational[2, 9]}, {
+      0, 0.7777777777777778, 0.2222222222222222}], 
+     NCache[{Rational[1, 9], Rational[8, 9], Rational[1, 3]}, {
+      0.1111111111111111, 0.8888888888888888, 0.3333333333333333}]], 
+    CuboidBox[NCache[{0, Rational[8, 9], 0}, {0, 0.8888888888888888, 0}], 
+     NCache[{Rational[1, 9], 1, Rational[1, 9]}, {
+      0.1111111111111111, 1, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{0, Rational[8, 9], Rational[1, 9]}, {
+      0, 0.8888888888888888, 0.1111111111111111}], 
+     NCache[{Rational[1, 9], 1, Rational[2, 9]}, {
+      0.1111111111111111, 1, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{0, Rational[8, 9], Rational[2, 9]}, {
+      0, 0.8888888888888888, 0.2222222222222222}], 
+     NCache[{Rational[1, 9], 1, Rational[1, 3]}, {
+      0.1111111111111111, 1, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[2, 3], 0}, {
+      0.1111111111111111, 0.6666666666666666, 0}], 
+     NCache[{Rational[2, 9], Rational[7, 9], Rational[1, 9]}, {
+      0.2222222222222222, 0.7777777777777778, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[2, 3], Rational[2, 9]}, {
+      0.1111111111111111, 0.6666666666666666, 0.2222222222222222}], 
+     NCache[{Rational[2, 9], Rational[7, 9], Rational[1, 3]}, {
+      0.2222222222222222, 0.7777777777777778, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[8, 9], 0}, {
+      0.1111111111111111, 0.8888888888888888, 0}], 
+     NCache[{Rational[2, 9], 1, Rational[1, 9]}, {
+      0.2222222222222222, 1, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[8, 9], Rational[2, 9]}, {
+      0.1111111111111111, 0.8888888888888888, 0.2222222222222222}], 
+     NCache[{Rational[2, 9], 1, Rational[1, 3]}, {
+      0.2222222222222222, 1, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 3], 0}, {
+      0.2222222222222222, 0.6666666666666666, 0}], 
+     NCache[{Rational[1, 3], Rational[7, 9], Rational[1, 9]}, {
+      0.3333333333333333, 0.7777777777777778, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 3], Rational[1, 9]}, {
+      0.2222222222222222, 0.6666666666666666, 0.1111111111111111}], 
+     NCache[{Rational[1, 3], Rational[7, 9], Rational[2, 9]}, {
+      0.3333333333333333, 0.7777777777777778, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 3], Rational[2, 9]}, {
+      0.2222222222222222, 0.6666666666666666, 0.2222222222222222}], 
+     NCache[{Rational[1, 3], Rational[7, 9], Rational[1, 3]}, {
+      0.3333333333333333, 0.7777777777777778, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[7, 9], 0}, {
+      0.2222222222222222, 0.7777777777777778, 0}], 
+     NCache[{Rational[1, 3], Rational[8, 9], Rational[1, 9]}, {
+      0.3333333333333333, 0.8888888888888888, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[7, 9], Rational[2, 9]}, {
+      0.2222222222222222, 0.7777777777777778, 0.2222222222222222}], 
+     NCache[{Rational[1, 3], Rational[8, 9], Rational[1, 3]}, {
+      0.3333333333333333, 0.8888888888888888, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[8, 9], 0}, {
+      0.2222222222222222, 0.8888888888888888, 0}], 
+     NCache[{Rational[1, 3], 1, Rational[1, 9]}, {
+      0.3333333333333333, 1, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[8, 9], Rational[1, 9]}, {
+      0.2222222222222222, 0.8888888888888888, 0.1111111111111111}], 
+     NCache[{Rational[1, 3], 1, Rational[2, 9]}, {
+      0.3333333333333333, 1, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[8, 9], Rational[2, 9]}, {
+      0.2222222222222222, 0.8888888888888888, 0.2222222222222222}], 
+     NCache[{Rational[1, 3], 1, Rational[1, 3]}, {
+      0.3333333333333333, 1, 0.3333333333333333}]]}, {
+    CuboidBox[
+     NCache[{0, Rational[2, 3], Rational[1, 3]}, {
+      0, 0.6666666666666666, 0.3333333333333333}], 
+     NCache[{Rational[1, 9], Rational[7, 9], Rational[4, 9]}, {
+      0.1111111111111111, 0.7777777777777778, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 3], Rational[4, 9]}, {
+      0, 0.6666666666666666, 0.4444444444444444}], 
+     NCache[{Rational[1, 9], Rational[7, 9], Rational[5, 9]}, {
+      0.1111111111111111, 0.7777777777777778, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 3], Rational[5, 9]}, {
+      0, 0.6666666666666666, 0.5555555555555556}], 
+     NCache[{Rational[1, 9], Rational[7, 9], Rational[2, 3]}, {
+      0.1111111111111111, 0.7777777777777778, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{0, Rational[7, 9], Rational[1, 3]}, {
+      0, 0.7777777777777778, 0.3333333333333333}], 
+     NCache[{Rational[1, 9], Rational[8, 9], Rational[4, 9]}, {
+      0.1111111111111111, 0.8888888888888888, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{0, Rational[7, 9], Rational[5, 9]}, {
+      0, 0.7777777777777778, 0.5555555555555556}], 
+     NCache[{Rational[1, 9], Rational[8, 9], Rational[2, 3]}, {
+      0.1111111111111111, 0.8888888888888888, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{0, Rational[8, 9], Rational[1, 3]}, {
+      0, 0.8888888888888888, 0.3333333333333333}], 
+     NCache[{Rational[1, 9], 1, Rational[4, 9]}, {
+      0.1111111111111111, 1, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{0, Rational[8, 9], Rational[4, 9]}, {
+      0, 0.8888888888888888, 0.4444444444444444}], 
+     NCache[{Rational[1, 9], 1, Rational[5, 9]}, {
+      0.1111111111111111, 1, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{0, Rational[8, 9], Rational[5, 9]}, {
+      0, 0.8888888888888888, 0.5555555555555556}], 
+     NCache[{Rational[1, 9], 1, Rational[2, 3]}, {
+      0.1111111111111111, 1, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[2, 3], Rational[1, 3]}, {
+      0.1111111111111111, 0.6666666666666666, 0.3333333333333333}], 
+     NCache[{Rational[2, 9], Rational[7, 9], Rational[4, 9]}, {
+      0.2222222222222222, 0.7777777777777778, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[2, 3], Rational[5, 9]}, {
+      0.1111111111111111, 0.6666666666666666, 0.5555555555555556}], 
+     NCache[{Rational[2, 9], Rational[7, 9], Rational[2, 3]}, {
+      0.2222222222222222, 0.7777777777777778, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[8, 9], Rational[1, 3]}, {
+      0.1111111111111111, 0.8888888888888888, 0.3333333333333333}], 
+     NCache[{Rational[2, 9], 1, Rational[4, 9]}, {
+      0.2222222222222222, 1, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[8, 9], Rational[5, 9]}, {
+      0.1111111111111111, 0.8888888888888888, 0.5555555555555556}], 
+     NCache[{Rational[2, 9], 1, Rational[2, 3]}, {
+      0.2222222222222222, 1, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 3], Rational[1, 3]}, {
+      0.2222222222222222, 0.6666666666666666, 0.3333333333333333}], 
+     NCache[{Rational[1, 3], Rational[7, 9], Rational[4, 9]}, {
+      0.3333333333333333, 0.7777777777777778, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 3], Rational[4, 9]}, {
+      0.2222222222222222, 0.6666666666666666, 0.4444444444444444}], 
+     NCache[{Rational[1, 3], Rational[7, 9], Rational[5, 9]}, {
+      0.3333333333333333, 0.7777777777777778, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 3], Rational[5, 9]}, {
+      0.2222222222222222, 0.6666666666666666, 0.5555555555555556}], 
+     NCache[{Rational[1, 3], Rational[7, 9], Rational[2, 3]}, {
+      0.3333333333333333, 0.7777777777777778, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[7, 9], Rational[1, 3]}, {
+      0.2222222222222222, 0.7777777777777778, 0.3333333333333333}], 
+     NCache[{Rational[1, 3], Rational[8, 9], Rational[4, 9]}, {
+      0.3333333333333333, 0.8888888888888888, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[7, 9], Rational[5, 9]}, {
+      0.2222222222222222, 0.7777777777777778, 0.5555555555555556}], 
+     NCache[{Rational[1, 3], Rational[8, 9], Rational[2, 3]}, {
+      0.3333333333333333, 0.8888888888888888, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[8, 9], Rational[1, 3]}, {
+      0.2222222222222222, 0.8888888888888888, 0.3333333333333333}], 
+     NCache[{Rational[1, 3], 1, Rational[4, 9]}, {
+      0.3333333333333333, 1, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[8, 9], Rational[4, 9]}, {
+      0.2222222222222222, 0.8888888888888888, 0.4444444444444444}], 
+     NCache[{Rational[1, 3], 1, Rational[5, 9]}, {
+      0.3333333333333333, 1, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[8, 9], Rational[5, 9]}, {
+      0.2222222222222222, 0.8888888888888888, 0.5555555555555556}], 
+     NCache[{Rational[1, 3], 1, Rational[2, 3]}, {
+      0.3333333333333333, 1, 0.6666666666666666}]]}, {
+    CuboidBox[
+     NCache[{0, Rational[2, 3], Rational[2, 3]}, {
+      0, 0.6666666666666666, 0.6666666666666666}], 
+     NCache[{Rational[1, 9], Rational[7, 9], Rational[7, 9]}, {
+      0.1111111111111111, 0.7777777777777778, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 3], Rational[7, 9]}, {
+      0, 0.6666666666666666, 0.7777777777777778}], 
+     NCache[{Rational[1, 9], Rational[7, 9], Rational[8, 9]}, {
+      0.1111111111111111, 0.7777777777777778, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{0, Rational[2, 3], Rational[8, 9]}, {
+      0, 0.6666666666666666, 0.8888888888888888}], 
+     NCache[{Rational[1, 9], Rational[7, 9], 1}, {
+      0.1111111111111111, 0.7777777777777778, 1}]], 
+    CuboidBox[
+     NCache[{0, Rational[7, 9], Rational[2, 3]}, {
+      0, 0.7777777777777778, 0.6666666666666666}], 
+     NCache[{Rational[1, 9], Rational[8, 9], Rational[7, 9]}, {
+      0.1111111111111111, 0.8888888888888888, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{0, Rational[7, 9], Rational[8, 9]}, {
+      0, 0.7777777777777778, 0.8888888888888888}], 
+     NCache[{Rational[1, 9], Rational[8, 9], 1}, {
+      0.1111111111111111, 0.8888888888888888, 1}]], 
+    CuboidBox[
+     NCache[{0, Rational[8, 9], Rational[2, 3]}, {
+      0, 0.8888888888888888, 0.6666666666666666}], 
+     NCache[{Rational[1, 9], 1, Rational[7, 9]}, {
+      0.1111111111111111, 1, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{0, Rational[8, 9], Rational[7, 9]}, {
+      0, 0.8888888888888888, 0.7777777777777778}], 
+     NCache[{Rational[1, 9], 1, Rational[8, 9]}, {
+      0.1111111111111111, 1, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{0, Rational[8, 9], Rational[8, 9]}, {
+      0, 0.8888888888888888, 0.8888888888888888}], 
+     NCache[{Rational[1, 9], 1, 1}, {0.1111111111111111, 1, 1}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[2, 3], Rational[2, 3]}, {
+      0.1111111111111111, 0.6666666666666666, 0.6666666666666666}], 
+     NCache[{Rational[2, 9], Rational[7, 9], Rational[7, 9]}, {
+      0.2222222222222222, 0.7777777777777778, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[2, 3], Rational[8, 9]}, {
+      0.1111111111111111, 0.6666666666666666, 0.8888888888888888}], 
+     NCache[{Rational[2, 9], Rational[7, 9], 1}, {
+      0.2222222222222222, 0.7777777777777778, 1}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[8, 9], Rational[2, 3]}, {
+      0.1111111111111111, 0.8888888888888888, 0.6666666666666666}], 
+     NCache[{Rational[2, 9], 1, Rational[7, 9]}, {
+      0.2222222222222222, 1, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[1, 9], Rational[8, 9], Rational[8, 9]}, {
+      0.1111111111111111, 0.8888888888888888, 0.8888888888888888}], 
+     NCache[{Rational[2, 9], 1, 1}, {0.2222222222222222, 1, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 3], Rational[2, 3]}, {
+      0.2222222222222222, 0.6666666666666666, 0.6666666666666666}], 
+     NCache[{Rational[1, 3], Rational[7, 9], Rational[7, 9]}, {
+      0.3333333333333333, 0.7777777777777778, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 3], Rational[7, 9]}, {
+      0.2222222222222222, 0.6666666666666666, 0.7777777777777778}], 
+     NCache[{Rational[1, 3], Rational[7, 9], Rational[8, 9]}, {
+      0.3333333333333333, 0.7777777777777778, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[2, 3], Rational[8, 9]}, {
+      0.2222222222222222, 0.6666666666666666, 0.8888888888888888}], 
+     NCache[{Rational[1, 3], Rational[7, 9], 1}, {
+      0.3333333333333333, 0.7777777777777778, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[7, 9], Rational[2, 3]}, {
+      0.2222222222222222, 0.7777777777777778, 0.6666666666666666}], 
+     NCache[{Rational[1, 3], Rational[8, 9], Rational[7, 9]}, {
+      0.3333333333333333, 0.8888888888888888, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[7, 9], Rational[8, 9]}, {
+      0.2222222222222222, 0.7777777777777778, 0.8888888888888888}], 
+     NCache[{Rational[1, 3], Rational[8, 9], 1}, {
+      0.3333333333333333, 0.8888888888888888, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[8, 9], Rational[2, 3]}, {
+      0.2222222222222222, 0.8888888888888888, 0.6666666666666666}], 
+     NCache[{Rational[1, 3], 1, Rational[7, 9]}, {
+      0.3333333333333333, 1, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[8, 9], Rational[7, 9]}, {
+      0.2222222222222222, 0.8888888888888888, 0.7777777777777778}], 
+     NCache[{Rational[1, 3], 1, Rational[8, 9]}, {
+      0.3333333333333333, 1, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[2, 9], Rational[8, 9], Rational[8, 9]}, {
+      0.2222222222222222, 0.8888888888888888, 0.8888888888888888}], 
+     NCache[{Rational[1, 3], 1, 1}, {0.3333333333333333, 1, 1}]]}, {
+    CuboidBox[NCache[{Rational[1, 3], 0, 0}, {0.3333333333333333, 0, 0}], 
+     NCache[{Rational[4, 9], Rational[1, 9], Rational[1, 9]}, {
+      0.4444444444444444, 0.1111111111111111, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], 0, Rational[1, 9]}, {
+      0.3333333333333333, 0, 0.1111111111111111}], 
+     NCache[{Rational[4, 9], Rational[1, 9], Rational[2, 9]}, {
+      0.4444444444444444, 0.1111111111111111, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], 0, Rational[2, 9]}, {
+      0.3333333333333333, 0, 0.2222222222222222}], 
+     NCache[{Rational[4, 9], Rational[1, 9], Rational[1, 3]}, {
+      0.4444444444444444, 0.1111111111111111, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[1, 9], 0}, {
+      0.3333333333333333, 0.1111111111111111, 0}], 
+     NCache[{Rational[4, 9], Rational[2, 9], Rational[1, 9]}, {
+      0.4444444444444444, 0.2222222222222222, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[1, 9], Rational[2, 9]}, {
+      0.3333333333333333, 0.1111111111111111, 0.2222222222222222}], 
+     NCache[{Rational[4, 9], Rational[2, 9], Rational[1, 3]}, {
+      0.4444444444444444, 0.2222222222222222, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[2, 9], 0}, {
+      0.3333333333333333, 0.2222222222222222, 0}], 
+     NCache[{Rational[4, 9], Rational[1, 3], Rational[1, 9]}, {
+      0.4444444444444444, 0.3333333333333333, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[2, 9], Rational[1, 9]}, {
+      0.3333333333333333, 0.2222222222222222, 0.1111111111111111}], 
+     NCache[{Rational[4, 9], Rational[1, 3], Rational[2, 9]}, {
+      0.4444444444444444, 0.3333333333333333, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[2, 9], Rational[2, 9]}, {
+      0.3333333333333333, 0.2222222222222222, 0.2222222222222222}], 
+     NCache[{Rational[4, 9], Rational[1, 3], Rational[1, 3]}, {
+      0.4444444444444444, 0.3333333333333333, 0.3333333333333333}]], 
+    CuboidBox[NCache[{Rational[4, 9], 0, 0}, {0.4444444444444444, 0, 0}], 
+     NCache[{Rational[5, 9], Rational[1, 9], Rational[1, 9]}, {
+      0.5555555555555556, 0.1111111111111111, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], 0, Rational[2, 9]}, {
+      0.4444444444444444, 0, 0.2222222222222222}], 
+     NCache[{Rational[5, 9], Rational[1, 9], Rational[1, 3]}, {
+      0.5555555555555556, 0.1111111111111111, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], Rational[2, 9], 0}, {
+      0.4444444444444444, 0.2222222222222222, 0}], 
+     NCache[{Rational[5, 9], Rational[1, 3], Rational[1, 9]}, {
+      0.5555555555555556, 0.3333333333333333, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], Rational[2, 9], Rational[2, 9]}, {
+      0.4444444444444444, 0.2222222222222222, 0.2222222222222222}], 
+     NCache[{Rational[5, 9], Rational[1, 3], Rational[1, 3]}, {
+      0.5555555555555556, 0.3333333333333333, 0.3333333333333333}]], 
+    CuboidBox[NCache[{Rational[5, 9], 0, 0}, {0.5555555555555556, 0, 0}], 
+     NCache[{Rational[2, 3], Rational[1, 9], Rational[1, 9]}, {
+      0.6666666666666666, 0.1111111111111111, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], 0, Rational[1, 9]}, {
+      0.5555555555555556, 0, 0.1111111111111111}], 
+     NCache[{Rational[2, 3], Rational[1, 9], Rational[2, 9]}, {
+      0.6666666666666666, 0.1111111111111111, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], 0, Rational[2, 9]}, {
+      0.5555555555555556, 0, 0.2222222222222222}], 
+     NCache[{Rational[2, 3], Rational[1, 9], Rational[1, 3]}, {
+      0.6666666666666666, 0.1111111111111111, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[1, 9], 0}, {
+      0.5555555555555556, 0.1111111111111111, 0}], 
+     NCache[{Rational[2, 3], Rational[2, 9], Rational[1, 9]}, {
+      0.6666666666666666, 0.2222222222222222, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[1, 9], Rational[2, 9]}, {
+      0.5555555555555556, 0.1111111111111111, 0.2222222222222222}], 
+     NCache[{Rational[2, 3], Rational[2, 9], Rational[1, 3]}, {
+      0.6666666666666666, 0.2222222222222222, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[2, 9], 0}, {
+      0.5555555555555556, 0.2222222222222222, 0}], 
+     NCache[{Rational[2, 3], Rational[1, 3], Rational[1, 9]}, {
+      0.6666666666666666, 0.3333333333333333, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[2, 9], Rational[1, 9]}, {
+      0.5555555555555556, 0.2222222222222222, 0.1111111111111111}], 
+     NCache[{Rational[2, 3], Rational[1, 3], Rational[2, 9]}, {
+      0.6666666666666666, 0.3333333333333333, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[2, 9], Rational[2, 9]}, {
+      0.5555555555555556, 0.2222222222222222, 0.2222222222222222}], 
+     NCache[{Rational[2, 3], Rational[1, 3], Rational[1, 3]}, {
+      0.6666666666666666, 0.3333333333333333, 0.3333333333333333}]]}, {
+    CuboidBox[
+     NCache[{Rational[1, 3], 0, Rational[2, 3]}, {
+      0.3333333333333333, 0, 0.6666666666666666}], 
+     NCache[{Rational[4, 9], Rational[1, 9], Rational[7, 9]}, {
+      0.4444444444444444, 0.1111111111111111, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], 0, Rational[7, 9]}, {
+      0.3333333333333333, 0, 0.7777777777777778}], 
+     NCache[{Rational[4, 9], Rational[1, 9], Rational[8, 9]}, {
+      0.4444444444444444, 0.1111111111111111, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], 0, Rational[8, 9]}, {
+      0.3333333333333333, 0, 0.8888888888888888}], 
+     NCache[{Rational[4, 9], Rational[1, 9], 1}, {
+      0.4444444444444444, 0.1111111111111111, 1}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[1, 9], Rational[2, 3]}, {
+      0.3333333333333333, 0.1111111111111111, 0.6666666666666666}], 
+     NCache[{Rational[4, 9], Rational[2, 9], Rational[7, 9]}, {
+      0.4444444444444444, 0.2222222222222222, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[1, 9], Rational[8, 9]}, {
+      0.3333333333333333, 0.1111111111111111, 0.8888888888888888}], 
+     NCache[{Rational[4, 9], Rational[2, 9], 1}, {
+      0.4444444444444444, 0.2222222222222222, 1}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[2, 9], Rational[2, 3]}, {
+      0.3333333333333333, 0.2222222222222222, 0.6666666666666666}], 
+     NCache[{Rational[4, 9], Rational[1, 3], Rational[7, 9]}, {
+      0.4444444444444444, 0.3333333333333333, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[2, 9], Rational[7, 9]}, {
+      0.3333333333333333, 0.2222222222222222, 0.7777777777777778}], 
+     NCache[{Rational[4, 9], Rational[1, 3], Rational[8, 9]}, {
+      0.4444444444444444, 0.3333333333333333, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[2, 9], Rational[8, 9]}, {
+      0.3333333333333333, 0.2222222222222222, 0.8888888888888888}], 
+     NCache[{Rational[4, 9], Rational[1, 3], 1}, {
+      0.4444444444444444, 0.3333333333333333, 1}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], 0, Rational[2, 3]}, {
+      0.4444444444444444, 0, 0.6666666666666666}], 
+     NCache[{Rational[5, 9], Rational[1, 9], Rational[7, 9]}, {
+      0.5555555555555556, 0.1111111111111111, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], 0, Rational[8, 9]}, {
+      0.4444444444444444, 0, 0.8888888888888888}], 
+     NCache[{Rational[5, 9], Rational[1, 9], 1}, {
+      0.5555555555555556, 0.1111111111111111, 1}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], Rational[2, 9], Rational[2, 3]}, {
+      0.4444444444444444, 0.2222222222222222, 0.6666666666666666}], 
+     NCache[{Rational[5, 9], Rational[1, 3], Rational[7, 9]}, {
+      0.5555555555555556, 0.3333333333333333, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], Rational[2, 9], Rational[8, 9]}, {
+      0.4444444444444444, 0.2222222222222222, 0.8888888888888888}], 
+     NCache[{Rational[5, 9], Rational[1, 3], 1}, {
+      0.5555555555555556, 0.3333333333333333, 1}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], 0, Rational[2, 3]}, {
+      0.5555555555555556, 0, 0.6666666666666666}], 
+     NCache[{Rational[2, 3], Rational[1, 9], Rational[7, 9]}, {
+      0.6666666666666666, 0.1111111111111111, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], 0, Rational[7, 9]}, {
+      0.5555555555555556, 0, 0.7777777777777778}], 
+     NCache[{Rational[2, 3], Rational[1, 9], Rational[8, 9]}, {
+      0.6666666666666666, 0.1111111111111111, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], 0, Rational[8, 9]}, {
+      0.5555555555555556, 0, 0.8888888888888888}], 
+     NCache[{Rational[2, 3], Rational[1, 9], 1}, {
+      0.6666666666666666, 0.1111111111111111, 1}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[1, 9], Rational[2, 3]}, {
+      0.5555555555555556, 0.1111111111111111, 0.6666666666666666}], 
+     NCache[{Rational[2, 3], Rational[2, 9], Rational[7, 9]}, {
+      0.6666666666666666, 0.2222222222222222, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[1, 9], Rational[8, 9]}, {
+      0.5555555555555556, 0.1111111111111111, 0.8888888888888888}], 
+     NCache[{Rational[2, 3], Rational[2, 9], 1}, {
+      0.6666666666666666, 0.2222222222222222, 1}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[2, 9], Rational[2, 3]}, {
+      0.5555555555555556, 0.2222222222222222, 0.6666666666666666}], 
+     NCache[{Rational[2, 3], Rational[1, 3], Rational[7, 9]}, {
+      0.6666666666666666, 0.3333333333333333, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[2, 9], Rational[7, 9]}, {
+      0.5555555555555556, 0.2222222222222222, 0.7777777777777778}], 
+     NCache[{Rational[2, 3], Rational[1, 3], Rational[8, 9]}, {
+      0.6666666666666666, 0.3333333333333333, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[2, 9], Rational[8, 9]}, {
+      0.5555555555555556, 0.2222222222222222, 0.8888888888888888}], 
+     NCache[{Rational[2, 3], Rational[1, 3], 1}, {
+      0.6666666666666666, 0.3333333333333333, 1}]]}, {
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[2, 3], 0}, {
+      0.3333333333333333, 0.6666666666666666, 0}], 
+     NCache[{Rational[4, 9], Rational[7, 9], Rational[1, 9]}, {
+      0.4444444444444444, 0.7777777777777778, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[2, 3], Rational[1, 9]}, {
+      0.3333333333333333, 0.6666666666666666, 0.1111111111111111}], 
+     NCache[{Rational[4, 9], Rational[7, 9], Rational[2, 9]}, {
+      0.4444444444444444, 0.7777777777777778, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[2, 3], Rational[2, 9]}, {
+      0.3333333333333333, 0.6666666666666666, 0.2222222222222222}], 
+     NCache[{Rational[4, 9], Rational[7, 9], Rational[1, 3]}, {
+      0.4444444444444444, 0.7777777777777778, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[7, 9], 0}, {
+      0.3333333333333333, 0.7777777777777778, 0}], 
+     NCache[{Rational[4, 9], Rational[8, 9], Rational[1, 9]}, {
+      0.4444444444444444, 0.8888888888888888, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[7, 9], Rational[2, 9]}, {
+      0.3333333333333333, 0.7777777777777778, 0.2222222222222222}], 
+     NCache[{Rational[4, 9], Rational[8, 9], Rational[1, 3]}, {
+      0.4444444444444444, 0.8888888888888888, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[8, 9], 0}, {
+      0.3333333333333333, 0.8888888888888888, 0}], 
+     NCache[{Rational[4, 9], 1, Rational[1, 9]}, {
+      0.4444444444444444, 1, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[8, 9], Rational[1, 9]}, {
+      0.3333333333333333, 0.8888888888888888, 0.1111111111111111}], 
+     NCache[{Rational[4, 9], 1, Rational[2, 9]}, {
+      0.4444444444444444, 1, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[8, 9], Rational[2, 9]}, {
+      0.3333333333333333, 0.8888888888888888, 0.2222222222222222}], 
+     NCache[{Rational[4, 9], 1, Rational[1, 3]}, {
+      0.4444444444444444, 1, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], Rational[2, 3], 0}, {
+      0.4444444444444444, 0.6666666666666666, 0}], 
+     NCache[{Rational[5, 9], Rational[7, 9], Rational[1, 9]}, {
+      0.5555555555555556, 0.7777777777777778, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], Rational[2, 3], Rational[2, 9]}, {
+      0.4444444444444444, 0.6666666666666666, 0.2222222222222222}], 
+     NCache[{Rational[5, 9], Rational[7, 9], Rational[1, 3]}, {
+      0.5555555555555556, 0.7777777777777778, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], Rational[8, 9], 0}, {
+      0.4444444444444444, 0.8888888888888888, 0}], 
+     NCache[{Rational[5, 9], 1, Rational[1, 9]}, {
+      0.5555555555555556, 1, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], Rational[8, 9], Rational[2, 9]}, {
+      0.4444444444444444, 0.8888888888888888, 0.2222222222222222}], 
+     NCache[{Rational[5, 9], 1, Rational[1, 3]}, {
+      0.5555555555555556, 1, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[2, 3], 0}, {
+      0.5555555555555556, 0.6666666666666666, 0}], 
+     NCache[{Rational[2, 3], Rational[7, 9], Rational[1, 9]}, {
+      0.6666666666666666, 0.7777777777777778, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[2, 3], Rational[1, 9]}, {
+      0.5555555555555556, 0.6666666666666666, 0.1111111111111111}], 
+     NCache[{Rational[2, 3], Rational[7, 9], Rational[2, 9]}, {
+      0.6666666666666666, 0.7777777777777778, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[2, 3], Rational[2, 9]}, {
+      0.5555555555555556, 0.6666666666666666, 0.2222222222222222}], 
+     NCache[{Rational[2, 3], Rational[7, 9], Rational[1, 3]}, {
+      0.6666666666666666, 0.7777777777777778, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[7, 9], 0}, {
+      0.5555555555555556, 0.7777777777777778, 0}], 
+     NCache[{Rational[2, 3], Rational[8, 9], Rational[1, 9]}, {
+      0.6666666666666666, 0.8888888888888888, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[7, 9], Rational[2, 9]}, {
+      0.5555555555555556, 0.7777777777777778, 0.2222222222222222}], 
+     NCache[{Rational[2, 3], Rational[8, 9], Rational[1, 3]}, {
+      0.6666666666666666, 0.8888888888888888, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[8, 9], 0}, {
+      0.5555555555555556, 0.8888888888888888, 0}], 
+     NCache[{Rational[2, 3], 1, Rational[1, 9]}, {
+      0.6666666666666666, 1, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[8, 9], Rational[1, 9]}, {
+      0.5555555555555556, 0.8888888888888888, 0.1111111111111111}], 
+     NCache[{Rational[2, 3], 1, Rational[2, 9]}, {
+      0.6666666666666666, 1, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[8, 9], Rational[2, 9]}, {
+      0.5555555555555556, 0.8888888888888888, 0.2222222222222222}], 
+     NCache[{Rational[2, 3], 1, Rational[1, 3]}, {
+      0.6666666666666666, 1, 0.3333333333333333}]]}, {
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[2, 3], Rational[2, 3]}, {
+      0.3333333333333333, 0.6666666666666666, 0.6666666666666666}], 
+     NCache[{Rational[4, 9], Rational[7, 9], Rational[7, 9]}, {
+      0.4444444444444444, 0.7777777777777778, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[2, 3], Rational[7, 9]}, {
+      0.3333333333333333, 0.6666666666666666, 0.7777777777777778}], 
+     NCache[{Rational[4, 9], Rational[7, 9], Rational[8, 9]}, {
+      0.4444444444444444, 0.7777777777777778, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[2, 3], Rational[8, 9]}, {
+      0.3333333333333333, 0.6666666666666666, 0.8888888888888888}], 
+     NCache[{Rational[4, 9], Rational[7, 9], 1}, {
+      0.4444444444444444, 0.7777777777777778, 1}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[7, 9], Rational[2, 3]}, {
+      0.3333333333333333, 0.7777777777777778, 0.6666666666666666}], 
+     NCache[{Rational[4, 9], Rational[8, 9], Rational[7, 9]}, {
+      0.4444444444444444, 0.8888888888888888, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[7, 9], Rational[8, 9]}, {
+      0.3333333333333333, 0.7777777777777778, 0.8888888888888888}], 
+     NCache[{Rational[4, 9], Rational[8, 9], 1}, {
+      0.4444444444444444, 0.8888888888888888, 1}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[8, 9], Rational[2, 3]}, {
+      0.3333333333333333, 0.8888888888888888, 0.6666666666666666}], 
+     NCache[{Rational[4, 9], 1, Rational[7, 9]}, {
+      0.4444444444444444, 1, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[8, 9], Rational[7, 9]}, {
+      0.3333333333333333, 0.8888888888888888, 0.7777777777777778}], 
+     NCache[{Rational[4, 9], 1, Rational[8, 9]}, {
+      0.4444444444444444, 1, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[1, 3], Rational[8, 9], Rational[8, 9]}, {
+      0.3333333333333333, 0.8888888888888888, 0.8888888888888888}], 
+     NCache[{Rational[4, 9], 1, 1}, {0.4444444444444444, 1, 1}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], Rational[2, 3], Rational[2, 3]}, {
+      0.4444444444444444, 0.6666666666666666, 0.6666666666666666}], 
+     NCache[{Rational[5, 9], Rational[7, 9], Rational[7, 9]}, {
+      0.5555555555555556, 0.7777777777777778, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], Rational[2, 3], Rational[8, 9]}, {
+      0.4444444444444444, 0.6666666666666666, 0.8888888888888888}], 
+     NCache[{Rational[5, 9], Rational[7, 9], 1}, {
+      0.5555555555555556, 0.7777777777777778, 1}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], Rational[8, 9], Rational[2, 3]}, {
+      0.4444444444444444, 0.8888888888888888, 0.6666666666666666}], 
+     NCache[{Rational[5, 9], 1, Rational[7, 9]}, {
+      0.5555555555555556, 1, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[4, 9], Rational[8, 9], Rational[8, 9]}, {
+      0.4444444444444444, 0.8888888888888888, 0.8888888888888888}], 
+     NCache[{Rational[5, 9], 1, 1}, {0.5555555555555556, 1, 1}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[2, 3], Rational[2, 3]}, {
+      0.5555555555555556, 0.6666666666666666, 0.6666666666666666}], 
+     NCache[{Rational[2, 3], Rational[7, 9], Rational[7, 9]}, {
+      0.6666666666666666, 0.7777777777777778, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[2, 3], Rational[7, 9]}, {
+      0.5555555555555556, 0.6666666666666666, 0.7777777777777778}], 
+     NCache[{Rational[2, 3], Rational[7, 9], Rational[8, 9]}, {
+      0.6666666666666666, 0.7777777777777778, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[2, 3], Rational[8, 9]}, {
+      0.5555555555555556, 0.6666666666666666, 0.8888888888888888}], 
+     NCache[{Rational[2, 3], Rational[7, 9], 1}, {
+      0.6666666666666666, 0.7777777777777778, 1}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[7, 9], Rational[2, 3]}, {
+      0.5555555555555556, 0.7777777777777778, 0.6666666666666666}], 
+     NCache[{Rational[2, 3], Rational[8, 9], Rational[7, 9]}, {
+      0.6666666666666666, 0.8888888888888888, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[7, 9], Rational[8, 9]}, {
+      0.5555555555555556, 0.7777777777777778, 0.8888888888888888}], 
+     NCache[{Rational[2, 3], Rational[8, 9], 1}, {
+      0.6666666666666666, 0.8888888888888888, 1}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[8, 9], Rational[2, 3]}, {
+      0.5555555555555556, 0.8888888888888888, 0.6666666666666666}], 
+     NCache[{Rational[2, 3], 1, Rational[7, 9]}, {
+      0.6666666666666666, 1, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[8, 9], Rational[7, 9]}, {
+      0.5555555555555556, 0.8888888888888888, 0.7777777777777778}], 
+     NCache[{Rational[2, 3], 1, Rational[8, 9]}, {
+      0.6666666666666666, 1, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[5, 9], Rational[8, 9], Rational[8, 9]}, {
+      0.5555555555555556, 0.8888888888888888, 0.8888888888888888}], 
+     NCache[{Rational[2, 3], 1, 1}, {0.6666666666666666, 1, 1}]]}, {
+    CuboidBox[NCache[{Rational[2, 3], 0, 0}, {0.6666666666666666, 0, 0}], 
+     NCache[{Rational[7, 9], Rational[1, 9], Rational[1, 9]}, {
+      0.7777777777777778, 0.1111111111111111, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], 0, Rational[1, 9]}, {
+      0.6666666666666666, 0, 0.1111111111111111}], 
+     NCache[{Rational[7, 9], Rational[1, 9], Rational[2, 9]}, {
+      0.7777777777777778, 0.1111111111111111, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], 0, Rational[2, 9]}, {
+      0.6666666666666666, 0, 0.2222222222222222}], 
+     NCache[{Rational[7, 9], Rational[1, 9], Rational[1, 3]}, {
+      0.7777777777777778, 0.1111111111111111, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[1, 9], 0}, {
+      0.6666666666666666, 0.1111111111111111, 0}], 
+     NCache[{Rational[7, 9], Rational[2, 9], Rational[1, 9]}, {
+      0.7777777777777778, 0.2222222222222222, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[1, 9], Rational[2, 9]}, {
+      0.6666666666666666, 0.1111111111111111, 0.2222222222222222}], 
+     NCache[{Rational[7, 9], Rational[2, 9], Rational[1, 3]}, {
+      0.7777777777777778, 0.2222222222222222, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 9], 0}, {
+      0.6666666666666666, 0.2222222222222222, 0}], 
+     NCache[{Rational[7, 9], Rational[1, 3], Rational[1, 9]}, {
+      0.7777777777777778, 0.3333333333333333, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 9], Rational[1, 9]}, {
+      0.6666666666666666, 0.2222222222222222, 0.1111111111111111}], 
+     NCache[{Rational[7, 9], Rational[1, 3], Rational[2, 9]}, {
+      0.7777777777777778, 0.3333333333333333, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 9], Rational[2, 9]}, {
+      0.6666666666666666, 0.2222222222222222, 0.2222222222222222}], 
+     NCache[{Rational[7, 9], Rational[1, 3], Rational[1, 3]}, {
+      0.7777777777777778, 0.3333333333333333, 0.3333333333333333}]], 
+    CuboidBox[NCache[{Rational[7, 9], 0, 0}, {0.7777777777777778, 0, 0}], 
+     NCache[{Rational[8, 9], Rational[1, 9], Rational[1, 9]}, {
+      0.8888888888888888, 0.1111111111111111, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], 0, Rational[2, 9]}, {
+      0.7777777777777778, 0, 0.2222222222222222}], 
+     NCache[{Rational[8, 9], Rational[1, 9], Rational[1, 3]}, {
+      0.8888888888888888, 0.1111111111111111, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[2, 9], 0}, {
+      0.7777777777777778, 0.2222222222222222, 0}], 
+     NCache[{Rational[8, 9], Rational[1, 3], Rational[1, 9]}, {
+      0.8888888888888888, 0.3333333333333333, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[2, 9], Rational[2, 9]}, {
+      0.7777777777777778, 0.2222222222222222, 0.2222222222222222}], 
+     NCache[{Rational[8, 9], Rational[1, 3], Rational[1, 3]}, {
+      0.8888888888888888, 0.3333333333333333, 0.3333333333333333}]], 
+    CuboidBox[NCache[{Rational[8, 9], 0, 0}, {0.8888888888888888, 0, 0}], 
+     NCache[{1, Rational[1, 9], Rational[1, 9]}, {
+      1, 0.1111111111111111, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], 0, Rational[1, 9]}, {
+      0.8888888888888888, 0, 0.1111111111111111}], 
+     NCache[{1, Rational[1, 9], Rational[2, 9]}, {
+      1, 0.1111111111111111, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], 0, Rational[2, 9]}, {
+      0.8888888888888888, 0, 0.2222222222222222}], 
+     NCache[{1, Rational[1, 9], Rational[1, 3]}, {
+      1, 0.1111111111111111, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[1, 9], 0}, {
+      0.8888888888888888, 0.1111111111111111, 0}], 
+     NCache[{1, Rational[2, 9], Rational[1, 9]}, {
+      1, 0.2222222222222222, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[1, 9], Rational[2, 9]}, {
+      0.8888888888888888, 0.1111111111111111, 0.2222222222222222}], 
+     NCache[{1, Rational[2, 9], Rational[1, 3]}, {
+      1, 0.2222222222222222, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 9], 0}, {
+      0.8888888888888888, 0.2222222222222222, 0}], 
+     NCache[{1, Rational[1, 3], Rational[1, 9]}, {
+      1, 0.3333333333333333, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 9], Rational[1, 9]}, {
+      0.8888888888888888, 0.2222222222222222, 0.1111111111111111}], 
+     NCache[{1, Rational[1, 3], Rational[2, 9]}, {
+      1, 0.3333333333333333, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 9], Rational[2, 9]}, {
+      0.8888888888888888, 0.2222222222222222, 0.2222222222222222}], 
+     NCache[{1, Rational[1, 3], Rational[1, 3]}, {
+      1, 0.3333333333333333, 0.3333333333333333}]]}, {
+    CuboidBox[
+     NCache[{Rational[2, 3], 0, Rational[1, 3]}, {
+      0.6666666666666666, 0, 0.3333333333333333}], 
+     NCache[{Rational[7, 9], Rational[1, 9], Rational[4, 9]}, {
+      0.7777777777777778, 0.1111111111111111, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], 0, Rational[4, 9]}, {
+      0.6666666666666666, 0, 0.4444444444444444}], 
+     NCache[{Rational[7, 9], Rational[1, 9], Rational[5, 9]}, {
+      0.7777777777777778, 0.1111111111111111, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], 0, Rational[5, 9]}, {
+      0.6666666666666666, 0, 0.5555555555555556}], 
+     NCache[{Rational[7, 9], Rational[1, 9], Rational[2, 3]}, {
+      0.7777777777777778, 0.1111111111111111, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[1, 9], Rational[1, 3]}, {
+      0.6666666666666666, 0.1111111111111111, 0.3333333333333333}], 
+     NCache[{Rational[7, 9], Rational[2, 9], Rational[4, 9]}, {
+      0.7777777777777778, 0.2222222222222222, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[1, 9], Rational[5, 9]}, {
+      0.6666666666666666, 0.1111111111111111, 0.5555555555555556}], 
+     NCache[{Rational[7, 9], Rational[2, 9], Rational[2, 3]}, {
+      0.7777777777777778, 0.2222222222222222, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 9], Rational[1, 3]}, {
+      0.6666666666666666, 0.2222222222222222, 0.3333333333333333}], 
+     NCache[{Rational[7, 9], Rational[1, 3], Rational[4, 9]}, {
+      0.7777777777777778, 0.3333333333333333, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 9], Rational[4, 9]}, {
+      0.6666666666666666, 0.2222222222222222, 0.4444444444444444}], 
+     NCache[{Rational[7, 9], Rational[1, 3], Rational[5, 9]}, {
+      0.7777777777777778, 0.3333333333333333, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 9], Rational[5, 9]}, {
+      0.6666666666666666, 0.2222222222222222, 0.5555555555555556}], 
+     NCache[{Rational[7, 9], Rational[1, 3], Rational[2, 3]}, {
+      0.7777777777777778, 0.3333333333333333, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], 0, Rational[1, 3]}, {
+      0.7777777777777778, 0, 0.3333333333333333}], 
+     NCache[{Rational[8, 9], Rational[1, 9], Rational[4, 9]}, {
+      0.8888888888888888, 0.1111111111111111, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], 0, Rational[5, 9]}, {
+      0.7777777777777778, 0, 0.5555555555555556}], 
+     NCache[{Rational[8, 9], Rational[1, 9], Rational[2, 3]}, {
+      0.8888888888888888, 0.1111111111111111, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[2, 9], Rational[1, 3]}, {
+      0.7777777777777778, 0.2222222222222222, 0.3333333333333333}], 
+     NCache[{Rational[8, 9], Rational[1, 3], Rational[4, 9]}, {
+      0.8888888888888888, 0.3333333333333333, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[2, 9], Rational[5, 9]}, {
+      0.7777777777777778, 0.2222222222222222, 0.5555555555555556}], 
+     NCache[{Rational[8, 9], Rational[1, 3], Rational[2, 3]}, {
+      0.8888888888888888, 0.3333333333333333, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], 0, Rational[1, 3]}, {
+      0.8888888888888888, 0, 0.3333333333333333}], 
+     NCache[{1, Rational[1, 9], Rational[4, 9]}, {
+      1, 0.1111111111111111, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], 0, Rational[4, 9]}, {
+      0.8888888888888888, 0, 0.4444444444444444}], 
+     NCache[{1, Rational[1, 9], Rational[5, 9]}, {
+      1, 0.1111111111111111, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], 0, Rational[5, 9]}, {
+      0.8888888888888888, 0, 0.5555555555555556}], 
+     NCache[{1, Rational[1, 9], Rational[2, 3]}, {
+      1, 0.1111111111111111, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[1, 9], Rational[1, 3]}, {
+      0.8888888888888888, 0.1111111111111111, 0.3333333333333333}], 
+     NCache[{1, Rational[2, 9], Rational[4, 9]}, {
+      1, 0.2222222222222222, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[1, 9], Rational[5, 9]}, {
+      0.8888888888888888, 0.1111111111111111, 0.5555555555555556}], 
+     NCache[{1, Rational[2, 9], Rational[2, 3]}, {
+      1, 0.2222222222222222, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 9], Rational[1, 3]}, {
+      0.8888888888888888, 0.2222222222222222, 0.3333333333333333}], 
+     NCache[{1, Rational[1, 3], Rational[4, 9]}, {
+      1, 0.3333333333333333, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 9], Rational[4, 9]}, {
+      0.8888888888888888, 0.2222222222222222, 0.4444444444444444}], 
+     NCache[{1, Rational[1, 3], Rational[5, 9]}, {
+      1, 0.3333333333333333, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 9], Rational[5, 9]}, {
+      0.8888888888888888, 0.2222222222222222, 0.5555555555555556}], 
+     NCache[{1, Rational[1, 3], Rational[2, 3]}, {
+      1, 0.3333333333333333, 0.6666666666666666}]]}, {
+    CuboidBox[
+     NCache[{Rational[2, 3], 0, Rational[2, 3]}, {
+      0.6666666666666666, 0, 0.6666666666666666}], 
+     NCache[{Rational[7, 9], Rational[1, 9], Rational[7, 9]}, {
+      0.7777777777777778, 0.1111111111111111, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], 0, Rational[7, 9]}, {
+      0.6666666666666666, 0, 0.7777777777777778}], 
+     NCache[{Rational[7, 9], Rational[1, 9], Rational[8, 9]}, {
+      0.7777777777777778, 0.1111111111111111, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], 0, Rational[8, 9]}, {
+      0.6666666666666666, 0, 0.8888888888888888}], 
+     NCache[{Rational[7, 9], Rational[1, 9], 1}, {
+      0.7777777777777778, 0.1111111111111111, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[1, 9], Rational[2, 3]}, {
+      0.6666666666666666, 0.1111111111111111, 0.6666666666666666}], 
+     NCache[{Rational[7, 9], Rational[2, 9], Rational[7, 9]}, {
+      0.7777777777777778, 0.2222222222222222, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[1, 9], Rational[8, 9]}, {
+      0.6666666666666666, 0.1111111111111111, 0.8888888888888888}], 
+     NCache[{Rational[7, 9], Rational[2, 9], 1}, {
+      0.7777777777777778, 0.2222222222222222, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 9], Rational[2, 3]}, {
+      0.6666666666666666, 0.2222222222222222, 0.6666666666666666}], 
+     NCache[{Rational[7, 9], Rational[1, 3], Rational[7, 9]}, {
+      0.7777777777777778, 0.3333333333333333, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 9], Rational[7, 9]}, {
+      0.6666666666666666, 0.2222222222222222, 0.7777777777777778}], 
+     NCache[{Rational[7, 9], Rational[1, 3], Rational[8, 9]}, {
+      0.7777777777777778, 0.3333333333333333, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 9], Rational[8, 9]}, {
+      0.6666666666666666, 0.2222222222222222, 0.8888888888888888}], 
+     NCache[{Rational[7, 9], Rational[1, 3], 1}, {
+      0.7777777777777778, 0.3333333333333333, 1}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], 0, Rational[2, 3]}, {
+      0.7777777777777778, 0, 0.6666666666666666}], 
+     NCache[{Rational[8, 9], Rational[1, 9], Rational[7, 9]}, {
+      0.8888888888888888, 0.1111111111111111, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], 0, Rational[8, 9]}, {
+      0.7777777777777778, 0, 0.8888888888888888}], 
+     NCache[{Rational[8, 9], Rational[1, 9], 1}, {
+      0.8888888888888888, 0.1111111111111111, 1}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[2, 9], Rational[2, 3]}, {
+      0.7777777777777778, 0.2222222222222222, 0.6666666666666666}], 
+     NCache[{Rational[8, 9], Rational[1, 3], Rational[7, 9]}, {
+      0.8888888888888888, 0.3333333333333333, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[2, 9], Rational[8, 9]}, {
+      0.7777777777777778, 0.2222222222222222, 0.8888888888888888}], 
+     NCache[{Rational[8, 9], Rational[1, 3], 1}, {
+      0.8888888888888888, 0.3333333333333333, 1}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], 0, Rational[2, 3]}, {
+      0.8888888888888888, 0, 0.6666666666666666}], 
+     NCache[{1, Rational[1, 9], Rational[7, 9]}, {
+      1, 0.1111111111111111, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], 0, Rational[7, 9]}, {
+      0.8888888888888888, 0, 0.7777777777777778}], 
+     NCache[{1, Rational[1, 9], Rational[8, 9]}, {
+      1, 0.1111111111111111, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], 0, Rational[8, 9]}, {
+      0.8888888888888888, 0, 0.8888888888888888}], 
+     NCache[{1, Rational[1, 9], 1}, {1, 0.1111111111111111, 1}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[1, 9], Rational[2, 3]}, {
+      0.8888888888888888, 0.1111111111111111, 0.6666666666666666}], 
+     NCache[{1, Rational[2, 9], Rational[7, 9]}, {
+      1, 0.2222222222222222, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[1, 9], Rational[8, 9]}, {
+      0.8888888888888888, 0.1111111111111111, 0.8888888888888888}], 
+     NCache[{1, Rational[2, 9], 1}, {1, 0.2222222222222222, 1}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 9], Rational[2, 3]}, {
+      0.8888888888888888, 0.2222222222222222, 0.6666666666666666}], 
+     NCache[{1, Rational[1, 3], Rational[7, 9]}, {
+      1, 0.3333333333333333, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 9], Rational[7, 9]}, {
+      0.8888888888888888, 0.2222222222222222, 0.7777777777777778}], 
+     NCache[{1, Rational[1, 3], Rational[8, 9]}, {
+      1, 0.3333333333333333, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 9], Rational[8, 9]}, {
+      0.8888888888888888, 0.2222222222222222, 0.8888888888888888}], 
+     NCache[{1, Rational[1, 3], 1}, {1, 0.3333333333333333, 1}]]}, {
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[1, 3], 0}, {
+      0.6666666666666666, 0.3333333333333333, 0}], 
+     NCache[{Rational[7, 9], Rational[4, 9], Rational[1, 9]}, {
+      0.7777777777777778, 0.4444444444444444, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[1, 3], Rational[1, 9]}, {
+      0.6666666666666666, 0.3333333333333333, 0.1111111111111111}], 
+     NCache[{Rational[7, 9], Rational[4, 9], Rational[2, 9]}, {
+      0.7777777777777778, 0.4444444444444444, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[1, 3], Rational[2, 9]}, {
+      0.6666666666666666, 0.3333333333333333, 0.2222222222222222}], 
+     NCache[{Rational[7, 9], Rational[4, 9], Rational[1, 3]}, {
+      0.7777777777777778, 0.4444444444444444, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[4, 9], 0}, {
+      0.6666666666666666, 0.4444444444444444, 0}], 
+     NCache[{Rational[7, 9], Rational[5, 9], Rational[1, 9]}, {
+      0.7777777777777778, 0.5555555555555556, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[4, 9], Rational[2, 9]}, {
+      0.6666666666666666, 0.4444444444444444, 0.2222222222222222}], 
+     NCache[{Rational[7, 9], Rational[5, 9], Rational[1, 3]}, {
+      0.7777777777777778, 0.5555555555555556, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[5, 9], 0}, {
+      0.6666666666666666, 0.5555555555555556, 0}], 
+     NCache[{Rational[7, 9], Rational[2, 3], Rational[1, 9]}, {
+      0.7777777777777778, 0.6666666666666666, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[5, 9], Rational[1, 9]}, {
+      0.6666666666666666, 0.5555555555555556, 0.1111111111111111}], 
+     NCache[{Rational[7, 9], Rational[2, 3], Rational[2, 9]}, {
+      0.7777777777777778, 0.6666666666666666, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[5, 9], Rational[2, 9]}, {
+      0.6666666666666666, 0.5555555555555556, 0.2222222222222222}], 
+     NCache[{Rational[7, 9], Rational[2, 3], Rational[1, 3]}, {
+      0.7777777777777778, 0.6666666666666666, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[1, 3], 0}, {
+      0.7777777777777778, 0.3333333333333333, 0}], 
+     NCache[{Rational[8, 9], Rational[4, 9], Rational[1, 9]}, {
+      0.8888888888888888, 0.4444444444444444, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[1, 3], Rational[2, 9]}, {
+      0.7777777777777778, 0.3333333333333333, 0.2222222222222222}], 
+     NCache[{Rational[8, 9], Rational[4, 9], Rational[1, 3]}, {
+      0.8888888888888888, 0.4444444444444444, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[5, 9], 0}, {
+      0.7777777777777778, 0.5555555555555556, 0}], 
+     NCache[{Rational[8, 9], Rational[2, 3], Rational[1, 9]}, {
+      0.8888888888888888, 0.6666666666666666, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[5, 9], Rational[2, 9]}, {
+      0.7777777777777778, 0.5555555555555556, 0.2222222222222222}], 
+     NCache[{Rational[8, 9], Rational[2, 3], Rational[1, 3]}, {
+      0.8888888888888888, 0.6666666666666666, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[1, 3], 0}, {
+      0.8888888888888888, 0.3333333333333333, 0}], 
+     NCache[{1, Rational[4, 9], Rational[1, 9]}, {
+      1, 0.4444444444444444, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[1, 3], Rational[1, 9]}, {
+      0.8888888888888888, 0.3333333333333333, 0.1111111111111111}], 
+     NCache[{1, Rational[4, 9], Rational[2, 9]}, {
+      1, 0.4444444444444444, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[1, 3], Rational[2, 9]}, {
+      0.8888888888888888, 0.3333333333333333, 0.2222222222222222}], 
+     NCache[{1, Rational[4, 9], Rational[1, 3]}, {
+      1, 0.4444444444444444, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[4, 9], 0}, {
+      0.8888888888888888, 0.4444444444444444, 0}], 
+     NCache[{1, Rational[5, 9], Rational[1, 9]}, {
+      1, 0.5555555555555556, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[4, 9], Rational[2, 9]}, {
+      0.8888888888888888, 0.4444444444444444, 0.2222222222222222}], 
+     NCache[{1, Rational[5, 9], Rational[1, 3]}, {
+      1, 0.5555555555555556, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[5, 9], 0}, {
+      0.8888888888888888, 0.5555555555555556, 0}], 
+     NCache[{1, Rational[2, 3], Rational[1, 9]}, {
+      1, 0.6666666666666666, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[5, 9], Rational[1, 9]}, {
+      0.8888888888888888, 0.5555555555555556, 0.1111111111111111}], 
+     NCache[{1, Rational[2, 3], Rational[2, 9]}, {
+      1, 0.6666666666666666, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[5, 9], Rational[2, 9]}, {
+      0.8888888888888888, 0.5555555555555556, 0.2222222222222222}], 
+     NCache[{1, Rational[2, 3], Rational[1, 3]}, {
+      1, 0.6666666666666666, 0.3333333333333333}]]}, {
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[1, 3], Rational[2, 3]}, {
+      0.6666666666666666, 0.3333333333333333, 0.6666666666666666}], 
+     NCache[{Rational[7, 9], Rational[4, 9], Rational[7, 9]}, {
+      0.7777777777777778, 0.4444444444444444, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[1, 3], Rational[7, 9]}, {
+      0.6666666666666666, 0.3333333333333333, 0.7777777777777778}], 
+     NCache[{Rational[7, 9], Rational[4, 9], Rational[8, 9]}, {
+      0.7777777777777778, 0.4444444444444444, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[1, 3], Rational[8, 9]}, {
+      0.6666666666666666, 0.3333333333333333, 0.8888888888888888}], 
+     NCache[{Rational[7, 9], Rational[4, 9], 1}, {
+      0.7777777777777778, 0.4444444444444444, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[4, 9], Rational[2, 3]}, {
+      0.6666666666666666, 0.4444444444444444, 0.6666666666666666}], 
+     NCache[{Rational[7, 9], Rational[5, 9], Rational[7, 9]}, {
+      0.7777777777777778, 0.5555555555555556, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[4, 9], Rational[8, 9]}, {
+      0.6666666666666666, 0.4444444444444444, 0.8888888888888888}], 
+     NCache[{Rational[7, 9], Rational[5, 9], 1}, {
+      0.7777777777777778, 0.5555555555555556, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[5, 9], Rational[2, 3]}, {
+      0.6666666666666666, 0.5555555555555556, 0.6666666666666666}], 
+     NCache[{Rational[7, 9], Rational[2, 3], Rational[7, 9]}, {
+      0.7777777777777778, 0.6666666666666666, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[5, 9], Rational[7, 9]}, {
+      0.6666666666666666, 0.5555555555555556, 0.7777777777777778}], 
+     NCache[{Rational[7, 9], Rational[2, 3], Rational[8, 9]}, {
+      0.7777777777777778, 0.6666666666666666, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[5, 9], Rational[8, 9]}, {
+      0.6666666666666666, 0.5555555555555556, 0.8888888888888888}], 
+     NCache[{Rational[7, 9], Rational[2, 3], 1}, {
+      0.7777777777777778, 0.6666666666666666, 1}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[1, 3], Rational[2, 3]}, {
+      0.7777777777777778, 0.3333333333333333, 0.6666666666666666}], 
+     NCache[{Rational[8, 9], Rational[4, 9], Rational[7, 9]}, {
+      0.8888888888888888, 0.4444444444444444, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[1, 3], Rational[8, 9]}, {
+      0.7777777777777778, 0.3333333333333333, 0.8888888888888888}], 
+     NCache[{Rational[8, 9], Rational[4, 9], 1}, {
+      0.8888888888888888, 0.4444444444444444, 1}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[5, 9], Rational[2, 3]}, {
+      0.7777777777777778, 0.5555555555555556, 0.6666666666666666}], 
+     NCache[{Rational[8, 9], Rational[2, 3], Rational[7, 9]}, {
+      0.8888888888888888, 0.6666666666666666, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[5, 9], Rational[8, 9]}, {
+      0.7777777777777778, 0.5555555555555556, 0.8888888888888888}], 
+     NCache[{Rational[8, 9], Rational[2, 3], 1}, {
+      0.8888888888888888, 0.6666666666666666, 1}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[1, 3], Rational[2, 3]}, {
+      0.8888888888888888, 0.3333333333333333, 0.6666666666666666}], 
+     NCache[{1, Rational[4, 9], Rational[7, 9]}, {
+      1, 0.4444444444444444, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[1, 3], Rational[7, 9]}, {
+      0.8888888888888888, 0.3333333333333333, 0.7777777777777778}], 
+     NCache[{1, Rational[4, 9], Rational[8, 9]}, {
+      1, 0.4444444444444444, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[1, 3], Rational[8, 9]}, {
+      0.8888888888888888, 0.3333333333333333, 0.8888888888888888}], 
+     NCache[{1, Rational[4, 9], 1}, {1, 0.4444444444444444, 1}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[4, 9], Rational[2, 3]}, {
+      0.8888888888888888, 0.4444444444444444, 0.6666666666666666}], 
+     NCache[{1, Rational[5, 9], Rational[7, 9]}, {
+      1, 0.5555555555555556, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[4, 9], Rational[8, 9]}, {
+      0.8888888888888888, 0.4444444444444444, 0.8888888888888888}], 
+     NCache[{1, Rational[5, 9], 1}, {1, 0.5555555555555556, 1}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[5, 9], Rational[2, 3]}, {
+      0.8888888888888888, 0.5555555555555556, 0.6666666666666666}], 
+     NCache[{1, Rational[2, 3], Rational[7, 9]}, {
+      1, 0.6666666666666666, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[5, 9], Rational[7, 9]}, {
+      0.8888888888888888, 0.5555555555555556, 0.7777777777777778}], 
+     NCache[{1, Rational[2, 3], Rational[8, 9]}, {
+      1, 0.6666666666666666, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[5, 9], Rational[8, 9]}, {
+      0.8888888888888888, 0.5555555555555556, 0.8888888888888888}], 
+     NCache[{1, Rational[2, 3], 1}, {1, 0.6666666666666666, 1}]]}, {
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 3], 0}, {
+      0.6666666666666666, 0.6666666666666666, 0}], 
+     NCache[{Rational[7, 9], Rational[7, 9], Rational[1, 9]}, {
+      0.7777777777777778, 0.7777777777777778, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 3], Rational[1, 9]}, {
+      0.6666666666666666, 0.6666666666666666, 0.1111111111111111}], 
+     NCache[{Rational[7, 9], Rational[7, 9], Rational[2, 9]}, {
+      0.7777777777777778, 0.7777777777777778, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 3], Rational[2, 9]}, {
+      0.6666666666666666, 0.6666666666666666, 0.2222222222222222}], 
+     NCache[{Rational[7, 9], Rational[7, 9], Rational[1, 3]}, {
+      0.7777777777777778, 0.7777777777777778, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[7, 9], 0}, {
+      0.6666666666666666, 0.7777777777777778, 0}], 
+     NCache[{Rational[7, 9], Rational[8, 9], Rational[1, 9]}, {
+      0.7777777777777778, 0.8888888888888888, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[7, 9], Rational[2, 9]}, {
+      0.6666666666666666, 0.7777777777777778, 0.2222222222222222}], 
+     NCache[{Rational[7, 9], Rational[8, 9], Rational[1, 3]}, {
+      0.7777777777777778, 0.8888888888888888, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[8, 9], 0}, {
+      0.6666666666666666, 0.8888888888888888, 0}], 
+     NCache[{Rational[7, 9], 1, Rational[1, 9]}, {
+      0.7777777777777778, 1, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[8, 9], Rational[1, 9]}, {
+      0.6666666666666666, 0.8888888888888888, 0.1111111111111111}], 
+     NCache[{Rational[7, 9], 1, Rational[2, 9]}, {
+      0.7777777777777778, 1, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[8, 9], Rational[2, 9]}, {
+      0.6666666666666666, 0.8888888888888888, 0.2222222222222222}], 
+     NCache[{Rational[7, 9], 1, Rational[1, 3]}, {
+      0.7777777777777778, 1, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[2, 3], 0}, {
+      0.7777777777777778, 0.6666666666666666, 0}], 
+     NCache[{Rational[8, 9], Rational[7, 9], Rational[1, 9]}, {
+      0.8888888888888888, 0.7777777777777778, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[2, 3], Rational[2, 9]}, {
+      0.7777777777777778, 0.6666666666666666, 0.2222222222222222}], 
+     NCache[{Rational[8, 9], Rational[7, 9], Rational[1, 3]}, {
+      0.8888888888888888, 0.7777777777777778, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[8, 9], 0}, {
+      0.7777777777777778, 0.8888888888888888, 0}], 
+     NCache[{Rational[8, 9], 1, Rational[1, 9]}, {
+      0.8888888888888888, 1, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[8, 9], Rational[2, 9]}, {
+      0.7777777777777778, 0.8888888888888888, 0.2222222222222222}], 
+     NCache[{Rational[8, 9], 1, Rational[1, 3]}, {
+      0.8888888888888888, 1, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 3], 0}, {
+      0.8888888888888888, 0.6666666666666666, 0}], 
+     NCache[{1, Rational[7, 9], Rational[1, 9]}, {
+      1, 0.7777777777777778, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 3], Rational[1, 9]}, {
+      0.8888888888888888, 0.6666666666666666, 0.1111111111111111}], 
+     NCache[{1, Rational[7, 9], Rational[2, 9]}, {
+      1, 0.7777777777777778, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 3], Rational[2, 9]}, {
+      0.8888888888888888, 0.6666666666666666, 0.2222222222222222}], 
+     NCache[{1, Rational[7, 9], Rational[1, 3]}, {
+      1, 0.7777777777777778, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[7, 9], 0}, {
+      0.8888888888888888, 0.7777777777777778, 0}], 
+     NCache[{1, Rational[8, 9], Rational[1, 9]}, {
+      1, 0.8888888888888888, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[7, 9], Rational[2, 9]}, {
+      0.8888888888888888, 0.7777777777777778, 0.2222222222222222}], 
+     NCache[{1, Rational[8, 9], Rational[1, 3]}, {
+      1, 0.8888888888888888, 0.3333333333333333}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[8, 9], 0}, {
+      0.8888888888888888, 0.8888888888888888, 0}], 
+     NCache[{1, 1, Rational[1, 9]}, {1, 1, 0.1111111111111111}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[8, 9], Rational[1, 9]}, {
+      0.8888888888888888, 0.8888888888888888, 0.1111111111111111}], 
+     NCache[{1, 1, Rational[2, 9]}, {1, 1, 0.2222222222222222}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[8, 9], Rational[2, 9]}, {
+      0.8888888888888888, 0.8888888888888888, 0.2222222222222222}], 
+     NCache[{1, 1, Rational[1, 3]}, {1, 1, 0.3333333333333333}]]}, {
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 3], Rational[1, 3]}, {
+      0.6666666666666666, 0.6666666666666666, 0.3333333333333333}], 
+     NCache[{Rational[7, 9], Rational[7, 9], Rational[4, 9]}, {
+      0.7777777777777778, 0.7777777777777778, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 3], Rational[4, 9]}, {
+      0.6666666666666666, 0.6666666666666666, 0.4444444444444444}], 
+     NCache[{Rational[7, 9], Rational[7, 9], Rational[5, 9]}, {
+      0.7777777777777778, 0.7777777777777778, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 3], Rational[5, 9]}, {
+      0.6666666666666666, 0.6666666666666666, 0.5555555555555556}], 
+     NCache[{Rational[7, 9], Rational[7, 9], Rational[2, 3]}, {
+      0.7777777777777778, 0.7777777777777778, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[7, 9], Rational[1, 3]}, {
+      0.6666666666666666, 0.7777777777777778, 0.3333333333333333}], 
+     NCache[{Rational[7, 9], Rational[8, 9], Rational[4, 9]}, {
+      0.7777777777777778, 0.8888888888888888, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[7, 9], Rational[5, 9]}, {
+      0.6666666666666666, 0.7777777777777778, 0.5555555555555556}], 
+     NCache[{Rational[7, 9], Rational[8, 9], Rational[2, 3]}, {
+      0.7777777777777778, 0.8888888888888888, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[8, 9], Rational[1, 3]}, {
+      0.6666666666666666, 0.8888888888888888, 0.3333333333333333}], 
+     NCache[{Rational[7, 9], 1, Rational[4, 9]}, {
+      0.7777777777777778, 1, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[8, 9], Rational[4, 9]}, {
+      0.6666666666666666, 0.8888888888888888, 0.4444444444444444}], 
+     NCache[{Rational[7, 9], 1, Rational[5, 9]}, {
+      0.7777777777777778, 1, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[8, 9], Rational[5, 9]}, {
+      0.6666666666666666, 0.8888888888888888, 0.5555555555555556}], 
+     NCache[{Rational[7, 9], 1, Rational[2, 3]}, {
+      0.7777777777777778, 1, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[2, 3], Rational[1, 3]}, {
+      0.7777777777777778, 0.6666666666666666, 0.3333333333333333}], 
+     NCache[{Rational[8, 9], Rational[7, 9], Rational[4, 9]}, {
+      0.8888888888888888, 0.7777777777777778, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[2, 3], Rational[5, 9]}, {
+      0.7777777777777778, 0.6666666666666666, 0.5555555555555556}], 
+     NCache[{Rational[8, 9], Rational[7, 9], Rational[2, 3]}, {
+      0.8888888888888888, 0.7777777777777778, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[8, 9], Rational[1, 3]}, {
+      0.7777777777777778, 0.8888888888888888, 0.3333333333333333}], 
+     NCache[{Rational[8, 9], 1, Rational[4, 9]}, {
+      0.8888888888888888, 1, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[8, 9], Rational[5, 9]}, {
+      0.7777777777777778, 0.8888888888888888, 0.5555555555555556}], 
+     NCache[{Rational[8, 9], 1, Rational[2, 3]}, {
+      0.8888888888888888, 1, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 3], Rational[1, 3]}, {
+      0.8888888888888888, 0.6666666666666666, 0.3333333333333333}], 
+     NCache[{1, Rational[7, 9], Rational[4, 9]}, {
+      1, 0.7777777777777778, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 3], Rational[4, 9]}, {
+      0.8888888888888888, 0.6666666666666666, 0.4444444444444444}], 
+     NCache[{1, Rational[7, 9], Rational[5, 9]}, {
+      1, 0.7777777777777778, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 3], Rational[5, 9]}, {
+      0.8888888888888888, 0.6666666666666666, 0.5555555555555556}], 
+     NCache[{1, Rational[7, 9], Rational[2, 3]}, {
+      1, 0.7777777777777778, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[7, 9], Rational[1, 3]}, {
+      0.8888888888888888, 0.7777777777777778, 0.3333333333333333}], 
+     NCache[{1, Rational[8, 9], Rational[4, 9]}, {
+      1, 0.8888888888888888, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[7, 9], Rational[5, 9]}, {
+      0.8888888888888888, 0.7777777777777778, 0.5555555555555556}], 
+     NCache[{1, Rational[8, 9], Rational[2, 3]}, {
+      1, 0.8888888888888888, 0.6666666666666666}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[8, 9], Rational[1, 3]}, {
+      0.8888888888888888, 0.8888888888888888, 0.3333333333333333}], 
+     NCache[{1, 1, Rational[4, 9]}, {1, 1, 0.4444444444444444}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[8, 9], Rational[4, 9]}, {
+      0.8888888888888888, 0.8888888888888888, 0.4444444444444444}], 
+     NCache[{1, 1, Rational[5, 9]}, {1, 1, 0.5555555555555556}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[8, 9], Rational[5, 9]}, {
+      0.8888888888888888, 0.8888888888888888, 0.5555555555555556}], 
+     NCache[{1, 1, Rational[2, 3]}, {1, 1, 0.6666666666666666}]]}, {
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 3], Rational[2, 3]}, {
+      0.6666666666666666, 0.6666666666666666, 0.6666666666666666}], 
+     NCache[{Rational[7, 9], Rational[7, 9], Rational[7, 9]}, {
+      0.7777777777777778, 0.7777777777777778, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 3], Rational[7, 9]}, {
+      0.6666666666666666, 0.6666666666666666, 0.7777777777777778}], 
+     NCache[{Rational[7, 9], Rational[7, 9], Rational[8, 9]}, {
+      0.7777777777777778, 0.7777777777777778, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[2, 3], Rational[8, 9]}, {
+      0.6666666666666666, 0.6666666666666666, 0.8888888888888888}], 
+     NCache[{Rational[7, 9], Rational[7, 9], 1}, {
+      0.7777777777777778, 0.7777777777777778, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[7, 9], Rational[2, 3]}, {
+      0.6666666666666666, 0.7777777777777778, 0.6666666666666666}], 
+     NCache[{Rational[7, 9], Rational[8, 9], Rational[7, 9]}, {
+      0.7777777777777778, 0.8888888888888888, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[7, 9], Rational[8, 9]}, {
+      0.6666666666666666, 0.7777777777777778, 0.8888888888888888}], 
+     NCache[{Rational[7, 9], Rational[8, 9], 1}, {
+      0.7777777777777778, 0.8888888888888888, 1}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[8, 9], Rational[2, 3]}, {
+      0.6666666666666666, 0.8888888888888888, 0.6666666666666666}], 
+     NCache[{Rational[7, 9], 1, Rational[7, 9]}, {
+      0.7777777777777778, 1, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[8, 9], Rational[7, 9]}, {
+      0.6666666666666666, 0.8888888888888888, 0.7777777777777778}], 
+     NCache[{Rational[7, 9], 1, Rational[8, 9]}, {
+      0.7777777777777778, 1, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[2, 3], Rational[8, 9], Rational[8, 9]}, {
+      0.6666666666666666, 0.8888888888888888, 0.8888888888888888}], 
+     NCache[{Rational[7, 9], 1, 1}, {0.7777777777777778, 1, 1}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[2, 3], Rational[2, 3]}, {
+      0.7777777777777778, 0.6666666666666666, 0.6666666666666666}], 
+     NCache[{Rational[8, 9], Rational[7, 9], Rational[7, 9]}, {
+      0.8888888888888888, 0.7777777777777778, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[2, 3], Rational[8, 9]}, {
+      0.7777777777777778, 0.6666666666666666, 0.8888888888888888}], 
+     NCache[{Rational[8, 9], Rational[7, 9], 1}, {
+      0.8888888888888888, 0.7777777777777778, 1}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[8, 9], Rational[2, 3]}, {
+      0.7777777777777778, 0.8888888888888888, 0.6666666666666666}], 
+     NCache[{Rational[8, 9], 1, Rational[7, 9]}, {
+      0.8888888888888888, 1, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[7, 9], Rational[8, 9], Rational[8, 9]}, {
+      0.7777777777777778, 0.8888888888888888, 0.8888888888888888}], 
+     NCache[{Rational[8, 9], 1, 1}, {0.8888888888888888, 1, 1}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 3], Rational[2, 3]}, {
+      0.8888888888888888, 0.6666666666666666, 0.6666666666666666}], 
+     NCache[{1, Rational[7, 9], Rational[7, 9]}, {
+      1, 0.7777777777777778, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 3], Rational[7, 9]}, {
+      0.8888888888888888, 0.6666666666666666, 0.7777777777777778}], 
+     NCache[{1, Rational[7, 9], Rational[8, 9]}, {
+      1, 0.7777777777777778, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[2, 3], Rational[8, 9]}, {
+      0.8888888888888888, 0.6666666666666666, 0.8888888888888888}], 
+     NCache[{1, Rational[7, 9], 1}, {1, 0.7777777777777778, 1}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[7, 9], Rational[2, 3]}, {
+      0.8888888888888888, 0.7777777777777778, 0.6666666666666666}], 
+     NCache[{1, Rational[8, 9], Rational[7, 9]}, {
+      1, 0.8888888888888888, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[7, 9], Rational[8, 9]}, {
+      0.8888888888888888, 0.7777777777777778, 0.8888888888888888}], 
+     NCache[{1, Rational[8, 9], 1}, {1, 0.8888888888888888, 1}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[8, 9], Rational[2, 3]}, {
+      0.8888888888888888, 0.8888888888888888, 0.6666666666666666}], 
+     NCache[{1, 1, Rational[7, 9]}, {1, 1, 0.7777777777777778}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[8, 9], Rational[7, 9]}, {
+      0.8888888888888888, 0.8888888888888888, 0.7777777777777778}], 
+     NCache[{1, 1, Rational[8, 9]}, {1, 1, 0.8888888888888888}]], 
+    CuboidBox[
+     NCache[{Rational[8, 9], Rational[8, 9], Rational[8, 9]}, {
+      0.8888888888888888, 0.8888888888888888, 0.8888888888888888}], {1, 1, 
+     1}]}}]], "Output",
+ CellChangeTimes->{3.392568855805811*^9},
+ ImageCache->GraphicsData["CompressedBitmap", "\<\
+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
+zwLiT60PhEiDLq+5UXFRt4WleZ2rIlzgzaHJBvvT4e9y8Q5QrCONrO2xUwf5
+eukvTD+DgBWRrX+KugvulvkpkVz6B9wwVj7R2xu4zq454v3ftj5ZRS1SZRCR
+VRjBW511M95BbjCTuhvr9praIVil4cVuyuJOCkUSyd+xPslF4e06SV7msuok
+l+hbIa3UjGp/Sdmb0SYvXOR3rG6D1DMgtZ1VoKoku/yLgh1qJaFae0iRSikH
+uLcevRcsn2l9b+dEd6z0twfyP3CudCsVQSkGu4jMuwNTgnokvmrdlKZ3rLA5
+iXY+qwgM18ZNnA3B5Le1wUGCZzAXlOIBYp3+EnnMqoc1oOfDIm0o5cbCyl8W
+MKiZzAIGhY82BUN/iTK+xAMSmqHUm7oLeYht+OieNtFal+57UbDIb7SdvjXi
+/61thO6tkn5wVKBQErrrBj+JVr7qJ/WXKO1MNJaq4H0/jckKocxeaYFPNsPb
+e+TWprYUfJSld5211FWPSN1avaWxDpFcYuCkcBSSk1spK1lpa/GytiufItDe
+LMBb2zAQcTuHmSmS/iSyiVoSRmxCFWeEgMS9qfxWQaBIeCV0NxMwHtJ7g//f
+Ekh/30l6WWg7w7SJz4gEXNg3fqqGEgZ/yAdCmghfFYRiyZtZ3FkKx2BV2dsT
+NocEJ1qI8/JaDU1WN/lXgwCU543voKJWI9XuBonMSr2voysJU4HNG+n85jbY
+JB1zALDR+Mh/s3OeduugBcCmSrn+HXfhUyWlXBYeNqQItKC1G53ZJtDpuAyP
++J2sG+FK2j5kd0DadQLTP2WxJjCbSWqmrmduJNQZ5y0VaGZBk0+xoGIf8ruE
+1bz7udMGTFMsSKeIl0Pl6tT7zMKncBwspKjoQk2hKSCp8ac3t3ENgaRWEDlq
+Ni2ItpM7phCRvSxRW9q7TBCpxRqKy2GVCRBOappnLLDyJhcGnO45cTpbEafl
+z67RY5wYz+PDyTYv6wcmpKEmfVTToW/dVkAz/BXjmsJoZcOR+HaV0d60PoBU
+PyadZdSkhMKGF4AYWfOSC7X6v5HdLvbjorhz/Pl4bACpuDuteSbyc4VCFBSm
+XYUbgIrrzpSqylrSe7zW33sJsKm7BCa7E2ipWwaI2JLmJm4ysw0n1YGkuGpb
+ET9hfqVeYQLXN62PZB+Zmpdqf7xD7TPSX3oAWFHURpKu3gZ7hJWI1nLn+Aaw
+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
+XGPooo9JXdFunctEJr1SaGZ1LRfL4LvCwH9cWwalox0Znww/orkoOpr0rXxI
+PS0/HIb0E80qijKK0t9PXiXHKJCAPkk4fqTSR8OQPg1UupnAlotWzSEgF06c
+4F0YEsmDfaBc0OrdTzopd5S/VM1XkEMm4Q/SMnfj87ZhmEFFdC/l1LT1g8MS
+P41Qi45VdcZ2DvAnw5A+C5TbBU1xA4ZEUWhJYpANeAG0+VQYyE+Z+uFOJC+9
+VDahFb6y2Ajn8OawarqfNlGhPEVtt5ZPqop9J6gEKnQ/Y6JimZmyjenA5PkF
+0ONnw8s/b9JDFnqXB81npk2V3TYRrTKGL4UxXNUJ0K9nKmcSE0Xo+nPhsV9w
+yolbERqi3VkOXD/uXwwv+KJJO3FP5LRF8sRl3L8cHvtlkxx2pIFE6Xb+qn4G
+vx5e9RVzBrJsyM9XQZ7lr/rN8KqfM2dF60TCVXeAWL8dHvvz9fVLgBbk+J3w
+sF/Qxuh47AGsk78WHvsXzKnbxpJM+G+Gh/2iOWGpkCWKysj+TnjYXzJHdgco
+9XK48ZfqS3/QC+Pwfzfc+CtOEh/Au38vPOJX47vFCxYzV974D8PXf0174078
+ev/0fxK+/uvw9Z3kWi+HnzxJbvzn4cavxmHtwCPO47B+P3z9N+BLVBV4Et/z
+B+HG34zvoa8fxK//Yfj6b/U/Jsm43TiefxO+95eLhz0ODbCGh/378KWe6baX
+F/5TuNA99/8BwGZnvQ==\
+\>"]]
+}, Open  ]]
+},
+WindowSize->{640, 656},
+WindowMargins->{{12, Automatic}, {Automatic, 24}},
+FrontEndVersion->"6.0 for Mac OS X x86 (32-bit) (April 20, 2007)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[590, 23, 9300, 262, 403, "Input"],
+Cell[9893, 287, 243, 7, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10173, 299, 98, 2, 27, "Input"],
+Cell[10274, 303, 121197, 2262, 406, 100824, 1926, "CachedBoxData", "BoxData", \
+"Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+

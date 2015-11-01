@@ -1,0 +1,222 @@
+* Higher-order programming 
+--------------------------
+
+Unlike Common Lisp (and like scheme), arbitrary expressions can be
+used directly in the first element of an expression to denote a
+function call to the result of that expression. For example,
+((make-adder 2) 3) ; returns 5.
+
+Note that Span is still a lisp-2: if a symbol is in the car of an
+expression, it refers to the lexical function named by that symbol.
+Interestingly enough, this makes it easy to call the global definition
+of a function: ('function arguments...).
+
+Values can also be bound directly to the function namespace by using
+the #'function-name (which is a standard reader macro for (function
+function-name)) syntax in let, let*, lambda, defun or defmethod.
+
+* Dynamically-scoped functions
+------------------------------
+
+Like values, functions can also be dynamically scoped in Span.  Simply
+(declare (special #'function-name)) after the binding expression (let,
+let*, flet, labels, lambda, defun, defgeneric) to bind that value to
+the special definition of the function. Like special variables,
+declaring a function special in any other place where you can place
+declaration will make uses of that function refer to the special
+definition of the function. As before, sending a symbol to funcall or
+apply will refer to the global definition of the function. If the
+closest binding to the function `name' around #'name is a special
+binding, #'name will refer to the dynamic definition of the function
+name; if the closest such binding is a lexical definition, #'name
+refers to that lexical definition. Thus, functions have up to three
+concurrent definitions: global, lexical and special.
+
+* Lambda
+--------
+
+{ var1 var2 ... -> form1 form2 ... }
+
+Defines an anonymous function, and is exactly equivalent to a Common
+Lisp (lamdba (var1 var2...) form1 form2...) form.  Only less verbose.
+Being exactly equivalent, you can also use any Common Lisp keywords,
+such as &rest.  If there are no forms in the body of the function, the
+function evaluates to NIL.
+
+* Currying lambda
+-----------------
+
+{ var1 var2 ...  +> form1 form2 ... }
+
+A form of lambda that can curry values.  That is, when evaluated with
+N arguments, it binds them to the first N required formal arguments,
+and returns a currying function of N fewer arguments.  Once all
+formals have been bound to values, the forms in the body of the
+function are evaluated.
+
+Examples:
+
+        { +> 1}         ; evaluates to a function that returns 1
+        { a +> ... }    ; is equivalent to { a -> ... }
+        { a b +> ... }  ; evaluates to a function that when given one argument
+                        ;  returns { b +> ... } with the variable 'a' bound to 
+                        ;  the argument.
+
+        (({ a b +> b} 1) 2) ; result is 2
+
+Currying only applies to required arguments in the parameter list; if
+there are optional or &rest arguments, they can only be bound on the
+final application of a curried function before it is called.
+
+Examples:
+
+        ({   &optional b +> b})         ; result is nil
+        ({ a &optional b +> b} 1)       ; result is nil
+        ({ a &optional b +> b} 1 2)     ; result is 2
+
+
+* Let expressions
+-----------------
+
+All let expressions have the generic form
+
+{ symbol1 op1 init-form1 declare-expression* [in]
+  symbol2 op2 init-form2 declare-expression* [in]
+  ... declare-expression* [in]
+  body-form1
+  body-form2 
+  ... }
+
+The symbols are bound to the values of their init-forms, evaluated in
+the given order, after which the body forms are evaluated in an
+environment with the symbols bound to the computed values.  The
+optional 'in' keyword controls the scope of the symbol bindings it
+precedes by making them visible to the bindings that follow it.
+Without an 'in' keyword, all the bindings of the same type (having the
+same binding operation op1, op2, ...) are evaluated in parallel (the
+values are evaluated in left-to-right order.)  With an 'in' keyword,
+the init-forms following the 'in' can use the values of the preceding
+symbols.  Note that there is an implicit 'in' inserted between
+bindings every time the binding operator type changes.  If there are
+no body forms and the last operator is a single <-, then the value of 
+the single init-form is returned as the value of the entire form (like
+setf, but unlike psetf). Since the assignments are conceptually executed
+in parallel, returning the value of a particular init-form when there
+are more than one does not seem to make sense.
+
+The binding operators are:
+
+        =       define a new lexically scoped variable.
+        <-      assign to an existing variable.
+        f=      define a new local function.
+        r=      define a new recursive local function.
+
+Sequences of = definitions act similarly to the Common Lisp 'LET*'
+form or 'LET' form, according as every init-form is followed by a 'in'
+keyword or not.
+
+The <- operator assigns the value of the right hand side to the
+existing variable named on the left hand side.  If the named variable
+does not exist in any outer environment, then a new global variable is
+create by that name.
+
+Examples:
+
+        { x = 10 in             ; x = 10
+          y = (+ x 5) in        ; y = 15
+          y }                   ; result is 15
+
+        
+        { x <- 20 }             ; assign a global x = 20
+        { x = 10                ; useless, x not used in the body
+          y = (+ x 5) in        ; y = 25
+          y }                   ; result is 25
+
+        { x <- 20 }             ; assign a global x = 20
+        { x <- 10               ; set global x to 10
+          y = (+ x 5) in        ; y = 15            
+          y }                   ; result is 15
+
+
+        { c = 0 in              ; a new private counter c
+          { ->                  ; just visible to:
+            { c <- (1+ c) }     ; a function incrementing c
+          }
+        }
+
+The f= operator is used to define a new function by binding the symbol
+on the left hand side to a lambda form on its right hand side, either
+using { ... ->/+> ... } or Common Lisp (lambda) notation.  To have an
+arbitrary Common Lisp form on the right hand side, one can use the =
+operator with the left hand side being prefixed by #' to bind to the
+variable in the Common Lisp namespace for functions:
+
+        { #'foo = ...arbitrary common lisp form... in
+          ... something that calls (foo ..) ... }
+
+The scope of a symbol defined using f= does not include the lambda
+form on the right hand side of its definition, so such functions
+cannot be recursive.  To define recursive or mutually recursive
+functions, the r= operator may be used in place of f=.  Mutually
+recursive functions are possible by using a sequence of r= definitions
+without intervening 'in' keywords.
+
+Examples:
+
+        { sum f=
+            { a b -> (+ a b) } in
+          (sum 10 20) }                 ; result is 30
+
+
+        { factorial r= 
+            { n -> 
+              (if (zerop n)
+                  1
+                  (* n (factorial (1- n))))
+            }
+          in (factorial 5)              ; result is 120
+        }
+
+* Green (cooperative) threads
+-----------------------------
+
+To spawn a new thread, either use (spawn nullary-function), or 
+{` function arguments...}.  In order to use threads, you have to 
+spawn the tasks and run (next-task) in a single command at the repl,
+for example, with progn.  Thread switching rate has been mesured at
+~40-45k switch/second on a P-M 1.6 GHz (with SBCL 0.9.15).
+
+Example:
+        
+        { counter r=
+            { tag count -> (if (zerop count)
+                               tag
+                               (progn
+                                 (format t "~A: ~A~%" tag count)
+                                 (counter tag (1- count))))
+            }
+          in {` counter 'a 5}
+             (spawn (lambda () (counter 'b 5))) ; Could use {-> ...}
+             (next-task)
+        }
+
+; Prints
+A: 5
+B: 5
+A: 4
+B: 4
+A: 3
+B: 3
+A: 2
+B: 2
+A: 1
+B: 1
+
+; Result
+B
+
+Arbitrary CL code can be called from within a thread. Call/cc can also
+be used in a thread.  Note that the current scheduler is extremely
+simple-minded. It simply switches at every other call to Span/NLI code
+(and will thus completely disregard time spent in CL code).
+Obviously, this will have to change.

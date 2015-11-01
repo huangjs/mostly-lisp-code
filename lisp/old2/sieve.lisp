@@ -1,0 +1,43 @@
+(defun sieve (max)
+  "compute primes by annoted as 1 in the bit vector from 0 to max-1 (the same to its position in the bit vector).
+Because the output is possibly too large, bind the value of symbol sym with the matrix and output the total number below max."
+  (declare (type fixnum max)
+		   (optimize (speed 3) (debug 1) (safety 0)))
+  (let ((result (make-array max :element-type 'bit :initial-element 1))
+		(sqrt-of-max (1+ (isqrt max)))
+		(count (if (> max 2)
+				   (- max 2)
+				   0)))
+	(declare (type fixnum sqrt-of-max count))
+	(setf (aref result 0) 0)
+	(setf (aref result 1) 0)
+	(dotimes (i sqrt-of-max)
+	  (when (= (aref result i) 1)
+		(loop for j of-type fixnum = (* 2 i) then (+ j i)
+		   until (> j (- max 1))
+		   do (when (= (aref result j) 1)
+				(setf (aref result j) 0)
+				(decf count)))))
+	(values result count)))
+
+(defun take-n-from-head (n vector)
+  (loop with length = (length vector)
+	   with result = '()
+	   with count = 0
+	   for i from 0 to (1- length)
+	   until (>= count n)
+	   do (when (= (aref vector i) 1)
+			(push i result)
+			(incf count))
+	   finally (return (nreverse result))))
+
+(defun take-n-from-tail (n vector)
+  (loop with length = (length vector)
+	 with result = '()
+	 with count = 0
+	 for i from (1- length) downto 0
+	 until (>= count n)
+	 do (when (= (aref vector i) 1)
+		  (push i result)
+		  (incf count))
+	 finally (return result)))

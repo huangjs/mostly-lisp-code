@@ -1,0 +1,149 @@
+(defpackage "KNUTH-MORRIS-PRATT"
+  (:nicknames "KMP")
+  (:use #:CL)
+  (:export #:MAKE-RESTART-VECTOR
+           #:DO-DELIMITED-STREAM
+           #:STREAM-SEARCH))
+
+(in-package #:KMP)
+
+(defmacro once-only ((&rest names) &body body)
+  ;; from Practical Common Lisp, http://gigamonkeys.com/book/
+  (let ((gensyms (loop for n in names collect (gensym))))
+    `(let (,@(loop for g in gensyms and n in names
+				collect `(,g (gensym ,(format nil "~S-" n)))))
+       `(let (,,@(loop for g in gensyms for n in names collect ``(,,g ,,n)))
+          ,(let (,@(loop for n in names for g in gensyms collect `(,n ,g)))
+                ,@body)))))
+
+;;;; Search in streams
+(defun make-restart-vector (pattern &optional (predicate #'eql) key)
+  "Returns restart vector for non-empty sequence PATTERN,
+suitable for string matching functions like Knuth-Morris-Pratt.
+Elements of PATTERN are compared with PREDICATE, a binary test
+function.
+
+The argument to the KEY function are the elements of PATTERN.
+The return value of the KEY function becomes an argument to
+PREDICATE.  If KEY is not supplied or NIL, the element itself is
+used.  There is no guarantee on the number of times the KEY will
+be called.
+
+Runs in O(M) time and space, with M being (length PATTERN)."
+  (check-type pattern sequence "a sequence")
+  (setf pattern (coerce pattern 'vector)
+        key (or key #'identity))
+  (let ((rv (make-sequence 'vector (length pattern))))
+    (prog1 rv
+      (symbol-macrolet ((cur-idx (aref rv i)))
+        (loop initially (setf (aref rv 0) -1)
+		   for i from 1 below (length pattern) do
+		   (setf cur-idx (1+ (aref rv (1- i))))
+		   (loop
+			  while (and (plusp cur-idx)
+						 (not (funcall predicate
+									   (funcall key (aref pattern (1- i)))
+									   (funcall key (aref pattern (1- cur-idx))))))
+			  do (setf cur-idx (1+ (aref rv (1- cur-idx))))))))))
+
+(defmacro do-delimited-stream
+    (((var expected form &optional result)
+      delimiter
+      &key predicate key restart-vector)
+     &body body)
+  "Searches non-empty sequence DELIMITER in the stream generated
+by FORM returning elements, and returns the value of the RESULT
+form if found.  The element from DELIMITER currently to be
+matched is bound to EXPECTED, then the result of FORM is bound to
+VAR, then BODY is executed.  It is permitted to rebind VAR in
+BODY, but not EXPECTED.  The binding of EXPECTED is visible both
+for FORM and BODY.  The whole DO-DELIMITED-STREAM form
+constitutes an implicit TAGBODY.  An implicit BLOCK named NIL is
+surrounding the whole form.
+
+When the end of the BODY forms is reached, the values of VAR and
+EXPECTED are compared with PREDICATE, a binary test function.
+
+The argument to the KEY function are the stream elements. The
+return value of the KEY function becomes an argument to
+PREDICATE.  If KEY is not supplied or NIL, the element itself is
+used.  There is no guarantee on the number of times the KEY will
+be called.
+
+If DELIMITER is not matched fully, a new iteration starts (with
+evaluating FORM and binding the result to VAR).
+
+If RESTART-VECTOR is not supplied or NIL, it is computed from
+DELIMITER.
+
+It is guaranteed that the search does not backtrack on the stream
+elements \(cf. Knuth-Morris-Pratt string search).  If
+RESTART-VECTOR is supplied, the function runs in O(N) time and
+constant space, with N being the length of the stream prefix
+examined."
+  (check-type var (and symbol (not null)) "a variable")
+  (check-type expected symbol "a variable")
+  (let ((expected-supplied-p t))
+    (setf expected (or expected (prog1 (gensym "EXPECTED-")
+                                  (setf expected-supplied-p nil))))
+    (once-only (delimiter predicate key)
+      (when (null restart-vector)
+        (setf restart-vector `(make-restart-vector ,delimiter ,predicate ,key)))
+      (once-only (restart-vector)
+        (let (($j (gensym "J-"))
+              ($outer-loop (gensym "LOOP-")))
+          `(prog ((,$j 0) ,var ,expected)
+              (check-type ,delimiter sequence "a sequence")
+              (setf ,delimiter (coerce ,delimiter 'vector)
+                    ,predicate (or ,predicate #'eql)
+                    ,key (or ,key #'identity))
+              ,$outer-loop
+              (setf ,expected (funcall ,key (aref ,delimiter ,$j))
+                    ,var ,form)
+              ,@body
+              (loop named ,(gensym) do
+				   (cond ((funcall ,predicate
+								   (funcall ,key (aref ,delimiter ,$j))
+								   (funcall ,key ,var))
+						  (incf ,$j)
+						  (if (< ,$j (length ,restart-vector))
+							  (go ,$outer-loop)
+							  (return ,result)))
+						 ((zerop ,$j) (go ,$outer-loop))
+						 (t
+						  (setf ,$j (aref ,restart-vector ,$j)))))
+              (go ,$outer-loop)))))))
+
+(defun stream-search (pattern generator &key (predicate #'eql)
+                      key restart-vector)
+  "Searches non-empty sequence PATTERN in a stream generated by
+GENERATOR returning elements, and returns T if found.  Elements
+of PATTERN and the generated stream are compared with PREDICATE,
+a binary test function.  If RESTART-VECTOR is not supplied or
+NIL, it is computed from PATTERN.
+
+It is guaranteed that the search does not backtrack on the stream
+elements \(cf. Knuth-Morris-Pratt string search).  
+
+If RESTART-VECTOR is supplied, the function runs in O(N) time and
+constant space, with N being the length of the stream prefix
+examined."
+  (do-delimited-stream
+      ((token expected (funcall generator expected) t)
+       pattern :restart-vector restart-vector
+       :predicate predicate :key key)))
+
+
+#||
+(with-input-from-string (s "12345AaAaB67890")
+  (let ((ts (make-array 10 :element-type 'character
+                        :adjustable t :fill-pointer 0)))
+    (do-delimited-stream
+        ((token expected (read-char s)
+                (multiple-value-call #'values ts (read-line s nil)))
+         "AAB" ; restart-vector generated automatically
+         :predicate #'char-equal)
+      (vector-push-extend token ts)
+      (format *trace-output* "~&Expected ~A, got ~A" expected token))))
+==> "12345AaAaB", "67890", T
+||#

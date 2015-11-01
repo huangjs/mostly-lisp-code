@@ -1,0 +1,873 @@
+<html>
+<head>
+<title>Sudoku prototype</title>
+<style>
+  
+</style>
+<script language='Javascript'>
+<!--
+VictoryFn = function () {
+               alert('You rulz0rz');
+               document.getElementById('possibles').innerHTML = 'Foobarness!';
+            };
+
+Wonp = false; //Change when already won, so don't get flooded with victories.
+
+NormalPointerColour = '#FFFFFF';
+ErrorPointerColour = '#FF8080';
+
+PointerColour = NormalPointerColour;
+
+DefaultColour = '#E0E0E0';
+
+PossColours = Array('#FF0000',
+                    '#00FF00',
+                    '#5050FF',
+                    '#5858DD',
+                    '#6060BB',
+                    '#686899',
+                    '#707077',
+                    '#787855',
+                    '#808033',
+                    '#888811');
+
+Board = [[00, -5, 00, 00, -6, 00, 00, 00, -1], //.i, .j -> cursor position
+         [00, 00, -4, -8, 00, 00, 00, -7, 00],
+         [-8, 00, 00, 00, 00, 00, 00, -5, -2],
+         [-2, 00, 00, 00, -5, -7, 00, -3, 00],
+         [00, 00, 00, 00, 00, 00, 00, 00, 00],
+         [00, -3, 00, -6, -9, 00, 00, 00, -5],
+         [-7, -9, 00, 00, 00, 00, 00, 00, -8],
+         [00, -1, 00, 00, 00, -6, -5, 00, 00],
+         [-5, 00, 00, 00, -3, 00, 00, -6, 00]];
+
+//Board = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+//         [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//         [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//         [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//         [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//         [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//         [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//         [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//         [0, 0, 0, 0, 0, 0, 0, 0, 0]];
+
+PrevBoards = Array();
+
+UndoPosition = 0;
+
+Possibles = Array(); //2d array of array of possibilities
+
+function CopyBoard (oldBoard)
+{
+  var newBoard = Array();
+  for (var i = 0; i < 9; i++) {
+    var row = Array();
+    for (var j = 0; j < 9; j++) {
+      row.push(oldBoard[i][j]);
+    }
+    newBoard.push(row);
+  }
+
+  newBoard.i = oldBoard.i;
+  newBoard.j = oldBoard.j;
+
+  return newBoard;
+}
+
+function block_event(evt)
+{
+   if (evt != null) {
+     if (evt.stopPropagation) {
+       evt.stopPropagation();
+     } else if (evt.cancelBubble != null) {
+       evt.cancelBubble = true;
+     }
+
+     if (evt.preventDefault) {
+       evt.preventDefault();
+     } else {
+       evt.returnValue = false;
+     }
+   }
+
+   return false;
+}
+
+function PushBoard (board)
+{
+  if (UndoPosition < PrevBoards.length)
+    PrevBoards = PrevBoards.slice(0, UndoPosition);
+
+  PrevBoards.push(CopyBoard(board));
+  UndoPosition = PrevBoards.length;
+}
+
+function SaveBoard (evt)
+{
+  PushBoard(Board);
+
+  return block_event(evt);
+}
+
+function RestoreBoard (newBoard)
+{
+  if (Board.i != null)
+    lose_focus();
+
+  Board = CopyBoard(newBoard);
+  for (var i = 0; i < 9; i++) { //redraw board and reset possibles
+    for (var j = 0; j < 9; j++) {
+      Possibles[i][j] = Array(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    }
+  }
+
+  prop_board();
+  setup_board();
+  if (Board.i != null)
+    get_focus(Board.i, Board.j);
+
+  Wonp = false;
+  set_pointer_colour();
+}
+
+function Reset (evt)
+{
+  PrevBoards = PrevBoards.slice(0, 1);
+  UndoPosition = 1;
+  RestoreBoard(PrevBoards[0]);
+
+  if (Board.i != null)
+    lose_focus();
+
+  set_pointer_colour();
+  return block_event(evt);
+}
+
+function Undo (evt)
+{
+  if (UndoPosition > 1) {
+    RestoreBoard(PrevBoards[UndoPosition - 2]);
+    UndoPosition--;
+  }
+  
+  set_pointer_colour();
+  return block_event(evt);
+}
+
+function Redo (evt)
+{
+  if (UndoPosition < PrevBoards.length) {
+    RestoreBoard(PrevBoards[UndoPosition++]);
+  }
+
+  set_pointer_colour();
+  return block_event(evt);
+}
+
+function Sweep (evt)
+{
+  function write_cell (i, j) //copy-paste programming at its best!
+  {
+    if (Board[i][j] == 0 &&    //unset
+        Possibles[i][j].length == 1) {
+      var val = Possibles[i][j][0];
+      Board[i][j] = val;
+      var node = document.getElementById('C'+i+j);
+      if (node != null) {
+        node.innerHTML = val;
+        colour_cell(i, j);
+      }
+    }
+  }
+
+//  prop_board();
+
+  for (var i = 0; i < 9; i++) {
+    for (var j = 0; j < 9; j++) {
+      write_cell(i, j);
+    }
+  }
+
+  maybeVictory();
+  set_pointer_colour();
+
+  return block_event(evt);
+}
+
+function checkColours (evt)
+{
+  colour_board();
+  return evt; //go on.
+}
+
+function checkPossibles (evt)
+{
+  if (document.getElementById('poss-p').checked) {
+    document.getElementById('possibles').style.display = '';
+  } else {
+    document.getElementById('possibles').style.display = 'none';
+  }
+
+  return evt;
+}
+
+function maybeVictory ()
+{
+   function wonp () {
+     for (var i = 0; i < 9; i++) {
+       for (var j = 0; j < 9; j ++) {
+         var cur = Board[i][j];
+         if (cur >= 0 &&
+             -1 == find(Possibles[i][j], cur)) {
+           return false;
+         }
+       }
+     }
+
+     return true;
+   }
+
+   if (wonp()) {
+      if (!Wonp) {
+        Wonp = true;
+        VictoryFn();
+      }
+   } else {
+        Wonp = false;
+   }
+}
+
+function remove(array, val)
+{
+  var ret = Array();
+
+  for (var i = 0; i < array.length; i++) {
+    if (array[i] != val)
+      ret.push(array[i]);
+  }
+
+  return ret;
+}
+
+function prop_cell(i, j, val)
+{
+  function make_todo (i, j, val)
+  {
+    var obj = Object();
+    obj.i = i; obj.j = j; obj.val = val;
+    return obj;
+  }
+
+  function write_cell (i, j)
+  {
+    if (document.getElementById('autoset') &&
+        document.getElementById('autoset').checked &&
+        Board[i][j] >= 0) { // not a hint
+      var val = Possibles[i][j][0];
+      Board[i][j] = val;
+      var node = document.getElementById('C'+i+j);
+      if (node != null) {
+        node.innerHTML = val;
+        colour_cell(i, j);
+      }
+    }
+  }
+
+  var todo = Array();
+
+  todo.push(make_todo(i, j, val));
+
+  while (todo.length > 0) {
+    var cell = todo.pop();
+    var i = cell.i; var j = cell.j; 
+    var val = cell.val;
+
+    for (var jj = 0; jj < 9; jj++) {
+      if (j != jj) {
+        var oldLength = Possibles[i][jj].length;
+        Possibles[i][jj] = remove(Possibles[i][jj], val);
+        if (Possibles[i][jj].length == 1 &&
+            oldLength > 1 &&
+            Board[i][jj] == 0) {
+          todo.push(make_todo(i, jj, Possibles[i][jj][0]));
+          write_cell(i, jj);
+        }
+      }
+    }
+
+    for (var ii = 0; ii < 9; ii++) {
+      if (i != ii) {
+        var oldLength = Possibles[ii][j].length;
+        Possibles[ii][j] = remove(Possibles[ii][j], val);
+        if (Possibles[ii][j].length == 1 &&
+            oldLength > 1 &&
+            Board[ii][j] == 0) {
+          todo.push(make_todo(ii, j, Possibles[ii][j][0]));
+          write_cell(ii, j);
+        }
+      }
+    }
+
+    for (var ii = Math.floor(i/3)*3; ii < Math.floor(i/3)*3+3; ii++) {
+      for (var jj = Math.floor(j/3)*3; jj < Math.floor(j/3)*3+3; jj++) {
+        if (i != ii || j != jj) {
+          var oldLength = Possibles[ii][jj].length;
+          Possibles[ii][jj] = remove(Possibles[ii][jj], val);
+          if (Possibles[ii][jj].length == 1 &&
+              oldLength > 1 &&
+              Board[ii][jj] == 0) {
+            todo.push(make_todo(ii, jj, Possibles[ii][jj][0]));
+            write_cell(ii, jj);
+          }
+        }
+      } 
+    }
+  }
+}
+
+function find(array, val)
+{
+  for (var i = 0; i < array.length; i++) {
+    if (val == array[i])
+      return i;
+  }
+
+  return -1;
+}
+
+function add(array, val)
+{
+  if (find(array, val) > -1)
+    return array;
+
+  array.push(val);
+  return array;
+}
+
+function prop_board()
+{
+  for (var i = 0; i < 9; i++) {
+    for (var j = 0; j < 9; j++) {
+      if (Board[i][j] != 0) {
+        prop_cell(i, j, Math.abs(Board[i][j]));
+      }
+    }
+  }
+}
+
+function setup_possibles()
+{
+  Possibles = Array();
+
+  for (var i = 0; i < 9; i++) {
+    var row = Array();
+    for (var j = 0; j < 9; j++) {
+      var poss = Array();
+      for (var k = 1; k < 10; k++) {
+        poss.push(k);
+      }
+      row.push(poss);
+    }
+    Possibles.push(row);
+  }
+  
+  prop_board();
+}
+
+function unset_cell(i, j)
+{
+  Board[i][j] = 0;
+  SaveBoard(null);
+  setup_possibles();
+}
+
+function set_cell(i, j, val)
+{
+  if (val != Board[i][j]) {
+    if (Board[i][j] != 0)
+      unset_cell(i, j);
+
+    Board[i][j] = val;
+    SaveBoard(null);
+    prop_cell(i, j, val);
+ 
+    maybeVictory();
+  }
+}
+
+function set_hint(i, j, val)
+{
+  Board[i][j] = -val;
+  prop_cell(i, j, val);
+}
+
+function get_cell_colour(i, j)
+{
+  var cur = Math.abs(Board[i][j]);
+
+  if (!document.getElementById('colours').checked) {
+    if (0 == Possibles[i][j].length ||
+        (0 != cur &&
+         -1 == find(Possibles[i][j], cur))) {
+      return PossColours[0];
+    }
+
+    return DefaultColour;
+  }
+
+  if (0 != cur) {
+    if (-1 == find(Possibles[i][j], cur)) {
+      return PossColours[0];
+    } else {
+      return PossColours[1];
+    }
+  } else {
+    return PossColours[Possibles[i][j].length];
+  }
+}
+
+function colour_cell (i, j)
+{
+  var cell = 'C' + i+j;
+  document.getElementById(cell)
+          .style.backgroundColor = get_cell_colour(i, j);
+}
+
+function colour_board()
+{
+  for (var i = 0; i < 9; i++) {
+    for (var j = 0; j < 9; j++) {
+      colour_cell(i, j);
+    }
+  }
+}
+
+function set_possibles()
+{
+  var div = document.getElementById('possibles');
+  if (Board.i != null)
+    if (Board[Board.i][Board.j] >= 0) { 
+      div.innerHTML = 'Possibles: ' 
+                      + Possibles[Board.i][Board.j];
+    } else {
+      div.innerHTML = 'Hint.';
+    }
+}
+
+function set_pointer_colour ()
+{
+  PointerColour = NormalPointerColour;
+
+  for (var i = 0; i < 9; i++) {
+    for (var j = 0; j < 9; j++) {
+      var cur = Math.abs(Board[i][j]);
+
+      if  (0 == Possibles[i][j].length ||
+            ( 0 != cur &&
+              -1 == find(Possibles[i][j], cur))) {
+         PointerColour = ErrorPointerColour;
+         return;
+      } 
+    }
+  }
+}
+
+function update_board()
+{
+  colour_board();
+
+  set_pointer_colour();
+
+  var node = document.getElementById
+               ('C' + Board.i + Board.j);
+
+  node.style.backgroundColor = PointerColour;
+
+  set_possibles();
+}
+
+setup_possibles();
+
+function add_event_listener(obj, event, handler)
+{
+  if (obj.addEventListener) {
+    obj.addEventListener(event, handler, false);
+  } else if (obj.attachEvent) {
+    obj.attachEvent('on'+event, handler);
+  } else {
+    alert ("Couldn't attach event!");
+  }
+}
+
+function setup_page()
+{
+  SaveBoard(null); //save original position
+  prop_board();
+  setup_board();
+}
+
+function setup_board()
+{
+  var str = "<table style='background-color: #000000;'><tbody>\n";
+
+  for (var i = 0; i < 9; i++) {
+    str += "  <tr id='L" + i +"'>\n";
+    for (var j = 0; j < 9; j++) {
+      str += "   <td id='C" + i+j + "'"
+                  + " style ='"
+		  + " background-color: " 
+                    + get_cell_colour(i, j) + ";"
+	          + " text-align: center;"
+                  + " vertical-align: middle;"
+	          + " width: 4em;"
+	          + " height: 4em;"
+                  + "'>";
+      if (Board[i][j] < 0) {
+        str += "<b>" + (-Board[i][j]) + "</b>";
+      } else if (Board[i][j] > 0) {
+        str += Board[i][j];
+      } else {
+        str += '&nbsp;';
+      }
+      str += "</div></td>\n";
+
+      if (2 == j || 5 == j) {
+        str += "   <td style='width:0.1em; padding:0em;'></td>\n";
+      }
+    }
+    str += "  </tr>\n";
+
+    if ( 2 == i || 5 == i) {
+      str += "  <tr><td style='height:0.1em; padding:0em;'></td></tr>\n";
+    }
+  }
+
+  str += "</tbody></table>\n";
+  document.getElementById('board').innerHTML = str;
+
+  setTimeout(setup_board2, 100); //let the browser render it first  
+}
+
+function setup_board2()
+{
+  for (var i = 0; i < 9; i++) {
+    for (var j = 0; j < 9; j++) {
+      add_event_listener(document.getElementById('C'+i+j),
+		         'click', make_get_focus(i, j));
+    }
+  }
+}
+
+function no_focus(evt)
+{
+  if (!evt.cancelled && Board.i != null)
+    lose_focus();
+
+  return false;
+}
+
+function make_get_focus (i, j)
+{
+  return function (evt) { 
+           get_focus(i, j); 
+	   block_event(evt);
+           return false;
+         };
+}
+
+function get_focus (i, j)
+{
+  var cell = 'C' + i + j;
+ 
+  if (Board.i != null)
+     lose_focus();
+
+  var node = document.getElementById(cell);
+  last_bg = node.style.backgroundColor;
+  node.style.backgroundColor = PointerColour;
+
+  Board.i = i;
+  Board.j = j;
+
+  if (UndoPosition > 0) {
+    PrevBoards[UndoPosition -1].i = i;
+    PrevBoards[UndoPosition -1].j = j;
+  }
+
+  set_possibles();
+}
+
+function lose_focus ()
+{
+  var cell = 'C' + Board.i + Board.j;
+  var node = document.getElementById(cell);
+  colour_cell(Board.i, Board.j);
+  Board.i = null;
+  Board.j = null;
+}
+
+function key_event(evt)
+{
+  if (evt.ctrlKey || evt.altKey || evt.metaKey)
+    return true;
+
+  var keycode = null;
+  var backward = evt.shiftKey;
+
+  if (evt.which)
+    keycode = evt.which;
+
+  if (evt.keyCode)
+    keycode = evt.keyCode;
+
+  if (keycode) {
+    switch(keycode) {
+      case 9: //tab
+      case 81: //Q
+      case 113: //q
+        if (Board.i != null) {
+	   var i = Board.i;
+           var j = Board.j;
+           if (backward) {
+             if (--j < 0) {
+               j = 8;
+               if (--i < 0)
+                 i = 8;
+             }
+           } else {
+             if (++j > 8) {
+               j = 0;
+               i = (i + 1) % 9;
+             }
+           }
+           get_focus(i, j);
+        } else {
+          if (backward) {
+            get_focus(8, 8);
+          } else { get_focus(0, 0); }
+        }
+        block_event(evt);
+        break;
+
+      case 39: //right arrow
+      case 68: //D, d
+      case 100:
+        if (Board.i != null) {
+           var j = (Board.j + 1) % 9;
+           get_focus(Board.i, j);
+        } else {
+          get_focus(0, 0);
+        }
+        block_event(evt);
+        break;
+
+      case 37: //left arrow
+      case 65: //A, a
+      case 97: 
+        if (Board.i != null) {
+          var j = Board.j - 1;
+          if (j < 0)
+            j = 8;
+      
+          get_focus(Board.i, j);
+        } else {
+          get_focus(8, 8);
+        }
+        block_event(evt);
+        break;
+      case 38: //up arrow  
+      case 87: //W, w
+      case 119: 
+        if (Board.i != null) {
+          var i = Board.i - 1;
+          if (i < 0) 
+	    i = 8;
+
+          get_focus(i, Board.j);
+        } else {
+          get_focus(8,8);
+        }
+        block_event(evt);
+        break;
+      case 40: //down arrow
+      case 83: //S, s
+      case 115:
+        if (Board.i != null) {
+          var i = (Board.i + 1) % 9;
+
+          get_focus(i, Board.j);
+        } else {
+          get_focus(0,0);
+        }
+        block_event(evt);
+        break;
+      case 8:  //bs
+      case 46: //del
+      case 48: //0
+      case 69: //E, e
+      case 101:
+        if (Board.i != null) {
+	  if (0 <= Board[Board.i][Board.j]) {
+  	    var cell = 'C' + Board.i + Board.j;
+	    document.getElementById(cell).innerHTML = '';
+            unset_cell(Board.i, Board.j);
+            update_board();
+	  }
+          block_event(evt);
+	}
+        break;
+      case 49: //1
+        if (Board.i != null) {
+          if (0 <= Board[Board.i][Board.j]) {
+	    var cell = 'C' + Board.i + Board.j;
+	    document.getElementById(cell).innerHTML = '1';
+            set_cell(Board.i, Board.j, 1);
+            update_board();
+          }
+          block_event(evt);
+	}
+        break;
+      case 50: //2
+        if (Board.i != null) {
+          if (0 <= Board[Board.i][Board.j]) {
+	    var cell = 'C' + Board.i + Board.j;
+	    document.getElementById(cell).innerHTML = '2';
+            set_cell(Board.i, Board.j, 2);
+            update_board();
+          }
+          block_event(evt);
+	}
+        break;
+      case 51: //3
+        if (Board.i != null) {
+          if (0 <= Board[Board.i][Board.j]) {
+	    var cell = 'C' + Board.i + Board.j;
+	    document.getElementById(cell).innerHTML = '3';
+            set_cell(Board.i, Board.j, 3);
+            update_board();
+          }
+          block_event(evt);
+	}
+        break;
+      case 52: //4
+        if (Board.i != null) {
+          if (0 <= Board[Board.i][Board.j]) {
+	    var cell = 'C' + Board.i + Board.j;
+	    document.getElementById(cell).innerHTML = '4';
+            set_cell(Board.i, Board.j, 4);
+            update_board();
+          }
+          block_event(evt);
+	}
+        break;
+      case 53: //5
+        if (Board.i != null) {
+          if (0 <= Board[Board.i][Board.j]) {
+	    var cell = 'C' + Board.i + Board.j;
+  	    document.getElementById(cell).innerHTML = '5';
+            set_cell(Board.i, Board.j, 5);
+            update_board();
+          }
+          block_event(evt);
+	}
+        break;
+      case 54: //6
+        if (Board.i != null) {
+          if (0 <= Board[Board.i][Board.j]) {
+	    var cell = 'C' + Board.i + Board.j;
+	    document.getElementById(cell).innerHTML = '6';
+            set_cell(Board.i, Board.j, 6);
+            update_board();
+          }
+          block_event(evt);
+	}
+        break;
+      case 55: //7
+        if (Board.i != null) {
+          if (0 <= Board[Board.i][Board.j]) {
+	    var cell = 'C' + Board.i + Board.j;
+	    document.getElementById(cell).innerHTML = '7';
+            set_cell(Board.i, Board.j, 7);
+            update_board();
+          }
+          block_event(evt);
+	}
+        break;
+      case 56: //8
+        if (Board.i != null) {
+          if (0 <= Board[Board.i][Board.j]) {
+	    var cell = 'C' + Board.i + Board.j;
+	    document.getElementById(cell).innerHTML = '8';
+            set_cell(Board.i, Board.j, 8);
+            update_board();
+          }
+          block_event(evt);
+	}
+        break;
+      case 57: //9
+        if (Board.i != null) {
+          if (0 <= Board[Board.i][Board.j]) {
+	    var cell = 'C' + Board.i + Board.j;
+	    document.getElementById(cell).innerHTML = '9';
+            set_cell(Board.i, Board.j, 9);
+            update_board();
+          }
+          block_event(evt);
+	}
+        break;
+      default:
+//        alert(keycode);
+        break;
+    }
+  }
+
+  return false;
+}
+
+window.onload = setup_page;
+-->
+</script>
+
+</head>
+<body>
+  <div id='board'></div>
+  <div id='possibles'>Click on the board to start playing.</div>
+  <input type='button' id='Undo' value='Undo!'> &nbsp;
+  <input type='button' id='Redo' value='Redo'>  &nbsp;
+  <input type='button' id='Sweep' value='Sweep'> &nbsp;
+  <input type='button' id='Reset' value='Reset'> &nbsp; <br>
+  Autoset: <input type='checkbox' id='autoset' value=''>
+  Colours: <input type='checkbox' id='colours' value=''>
+  Possibles: <input type='checkbox' id='poss-p' value=''> <br>
+
+<a href='http://yahoo.com'>foobar</a>
+
+<script language='Javascript'> <!--
+//use setup_page() if must be single header.
+  add_event_listener(document, 'keypress', key_event);
+
+  add_event_listener(document.getElementById('board'), 
+                     'click', no_focus);
+
+  add_event_listener(document.getElementById('Undo'),
+                     'click', Undo);
+
+  add_event_listener(document.getElementById('Redo'),
+                     'click', Redo);
+
+  add_event_listener(document.getElementById('Reset'),
+                     'click', Reset);
+
+  add_event_listener(document.getElementById('Sweep'),
+                     'click', Sweep);
+
+  add_event_listener(document.getElementById('colours'),
+                     'click', checkColours);
+
+  add_event_listener(document.getElementById('poss-p'),
+                     'click', checkPossibles);
+  document.getElementById('poss-p').checked = true;
+-->
+</script>
+</body>
+</html>

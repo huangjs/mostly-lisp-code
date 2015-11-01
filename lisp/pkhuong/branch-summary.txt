@@ -1,0 +1,160 @@
+UHASH: no if chain
+DHASH: yes if chain
+
+UBASE: predictable polymorphism
+DBASE: monomorphic call site
+
+UDIRECT: indirect calls
+DDIRECT: direct calls (when possible)
+
+
+Combinations
+-------------
+branch-UHASH-UBASE-UDIRECT
+
+What we want to fix. Single
+polymorphic call site, with
+predictable targets.
+
+branch-UHASH-UBASE-DDIRECT
+
+Same as above. Can't have a
+direct call to an unknown
+target.
+
+branch-UHASH-DBASE-UDIRECT
+
+Best case for normal indirect
+call. Monomorphic.
+
+branch-UHASH-DBASE-DDIRECT ** BASELINE
+
+Best case scenario, w/ ideal
+program and full analysis.
+Monomorphic call site, with
+direct call.
+
+branch-DHASH-UBASE-UDIRECT
+
+Where we expect the proposal
+to shine. If chain -> indirect
+call, w/ predictable targets.
+
+branch-DHASH-UBASE-DDIRECT
+
+What we would/should do with
+enough analysis to determine
+a reasonable set of targets.
+~PIC w/o any fallback.
+
+branch-DHASH-DBASE-UDIRECT
+
+Where we pay for the overhead
+on our proposal. Obviously,
+for a single target, we can't
+beat the naive indirect call
+by adding a chain of ifs,
+no matter how well predicted.
+
+branch-DHASH-DBASE-DDIRECT
+
+Let's see what happens when
+we're a bit overly conservative
+in our target analysis.
+(We have an if chain for
+a known set of targets, but
+the call site is actually
+monomorphic)
+
+
+[Configuration]
+[~avg user time] -- [delta from best case]
+
+P4 3.0 GHz HT, loaded
+----------------------
+branch-UHASH-UBASE-UDIRECT
+34s -- 23s                
+
+branch-UHASH-UBASE-DDIRECT
+33s -- 22s
+
+branch-UHASH-DBASE-UDIRECT
+18s --  7s
+
+branch-UHASH-DBASE-DDIRECT
+11s -- BASE LINE
+
+branch-DHASH-UBASE-UDIRECT
+21s -- 10s
+
+branch-DHASH-UBASE-DDIRECT
+16s --  5s
+
+branch-DHASH-DBASE-UDIRECT
+20s --  9s
+
+branch-DHASH-DBASE-DDIRECT
+16s --  5s
+
+Analysis:
+
+There was a lot of jitter, but
+w/ 10 runs, the ~average should
+be decently accurate.
+
+There's a constant cost for
+indirect calls VS direct ones.
+The proposal fares well, paying
+a small penalty for the monomorphic
+case, but winning big in the
+polymorphic case. Still, it seems
+that well-predicted conditionals
+are sensibly cheaper than well-
+predicted indirects.
+
+
+
+Opteron (Quad O248?), v. stable
+---------------------------
+branch-UHASH-UBASE-UDIRECT
+24.36s -- 16.61s
+
+branch-UHASH-UBASE-DDIRECT
+24.36s -- 16.61s
+
+branch-UHASH-DBASE-UDIRECT
+ 7.75s --  0.00s
+
+branch-UHASH-DBASE-DDIRECT
+ 7.75s -- BASE LINE
+
+branch-DHASH-UBASE-UDIRECT
+21.04 --  13.29s
+14.40 --   6.65s [aligned]
+
+branch-DHASH-UBASE-DDIRECT
+14.40 --   6.65s
+
+branch-DHASH-DBASE-UDIRECT
+14.50 --   6.75s
+15.50 --   7.75s [aligned]
+
+branch-DHASH-DBASE-DDIRECT
+13.29 --   5.54s
+
+Analysis
+
+Weird results. Most results
+indicate that monomorphic 
+indirect calls are nearly free...
+Except for the proposed dispatch
+on predictable polymorphic. Is
+the demand for more complex prediction
+on the conditional stealing state
+from the indirects' prediction??
+Clearly, the O has no problem
+predicting the conditionals
+by themselves, or a monomorphic
+indirect by itself. 
+This problem disappears once we
+align the call sites to 16 bytes.

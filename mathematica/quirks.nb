@@ -1,0 +1,188 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 6.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[      4875,        179]
+NotebookOptionsPosition[      3971,        142]
+NotebookOutlinePosition[      4384,        160]
+CellTagsIndexPosition[      4341,        157]
+WindowFrame->Normal
+ContainsDynamic->False*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"Clear", "[", "f", "]"}]], "Input",
+ CellChangeTimes->{{3.392785235983189*^9, 3.3927852400515823`*^9}, {
+   3.3927923240220003`*^9, 3.392792326131407*^9}, {3.392877195416706*^9, 
+   3.392877196342252*^9}, 3.393054710457432*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"f", "[", "x_", "]"}], ":=", 
+  RowBox[{"Log", "[", 
+   RowBox[{"1", "+", 
+    RowBox[{
+     RowBox[{"Exp", "[", 
+      RowBox[{"-", "x"}], "]"}], "/", 
+     RowBox[{"Sqrt", "[", "x", "]"}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.392877197316581*^9, 3.392877219402009*^9}, 
+   3.3928773631980743`*^9, 3.393054710457835*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"f", "[", "x", "]"}]], "Input",
+ CellChangeTimes->{{3.392877224147451*^9, 3.3928772246470633`*^9}, 
+   3.3930547104581203`*^9}],
+
+Cell[BoxData[
+ RowBox[{"Log", "[", 
+  RowBox[{"1", "+", 
+   FractionBox[
+    SuperscriptBox["\[ExponentialE]", 
+     RowBox[{"-", "x"}]], 
+    SqrtBox["x"]]}], "]"}]], "Output",
+ GeneratedCell->False,
+ CellAutoOverwrite->False,
+ CellChangeTimes->{3.392877225060755*^9, 3.392877365881119*^9, 
+  3.393054710458459*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Integrate", "[", 
+  RowBox[{
+   RowBox[{"f", "[", "x", "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", "0", ",", "Infinity"}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.392877234550993*^9, 3.392877244286705*^9}, 
+   3.393054710458951*^9}],
+
+Cell[BoxData[
+ FractionBox[
+  SuperscriptBox["\[Pi]", "2"], "6"]], "Output",
+ GeneratedCell->False,
+ CellAutoOverwrite->False,
+ CellChangeTimes->{3.392877246673595*^9, 3.392877373411319*^9, 
+  3.3930547104592047`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"N", "[", "%", "]"}]], "Input",
+ CellChangeTimes->{{3.3928773770177813`*^9, 3.3928773791324043`*^9}, 
+   3.3930547104594593`*^9}],
+
+Cell[BoxData["1.6449340668482262`"], "Output",
+ GeneratedCell->False,
+ CellAutoOverwrite->False,
+ CellChangeTimes->{3.39287737956688*^9, 3.3930547104596786`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"NIntegrate", "[", 
+  RowBox[{
+   RowBox[{"f", "[", "x", "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"x", ",", "0", ",", "Infinity"}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.392877234550993*^9, 3.392877244286705*^9}, 
+   3.392877384101227*^9, 3.393054710459985*^9}],
+
+Cell[BoxData["1.0179913870878599`"], "Output",
+ GeneratedCell->False,
+ CellAutoOverwrite->False,
+ CellChangeTimes->{3.3928773845016327`*^9, 3.39305471046021*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"DSolve", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"y", "'"}], "[", "x", "]"}], "^", "2"}], "-", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"y", "'"}], "[", "x", "]"}], "*", "x"}], "+", 
+     RowBox[{"y", "[", "x", "]"}]}], "\[Equal]", "0"}], ",", 
+   RowBox[{"y", "[", "x", "]"}], ",", "x"}], "]"}]], "Input",
+ CellChangeTimes->{{3.39287818683805*^9, 3.392878211161791*^9}, 
+   3.393054710460585*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"y", "[", "x", "]"}], "\[Rule]", 
+    RowBox[{
+     RowBox[{"x", " ", 
+      RowBox[{"C", "[", "1", "]"}]}], "-", 
+     SuperscriptBox[
+      RowBox[{"C", "[", "1", "]"}], "2"]}]}], "}"}], "}"}]], "Output",
+ GeneratedCell->False,
+ CellAutoOverwrite->False,
+ CellChangeTimes->{3.392878211927134*^9, 3.39305471046087*^9}]
+}, Open  ]]
+},
+WindowSize->{640, 656},
+WindowMargins->{{155, Automatic}, {47, Automatic}},
+PrintingCopies->1,
+PrintingPageRange->{1, Automatic},
+ShowSelection->True,
+FrontEndVersion->"6.0 for Mac OS X x86 (32-bit) (April 20, 2007)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[568, 21, 250, 4, 27, "Input"],
+Cell[821, 27, 363, 10, 27, "Input"],
+Cell[CellGroupData[{
+Cell[1209, 41, 150, 3, 27, "Input"],
+Cell[1362, 46, 316, 10, 51, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1715, 61, 272, 7, 27, "Input"],
+Cell[1990, 70, 217, 6, 48, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2244, 81, 152, 3, 27, "Input"],
+Cell[2399, 86, 161, 3, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2597, 94, 295, 7, 27, "Input"],
+Cell[2895, 103, 161, 3, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3093, 111, 471, 14, 27, "Input"],
+Cell[3567, 127, 388, 12, 33, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

@@ -1,0 +1,16 @@
+(define (fast-fibonacci n)
+  (fast-fib-iter 1 0 0 1 n))
+
+(define (fast-fib-iter a b p q n)
+  (define pp (+ (square p) (square q)))
+  (define qq (+ (square q) (* 2 (* p q))))
+  (define aa (+ (* (+ p q)
+                   a)
+                (* q b)))
+  (define bb (+ (* a q)
+                (* b p)))
+  (cond ((= n 0) b)
+        ((even? n)
+         (fast-fib-iter a b pp qq (/ n 2)))
+        (else (fast-fib-iter aa bb p q (- n 1)))))
+

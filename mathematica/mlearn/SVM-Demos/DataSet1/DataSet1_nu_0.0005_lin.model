@@ -1,0 +1,10 @@
+svm_type nu_svc
+kernel_type linear
+nr_class 2
+total_sv 2
+rho 6.16425
+label 1 -1
+nr_sv 1 1
+SV
+57.26053815236708 1:0.587485 2:0.3271 
+-57.26053815236708 1:0.416416 2:0.251844 

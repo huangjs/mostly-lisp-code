@@ -1,0 +1,138 @@
+(tc +)
+
+
+(datatype expr
+  ______________
+  (number? X) : verified >> X : number;
+
+  X : number;
+  ______________
+  X : expr;
+
+  if (not (element? X [+ - * /]))
+  X : symbol;
+  ______________
+  X : expr;
+
+  Op : (number --> number --> number);
+  X : expr;
+  Y : expr;
+  ==============
+  [X Op Y] : expr;
+  )
+  
+[56 + [x - 7]]
+[1 + [x * y]]
+[x * y] : expr
+
+
+(define arith
+  {expr --> expr}
+  [X Op Y] -> (Op X Y) where (and (number? X) (number? Y))
+  X -> X)
+
+We define some valid operations
+
+______________
+arith : valid;
+
+
+(define compose
+  {[(A --> A)] --> (A --> A)}
+  [F] -> F
+  [F | Fs] -> (/. X ((compose Fs) (F X))))
+
+(compose [sqrt sqrt])
+((compose [sqrt sqrt]) 16)
+
+also only valid functions can be composed
+
+Fs : [valid];
+______________
+(compose Fs) : valid;
+
+(define recurse
+  {(expr --> expr) --> expr --> expr}
+  F [X Op Y] -> (F [(recurse F X) Op (recurse F Y)])
+  F X -> (F X))
+
+and
+
+F : valid;
+______________
+(recurse F) : valid;
+
+
+
+fix
+
+F : valid;
+______________
+(fix F) : valid;
+
+
+
+Define ok-expr (results from the application of a valid algebraic operation)
+
+F : valid;
+X : expr;
+______________
+(F X) : ok-expr;
+
+X : ok-expr;
+______________
+X : expr;
+
+
+Put all together:
+
+(datatype expr
+  ______________
+  (number? X) : verified >> X : number;
+
+  X : number;
+  ______________
+  X : expr;
+
+  if (not (element? X [+ - * /]))
+  X : symbol;
+  ______________
+  X : expr;
+
+  Op : (number --> number --> number);
+  X : expr;
+  Y : expr;
+  ==============
+  [X Op Y] : expr;
+
+  ______________
+  arith : valid;
+
+  Fs : [valid];
+  ______________
+  (compose Fs) : valid;
+  
+  F : valid;
+  ______________
+  (recurse F) : valid;
+
+  F : valid;
+  ______________
+  (fix F) : valid;
+
+  F : valid;
+  X : expr;
+  ______________
+  (F X) : ok-expr;
+
+  X : ok-expr;
+  ______________
+  X : expr;
+  )
+
+(define kenny
+  {valid --> expr --> ok-expr}
+  F E -> (fix (recurse F) E))
+
+(kenny arith [x + [12 * [5 - 3]]])
+

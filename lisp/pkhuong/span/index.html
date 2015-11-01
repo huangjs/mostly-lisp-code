@@ -1,0 +1,62 @@
+<html>
+<head>
+  <title> Span -- A New Layer of 'istory </title>
+</head>
+<body>
+<p>
+2006-09-10: I'm using Span for a continuations-based webserver (that
+speaks mod_lisp). The green threading support depends on sbcl's
+unix-layer, so isn't portable, but should be easily ported ;) The
+server code is in server/, and depends on sbcl's bsd-sockets and on
+ironclad (asdf-installable).  The example page depends on Edi Weitz's
+CL-WHO. The code is highly experimental, and some things are downright
+wrong, like the send-string function, which doesn't take SSIZE_MAX
+into account. 
+</p>
+<p>
+New: A binary distribution for linux/x86. This is simply a bzipped
+executable clisp image. Download it <a href='span-nli-bin.bz2'>here</a>.
+No guarantee, don't blame me if it messes up your computer, etc.
+</p>
+<p>
+In short, Span/NLI is a set of portable extensions to Common Lisp
+written in Common Lisp.  I'm not really interested in hacking the
+type system (for that, see Qi), but in making it a bit easier to use,
+especially for someone coming from an Unix perspective. In order to 
+achieve that, we have: syntactic sugar to abbreviate let, let*, flet,
+labels, setf and lambda, support for easier manipulation of functions
+(binding values directly to lexical functions, dynamically-scoped 
+functions and calling the result of an arbitrary expression without an
+explicit funcall), and call/cc, on top of which cooperative multitasking 
+is implemented. All that is in portable Common Lisp and compiles to
+portable CL.
+</p>
+<a href='introduction.txt'>Introduction</a>
+<br>
+<a href='sugar.txt'>Syntactic sugar</a>
+<br>
+<a href='message-passing.txt'>CLOS-compatible message-passing OO</a>
+<br>
+<a href='nli.tar.gz'>The code</a>
+<p> Dependencies:
+<ul>
+<li><a href='../simple-match.tar.gz'> Simple Match </a></li>
+<li><a href='http://common-lisp.net/project/closer/ftp/closer-mop-0.40.tar.gz'>
+closer-mop</a></li>
+<li><a href='http://common-lisp.net/project/closer/ftp/lw-compat-0.22.tar.gz'>
+lw-compat</a></li>
+</ul>
+</p>
+<p> Examples:
+<ul>
+<li> <a href='http://paste.lisp.org/display/24953'>Message passing</a> </li>
+<li> <a href='http://paste.lisp.org/display/24844'>Call/cc</a> </li>
+</ul>
+</p>
+<p>
+Paul Khuong (pvk at same in canada) & cie.
+</p>
+<br>
+P.S. I know, the website sucks. I prefer writing code to writing HTML.
+</body>
+</html>

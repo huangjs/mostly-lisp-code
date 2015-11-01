@@ -1,0 +1,18 @@
+(declaim (ftype (function (fixnum fixnum fixnum) fixnum) tak))
+(defun tak (x y z)
+  (declare (optimize speed (safety 0)))
+  (if (< y x)
+      (tak (tak (1- x) y z)
+           (tak (1- y) z x)
+           (tak (1- z) x y))
+      z))
+
+
+(declaim (ftype (function (t t t) fixnum) tak))
+(defun-tc tak (x y z)
+  (declare (fixnum x y z) (optimize speed (safety 0)))
+  (if (< y x)
+      (tak (tak (1- x) y z)
+           (tak (1- y) z x)
+           (tak (1- z) x y))
+      z))

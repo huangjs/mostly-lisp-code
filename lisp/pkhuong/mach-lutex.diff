@@ -1,0 +1,314 @@
+diff --git a/src/compiler/generic/objdef.lisp b/src/compiler/generic/objdef.lisp
+index d768bca..dd45bea 100644
+--- a/src/compiler/generic/objdef.lisp
++++ b/src/compiler/generic/objdef.lisp
+@@ -356,7 +356,7 @@
+   (real :c-type "double" :length #!-x86-64 2 #!+x86-64 1)
+   (imag :c-type "double" :length #!-x86-64 2 #!+x86-64 1))
+ 
+-#!+(and sb-lutex sb-thread)
++#!+(and sb-lutex sb-thread (not sb-mach-lutex))
+ (define-primitive-object (lutex
+                           :lowtag other-pointer-lowtag
+                           :widetag lutex-widetag
+@@ -372,6 +372,17 @@
+   (condition-variable :c-type "pthread_cond_t *"
+                       :length 1))
+ 
++#!+(and sb-lutex sb-thread sb-mach-lutex)
++(define-primitive-object (lutex
++                          :lowtag other-pointer-lowtag
++                          :widetag lutex-widetag
++                          :alloc-trans %make-lutex)
++  (gen :c-type "long" :length 1)
++  (live :c-type "long" :length 1)
++  (next :c-type "struct lutex *" :length 1)
++  (prev :c-type "struct lutex *" :length 1)
++  (semaphore :c-type "unsigned long" :length 1))
++
+ ;;; this isn't actually a lisp object at all, it's a c structure that lives
+ ;;; in c-land.  However, we need sight of so many parts of it from Lisp that
+ ;;; it makes sense to define it here anyway, so that the GENESIS machinery
+diff --git a/src/runtime/GNUmakefile b/src/runtime/GNUmakefile
+index cfaac20..51e2688 100644
+--- a/src/runtime/GNUmakefile
++++ b/src/runtime/GNUmakefile
+@@ -41,7 +41,7 @@ include Config
+ COMMON_SRC = alloc.c backtrace.c breakpoint.c coreparse.c \
+ 	dynbind.c funcall.c gc-common.c globals.c interr.c interrupt.c \
+ 	largefile.c monitor.c os-common.c parse.c print.c purify.c \
+-	pthread-futex.c pthread-lutex.c \
++	pthread-futex.c pthread-lutex.c mach-lutex.c \
+ 	regnames.c run-program.c runtime.c save.c search.c \
+ 	thread.c time.c util.c validate.c vars.c wrap.c	
+ 
+diff --git a/src/runtime/coreparse.c b/src/runtime/coreparse.c
+index 1757444..e527bf1 100644
+--- a/src/runtime/coreparse.c
++++ b/src/runtime/coreparse.c
+@@ -38,7 +38,11 @@
+ /* lutex stuff */
+ #if defined(LISP_FEATURE_SB_THREAD) && defined(LISP_FEATURE_SB_LUTEX)
+ #include "genesis/sap.h"
+-#include "pthread-lutex.h"
++# ifdef LISP_FEATURE_SB_MACH_LUTEX
++#  include "mach-lutex.h"
++# else
++#  include "pthread-lutex.h"
++# endif
+ #endif
+ 
+ 
+diff --git a/src/runtime/gencgc.c b/src/runtime/gencgc.c
+index 5bd67c8..6e006e5 100644
+--- a/src/runtime/gencgc.c
++++ b/src/runtime/gencgc.c
+@@ -53,7 +53,11 @@
+ #include "genesis/layout.h"
+ #include "gencgc.h"
+ #if defined(LUTEX_WIDETAG)
+-#include "pthread-lutex.h"
++# ifdef LISP_FEATURE_SB_MACH_LUTEX
++#  include "mach-lutex.h"
++# else
++#  include "pthread-lutex.h"
++# endif
+ #endif
+ 
+ /* forward declarations */
+diff --git a/src/runtime/mach-lutex.c b/src/runtime/mach-lutex.c
+new file mode 100644
+index 0000000..7604eac
+--- /dev/null
++++ b/src/runtime/mach-lutex.c
+@@ -0,0 +1,174 @@
++#include "sbcl.h"
++
++#if defined(LISP_FEATURE_SB_THREAD) && defined(LISP_FEATURE_SB_MACH_LUTEX)  && defined(LISP_FEATURE_SB_MACH_LUTEX)
++#include <errno.h>
++#include <stdlib.h>
++#include <stdio.h>
++
++#include <mach/semaphore.h>
++#include <mach/task.h>
++
++#include "runtime.h"
++#include "arch.h"
++#include "target-arch-os.h"
++#include "os.h"
++#include "mach-lutex.h"
++#include "gencgc.h"
++
++#include "genesis/lutex.h"
++
++#if 1
++# define lutex_assert(ex)                                              \
++do {                                                                   \
++    if (!(ex)) lutex_abort();                                          \
++} while (0)
++# define lutex_assert_verbose(ex, fmt, ...)                            \
++do {                                                                   \
++    if (!(ex)) {                                                       \
++        fprintf(stderr, fmt, ## __VA_ARGS__);                          \
++        lutex_abort();                                                 \
++    }                                                                  \
++} while (0)
++#else
++# define lutex_assert(ex)
++# define lutex_assert_verbose(ex, fmt, ...)
++#endif
++
++#define lutex_abort()                                                  \
++  lose("Lutex assertion failure, file \"%s\", line %d\n", __FILE__, __LINE__)
++
++static semaphore_t lutex_register_semaphore = 0;
++
++int
++lutex_init (tagged_lutex_t tagged_lutex)
++{
++    int ret;
++    struct lutex *lutex = (struct lutex*) native_pointer(tagged_lutex);
++    task_t self = mach_task_self();
++    unsigned sem;
++    if (!lutex_register_semaphore) {
++        int ret = semaphore_create(self, &sem, SYNC_POLICY_FIFO, 1);
++        lutex_assert(!ret);
++
++        if (lutex_register_semaphore) // TODO: compare-and-swap
++            semaphore_destroy(self, sem);
++        else
++            lutex_register_semaphore = sem;
++    }
++
++    ret = semaphore_create(self, &sem, SYNC_POLICY_FIFO, 1);
++    lutex->semaphore = sem;
++    /* only binary semaphores for now; while this results in spurious wake-ups in condvars,
++     *  that's acceptable fpr condvars.
++     */
++    lutex_assert(!ret);
++
++    ret = semaphore_wait(lutex_register_semaphore);
++    lutex_assert(!ret);
++
++    gencgc_register_lutex(lutex);
++
++    ret = semaphore_signal(lutex_register_semaphore);
++    lutex_assert(!ret);
++
++    return ret;
++}
++
++int
++lutex_wait (tagged_lutex_t tagged_queue_lutex, tagged_lutex_t tagged_mutex_lutex)
++{
++    int ret;
++    struct lutex *queue_lutex = (struct lutex*) native_pointer(tagged_queue_lutex);
++    struct lutex *mutex_lutex = (struct lutex*) native_pointer(tagged_mutex_lutex);
++
++    ret = semaphore_wait_signal(queue_lutex->semaphore,
++                                mutex_lutex->semaphore);
++    if (KERN_ABORTED == ret) return ret;
++    lutex_assert_verbose(!ret, "ret: %d\n", ret);
++
++    semaphore_wait(mutex_lutex->semaphore);
++    lutex_assert(!ret);
++
++    return ret;
++}
++
++int
++lutex_wake (tagged_lutex_t tagged_lutex, int n)
++{
++    int ret = 0;
++    struct lutex *lutex = (struct lutex*) native_pointer(tagged_lutex);
++
++    if (n >= ((1 << 29) - 1)) {
++        ret = semaphore_signal_all(lutex->semaphore);
++        lutex_assert(!ret);
++    } else {
++        while (n--) {
++            ret = semaphore_signal_thread(lutex->semaphore, 0);
++            if (KERN_NOT_WAITING == ret) return 0;
++
++            lutex_assert(!ret);
++        }
++    }
++
++    return ret;
++}
++
++int
++lutex_lock (tagged_lutex_t tagged_lutex)
++{
++    int ret = 0;
++    struct lutex *lutex = (struct lutex*) native_pointer(tagged_lutex);
++
++    do
++        ret = semaphore_wait(lutex->semaphore);
++    while (ret == KERN_ABORTED);
++
++    lutex_assert_verbose(!ret, "ret: %d\n", ret);
++
++    return ret;
++}
++
++int
++lutex_trylock (tagged_lutex_t tagged_lutex)
++{
++    int ret = 0;
++    struct lutex *lutex = (struct lutex*) native_pointer(tagged_lutex);
++    mach_timespec_t time = {0, 0};
++
++    ret = semaphore_timedwait(lutex->semaphore, time);
++    if (KERN_OPERATION_TIMED_OUT == ret) return ret;
++    lutex_assert(!ret);
++
++    return ret;
++}
++
++int
++lutex_unlock (tagged_lutex_t tagged_lutex)
++{
++    int ret = 0;
++    struct lutex *lutex = (struct lutex*) native_pointer(tagged_lutex);
++
++    ret = semaphore_signal(lutex->semaphore);
++    lutex_assert_verbose(!ret, "ret: %d sem: %lx\n", ret, lutex->semaphore);
++
++    return ret;
++}
++int
++lutex_destroy (tagged_lutex_t tagged_lutex)
++{
++    struct lutex *lutex = (struct lutex*) native_pointer(tagged_lutex);
++    task_t self = mach_task_self();
++    int ret;
++
++    unsigned semaphore = lutex->semaphore;
++
++    if (semaphore) {
++        ret = semaphore_destroy(self, semaphore);
++        lutex->semaphore = 0;
++        if (ret != KERN_SEMAPHORE_DESTROYED)
++            lutex_assert(!ret);
++    }
++
++    return 0;
++}
++#endif
+diff --git a/src/runtime/mach-lutex.h b/src/runtime/mach-lutex.h
+new file mode 100644
+index 0000000..bf69526
+--- /dev/null
++++ b/src/runtime/mach-lutex.h
+@@ -0,0 +1,24 @@
++/*
++ * This software is part of the SBCL system. See the README file for
++ * more information.
++ *
++ * This software is derived from the CMU CL system, which was
++ * written at Carnegie Mellon University and released into the
++ * public domain. The software is in the public domain and is
++ * provided with absolutely no warranty. See the COPYING and CREDITS
++ * files for more information.
++ */
++
++#ifndef __MACH_LUTEX_H__
++#define __MACH_LUTEX_H__
++
++#if defined(LISP_FEATURE_SB_THREAD) && defined(LISP_FEATURE_SB_MACH_LUTEX)  && defined(LISP_FEATURE_SB_MACH_LUTEX)
++
++typedef unsigned long tagged_lutex_t;
++
++extern int lutex_init (tagged_lutex_t tagged_lutex);
++extern int lutex_destroy (tagged_lutex_t tagged_lutex);
++
++#endif
++
++#endif /* __MACH_LUTEX_H__ */
+diff --git a/src/runtime/pthread-lutex.c b/src/runtime/pthread-lutex.c
+index 6365214..80723fe 100644
+--- a/src/runtime/pthread-lutex.c
++++ b/src/runtime/pthread-lutex.c
+@@ -13,7 +13,7 @@
+ 
+ #include "sbcl.h"
+ 
+-#if defined(LISP_FEATURE_SB_THREAD) && defined(LISP_FEATURE_SB_LUTEX)
++#if defined(LISP_FEATURE_SB_THREAD) && defined(LISP_FEATURE_SB_LUTEX)  && !defined(LISP_FEATURE_SB_MACH_LUTEX)
+ 
+ #include <errno.h>
+ #include <stdlib.h>
+diff --git a/src/runtime/pthread-lutex.h b/src/runtime/pthread-lutex.h
+index 69f27c0..86bb240 100644
+--- a/src/runtime/pthread-lutex.h
++++ b/src/runtime/pthread-lutex.h
+@@ -12,7 +12,7 @@
+ #ifndef __PTHREAD_LUTEX_H__
+ #define __PTHREAD_LUTEX_H__
+ 
+-#if defined(LISP_FEATURE_SB_THREAD) && defined(LISP_FEATURE_SB_LUTEX)
++#if defined(LISP_FEATURE_SB_THREAD) && defined(LISP_FEATURE_SB_LUTEX) && !defined(LISP_FEATURE_SB_MACH_LUTEX)
+ 
+ typedef unsigned long tagged_lutex_t;
+ 

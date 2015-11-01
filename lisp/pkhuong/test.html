@@ -1,0 +1,35 @@
+<html>
+<head>
+<script type="text/javascript">
+  function keydown_handler(ev)
+  {
+    if (!ev) var ev = window.event;
+    alert("keydown keyCode="+ev.keyCode+" which="+ev.which+
+          " shiftKey="+ev.shiftKey+" ctrlKey="+ev.ctrlKey+" altKey="+ev.altKey);
+    return true;
+  };
+
+  window.onload=
+  function() {
+    document.onkeydown = document.onkeypress = keydown_handler;
+  };
+</script>
+
+<style type="text/css">
+#textarea
+{
+position:absolute;
+left:0px;
+top:0px;
+z-index:-1; }
+</style>
+
+</head>
+<body>
+<div id="term"> 
+<textarea id="textarea"></textarea>
+<p>
+asdfg
+</p>
+</div>
+</body>

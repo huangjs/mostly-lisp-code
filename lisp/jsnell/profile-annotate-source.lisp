@@ -1,0 +1,148 @@
+(declaim (inline find-zero))
+(defun find-zero (f next-x xk-1 xk epsilon)
+  (labels ((find-zero-recursive (xk-1 xk)
+	     (let ((xk+1 (funcall next-x f xk-1 xk)))
+	       (if (< (abs (funcall f xk+1))
+		      epsilon)
+		   xk+1
+		   (if (< (* (funcall f xk)
+			     (funcall f xk+1))
+			  0d0)
+		       (find-zero-recursive xk xk+1)
+		       (find-zero-recursive xk-1 xk+1))))))
+    (find-zero-recursive xk-1 xk)))
+
+(defun find-zero-with-test-2 (xk-1 xk epsilon)
+  (declare (type double-float xk-1 xk epsilon)
+	   (optimize (speed 3) (debug 0)))
+  (labels ((test-2 (x)
+	     (declare (double-float x))
+	     (+ (* x x) -3))
+	   (next-x-1 (f xk-1 xk)
+	     (declare (double-float xk-1 xk)
+		      (ignore f))
+	     (/ (+ xk-1 xk) 2d0)))
+    (declare (inline test-2 next-x-1))
+    (find-zero #'test-2 #'next-x-1 xk-1 xk epsilon)))
+
+(defun find-zero-with-test-2* (xk-1 xk epsilon)
+  (declare (type double-float xk-1 xk epsilon)
+	   (optimize (speed 2) (debug 2)))
+  (labels ((test-2 (x)
+	     (declare (double-float x))
+	     (+ (* x x) -3))
+	   (next-x-1 (f xk-1 xk)
+	     (declare (double-float xk-1 xk)
+		      (ignore f))
+	     (/ (+ xk-1 xk) 2d0))
+	   (find-zero (f next-x xk-1 xk epsilon)
+	     (labels ((find-zero-recursive (xk-1 xk)
+			(let ((xk+1 (funcall next-x f xk-1 xk)))
+			  (if (< (abs (funcall f xk+1))
+				 epsilon)
+			      xk+1
+			      (if (< (* (funcall f xk)
+					(funcall f xk+1))
+				     0d0)
+				  (find-zero-recursive xk xk+1)
+				  (find-zero-recursive xk-1 xk+1))))))
+	       (find-zero-recursive xk-1 xk))))
+    (declare (inline test-2 next-x-1 find-zero))
+    (find-zero #'test-2 #'next-x-1 xk-1 xk epsilon)))
+
+(defun zero-test ()
+  (loop repeat 100
+    sum (find-zero-with-test-2* 0.0d0
+			       100.0d0
+			       0.0001d0) of-type double-float))
+
+(defun find-form (source target-number)
+  (let ((form-number 0))
+    (labels ((find-form-aux (form)
+	       (when (= target-number form-number)
+		 (return-from find-form form))
+	       (incf form-number)
+	       (dolist (subform form)
+		 (when (consp subform)
+		   (find-form-aux subform)))))
+      (find-form-aux source))))
+
+(defclass profile-annotation ()
+  ((samples :initarg :samples :accessor samples-of)
+   (sample-ratio :initarg :sample-ratio :accessor sample-ratio-of)
+   (form :initarg :form :accessor form-of)))
+
+(defmethod print-object ((o profile-annotation) stream)
+  (format stream "([~A] ~A)" (sample-ratio-of o) (form-of o)))
+    
+(defun map-pcs-to-form-numbers (function)
+  (let* ((last-pc -1)
+	 (last-form 0)
+	 (debug-fun (sb-di::fun-debug-fun function))
+	 (component (sb-di::compiled-debug-fun-component debug-fun))
+	 (start-pc (sb-sprof::code-start component))
+	 (map nil))
+    (loop for block across (sb-di::parse-debug-blocks debug-fun)
+       do (sb-di::do-debug-block-locations (location block)
+	    (let ((pc (sb-di::compiled-code-location-pc location))
+		  (form (sb-di::compiled-code-location-%form-number location)))
+	      (when (/= pc last-pc)
+		(push (cons (+ start-pc last-pc) last-form) map))
+	      (setf last-pc pc
+		    last-form form))))
+    (push (cons (+ start-pc last-pc) last-form) map)    
+    (reverse map)))
+
+(defun get-source (sources)
+  (svref (sb-c::debug-source-name (car sources)) 0))
+
+(defun profile-annotate-source (function)
+  (let* ((debug-fun (sb-di::fun-debug-fun function))
+	 (info (sb-di::compiled-debug-fun-debug-info debug-fun))
+	 (sources (sb-c::compiled-debug-info-source info))
+	 (form (get-source sources))
+	 (pc-map (map-pcs-to-form-numbers function))
+	 (low-pc (caar pc-map))
+	 (high-pc (caar (last pc-map)))
+	 (form-samples (make-hash-table))
+	 (form-number 0))
+    (labels ((get-pc-form (pc)
+	       (let ((form nil))
+		 (loop for x in pc-map
+		    do (when (< (car x) pc)
+			 (setf form (cdr x))))
+		 form))
+	     (annotate-form (form)
+	       (let ((samples (gethash form-number form-samples)))
+		 (incf form-number)
+		 (let ((subforms (mapcar (lambda (subform)
+					   (if (consp subform)
+					       (annotate-form subform)
+					       subform))
+					 form)))
+		   (if samples
+		       (make-instance 'profile-annotation
+				      :samples samples
+				      :sample-ratio (/ samples
+						       (truncate
+							sb-sprof::*samples-index*
+							sb-sprof::+sample-size+))
+				      :form subforms)
+		       subforms)))))
+      (when sb-sprof::*samples*
+	(loop for i below (length sb-sprof::*samples*)
+	   by sb-sprof::+sample-size+
+	   for pc = (aref sb-sprof::*samples* i)
+	   do (when (<= low-pc pc high-pc)
+		(incf (gethash (get-pc-form pc) form-samples 0)))))
+      (annotate-form form))))
+
+(defun test-profile ()
+  (sb-sprof:with-profiling (:max-samples 1000)
+    (dotimes (i #xfff) (zero-test))))
+  
+;; (princ (zero-test)) (terpri)
+
+(set-pprint-dispatch '(cons (member SB-INT:NAMED-LAMBDA))
+		     (pprint-dispatch '(defun) nil))
+

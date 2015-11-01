@@ -1,0 +1,22 @@
+(declaim (inline vec x y z)
+		 (optimize (speed 3) (safety 0) (space 0) (debug 0) (compilation-speed 0)))
+
+(defstruct (vec (:conc-name nil)
+				(:constructor vec (x y z))
+				(:type (vector double-float)))
+  (x 0d0)
+  (y 0d0)
+  (z 0d0))
+(deftype vec ()
+  `(simple-array double-float (3)))
+
+;; (defstruct (vec (:conc-name nil)
+;; 				(:constructor vec (x y z)))
+;;   (x 0d0 :type double-float)
+;;   (y 0d0 :type double-float)
+;;   (z 0d0 :type double-float))
+
+(defun test ()
+  (let ((a (vec 1d0 2d0 3d0)))
+	(setf (x a) 4d0)
+	a))

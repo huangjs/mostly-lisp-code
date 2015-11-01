@@ -1,0 +1,47 @@
+--- copy_obj.cl.1	1995-06-10 01:06:43.000000000 +0200
++++ copy_obj.cl	2005-08-26 14:56:04.000000000 +0200
+@@ -21,7 +21,20 @@
+ 
+ (in-package :ut)
+ 
+-#+allegro
++;; hack
++(cl:defpackage "CLOS"
++  #+sbcl (:use "SB-PCL")
++  (:export #:class-slots
++	   #:slot-definition-allocation
++	   #:slot-definition-name
++	   #:metaobject))
++
++
++#+(or sbcl cmucl)
++(defun delete-all (set1 set2)
++  (set-difference set2 set1))
++
++#+(or allegro sbcl cmucl)
+ (eval-when (:compile-toplevel :load-toplevel :execute)
+   (export '(instance-slot-names
+ 	    make-uninitialized-instance
+@@ -30,7 +43,7 @@
+ 	    shallow-copy
+ 	    deep-copy)))
+ 
+-#-allegro
++#-(or allegro sbcl cmucl)
+ (eval-when (compile load eval)
+   (export '(instance-slot-names
+ 	    make-uninitialized-instance
+@@ -65,7 +78,7 @@
+ (defmethod copy (object &key &allow-other-keys)
+   (deep-copy object))
+ 
+-#-lucid
++#-(or sbcl lucid)
+ ;; class metobject is not supplied by lucid clos
+ (defmethod uninitialized-copy ((object clos:metaobject) &key &allow-other-keys)
+   ;; metaobjects are not copied
+--- copy_obj.cl.1	1995-06-10 01:06:43.000000000 +0200
++++ copy_obj.cl	2005-08-26 14:56:04.000000000 +0200
+@@ -21,7 +21,20 @@
+ 
+ (in-package :ut)

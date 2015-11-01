@@ -1,0 +1,287 @@
+(tc +)
+
+
+- What is an interval type
+
+(datatype interval
+
+if (number? N)
+if (number? A)
+if (number? B)
+if (>= B A)
+if (>= N A)
+if (>= B N)
+___________
+N : (interval A B);  )
+
+3 : (interval 1 7)
+6 : (interval 7 9)
+
+
+- Equality
+
+M : (interval C D);
+N : (interval E F);
+(= A (+ C E));
+(= B (+ D F));
+____________________
+(+ M N) : (interval A B);
+
+(datatype interval
+
+if (number? N)
+if (number? A)
+if (number? B)
+if (>= B A)
+if (>= N A)
+if (>= B N)
+___________
+N : (interval A B);
+
+M : (interval C D);
+N : (interval E F);
+(= A (+ C E));
+(= B (+ D F));
+____________________
+(+ M N) : (interval A B);
+)
+
+(define raise1
+   {(interval 10000 20000) --> (interval 1000 20000) --> (interval 11000 40000)}
+    N Raise -> (+ N Raise))
+
+
+if (= A (+ B C))
+____________
+(= A (+ B C));
+
+It fails because we need a rule that allows the computer to solve the equations (= A (+ C E)) and  (= B (+ D F)).     
+
+(datatype interval
+
+if (number? N)
+if (number? A)
+if (number? B)
+if (>= B A)
+if (>= N A)
+if (>= B N)
+_______________
+N : (interval A B);
+
+M : (interval C D);
+N : (interval E F);
+(= A (+ C E));
+(= B (+ D F));
+____________________
+(+ M N) : (interval A B);
+
+if (= A (+ B C))
+____________
+(= A (+ B C));
+)
+
+(define raise1
+   {(interval 10000 20000) --> (interval 1000 20000) --> (interval 11000 40000)}
+    N Raise -> (+ N Raise))
+
+
+Generalize raise1 by replacing numbers with variables?
+
+(define raise2  
+{(interval A B) --> (interval C D) --> (interval (+ A C) (+ B D))}
+    N Raise -> (+ N Raise))
+
+
+N : number, A : number, B : number >> P;
+___________________________________
+N : (interval A B) >> P;
+
+(datatype interval
+
+if (number? N)
+if (number? A)
+if (number? B)
+if (>= B A)
+if (>= N A)
+if (>= B N)
+_______________
+N : (interval A B);
+
+M : (interval C D);
+N : (interval E F);
+(= A (+ C E));
+(= B (+ D F));
+____________________
+(+ M N) : (interval A B);
+
+if (= A (+ B C))
+____________
+(= A (+ B C));
+
+N : number, A : number, B : number >> P;
+___________________________________
+N : (interval A B) >> P;   
+)
+
+(define raise2  
+  {(interval A B) --> (interval C D) --> (interval (+ A C) (+ B D))}
+    N Raise -> (+ N Raise))
+
+
+
+The problem is that we are using + both to the left and the right of
+the :. To the left it is curried automatically by Qi because Qi
+curries everything to the left of the : as part of a function
+expression. To the right it is not, because it is part of a type. This
+is not hard to fix, but we'll take the lazy way and just choose to
+write + in curried form in the type.
+
+(datatype interval
+
+if (number? N)
+if (number? A)
+if (number? B)
+if (>= B A)
+if (>= N A)
+if (>= B N)
+_______________
+N : (interval A B);
+
+M : (interval C D);
+N : (interval E F);
+(= A ((+ C) E)) : boolean;
+(= B ((+ D) F)) : boolean;
+(= A ((+ C) E));
+(= B ((+ D) F));
+____________________
+(+ M N) : (interval A B);
+
+if (= A ((+ B) C))
+____________
+(= A ((+ B) C));  
+
+N : number, A : number, B : number >> P;
+___________________________________
+N : (interval A B) >> P;
+)
+
+(define raise2  
+{(interval A B) --> (interval C D) --> (interval ((+ A) C) ((+ B) D))}
+    N Raise -> (+ N Raise))
+
+
+
+The problem is the rule  
+
+if (= A ((+ B) C))
+____________
+(= A ((+ B) C));  
+
+The equation contains algebraic terms and the computer tries to prove
+the identity by summing the terms. But the terms are not numbers now,
+but algebraic variables which cannot be summed by the evaluator.
+
+The solution to this final problem is symbolic evaluation.
+
+(datatype interval
+
+if (number? N)
+if (number? A)
+if (number? B)
+if (>= B A)
+if (>= N A)
+if (>= B N)
+_______________
+N : (interval A B);
+
+M : (interval C D);
+N : (interval E F);
+(= A ((+ C) E)) : boolean;
+(= B ((+ D) F)) : boolean;
+(= A ((+ C) E));
+(= B ((+ D) F));
+____________________
+(+ M N) : (interval A B);
+
+if (symeval [= A B])  
+_________________
+(= A B);
+
+N : number, A : number, B : number >> P;
+___________________________________
+N : (interval A B) >> P;
+)
+
+(tc -)
+
+(define symeval
+  [= X X] -> true
+  _ -> false)
+
+(tc +)
+
+(define raise2  
+    {(interval A B) --> (interval C D) --> (interval ((+ A) C) ((+ B) D))}
+    N Raise -> (+ N Raise))
+
+
+
+(raise1 10000 10000)
+(raise2 12 13)
+
+(tc -)
+(define symeval
+  [= X Y] -> (= (symeval X) (symeval Y))
+  [[+ X] Y] -> (+ X Y)  where (and (number? X) (number? Y))
+  X -> X)
+(tc +)
+
+(datatype interval
+
+if (number? N)
+if (number? A)
+if (number? B)
+if (>= B A)
+if (>= N A)
+if (>= B N)
+_______________
+N : (interval A B);
+
+M : (interval C D);
+N : (interval E F);
+(= A ((+ C) E)) : boolean;
+(= B ((+ D) F)) : boolean;
+(= A ((+ C) E));
+(= B ((+ D) F));
+____________________
+(+ M N) : (interval A B);
+
+if (symeval [= A B])  
+_________________
+(= A B);
+
+N : number, A : number, B : number >> P;
+___________________________________
+N : (interval A B) >> P;
+
+if (number? N)
+____________
+N : (interval N N);
+)
+
+(tc -)
+(define symeval
+  [= X Y] -> (= (symeval X) (symeval Y))
+  [[+ X] Y] -> (+ X Y)  where (and (number? X) (number? Y))
+  X -> X)
+(tc +)
+
+(define raise1
+   {(interval 10000 20000) --> (interval 1000 20000) --> (interval 11000 40000)}
+    N Raise -> (+ N Raise))
+
+(define raise2  
+    {(interval A B) --> (interval C D) --> (interval (+ A C) (+ B D))}
+    N Raise -> (+ N Raise))    
+
+

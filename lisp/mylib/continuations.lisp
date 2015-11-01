@@ -1,0 +1,95 @@
+(defun @eval (exp env cont)
+  (cond ((numberp exp) (funcall cont exp))
+	((stringp exp) (funcall cont exp))
+	((symbolp exp) (@lookup exp env cont))
+	((eq (first exp) 'LAMBDA)
+	 (funcall cont (list 'CLOSURE (second exp) (rest (rest exp)) env)))
+	((eq (first exp) 'IF)
+	 (@eval (second exp) env
+		#'(lambda (test)
+		    (@eval (cond (test (second exp)) (t (third exp))) env cont))))
+	((eq (first exp) 'LETREC)
+	 (@evletrec (second exp)
+		    (third exp)
+		    (pairlis (mapcar #'first (second exp))
+			     (make-list (length (second exp)))
+			     env)
+		    cont))
+	(t (@eval (first exp) env
+		  #'(lambda (fn)
+		      (@evlis (rest exp) env
+			      #'(lambda (args) (@apply fn args cont))))))))
+
+(defun @lookup (name env cont)
+  (cond ((null env)
+         (funcall cont name))
+        ((eq (car (first env)) name)
+         (funcall cont (cdr (first env))))
+        (t (@lookup name (rest env) cont))))
+
+(defun @evlis (exps env cont)
+  (cond ((null exps)
+         (funcall cont '()))
+        (t (@eval (first exps)
+                  env
+                  #'(lambda (arg)
+                      (@evlis (rest exps)
+                              env
+                              #'(lambda (args)
+                                  (funcall cont (cons arg args)))))))))
+
+(defun @evletrec (bindings body env cont)
+  (cond ((null bindings) (@eval body env cont))
+        (t (@eval (second (first bindings))
+                  env
+                  #'(lambda (fn)
+                      (rplacd (assoc (first (first bindings)) env) fn)
+                            (@evletrec (rest bindings) body env cont))))))
+
+(defun @apply (fn args cont)
+  (cond ((eq fn '+)
+         (funcall cont (+ (first args) (second args))))
+        ((eq fn '*)
+         (funcall cont (* (first args) (second args))))
+        ((eq fn 'print)
+         (princ (first args))
+         (fresh-line)
+         (funcall cont (first args)))
+        ((eq fn 'call/cc)
+         (@apply (first args) (list (list 'CONTINUATION cont)) cont))
+        ((atom fn)
+         (funcall cont 'UNDEFINED-FUNCTION))
+        ((eq (first fn) 'CLOSURE)
+         (@evlis (third fn)
+                 (pairlis (second fn)
+                          args
+                          (fourth fn))
+                 #'(lambda (vals)
+                     (funcall cont (first (last vals))))))
+        ((eq (first fn) 'CONTINUATION)
+         (funcall (second fn) (first args)))
+        (t (funcall cont 'UNDEFINED-FUNCTION))))
+
+(defun test ()
+  (@eval '((call/cc
+            (lambda (goto)
+              (letrec ((start
+                        (lambda ()
+                          (print "start")
+                          (goto next)))
+                       (froz
+                        (lambda ()
+                          (print "froz")
+                          (goto last)))
+                       (next
+                        (lambda ()
+                          (print "next")
+                          (goto froz)))
+                       (last
+                        (lambda ()
+                          (print "last")
+                          (+ 3 4))))
+                      start))))
+         '()
+         (lambda (x) x))) 
+

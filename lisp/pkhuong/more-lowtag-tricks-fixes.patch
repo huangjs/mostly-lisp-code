@@ -1,0 +1,455 @@
+diff --git a/src/assembly/x86-64/arith.lisp b/src/assembly/x86-64/arith.lisp
+index 49fa5cc..83305c6 100644
+--- a/src/assembly/x86-64/arith.lisp
++++ b/src/assembly/x86-64/arith.lisp
+@@ -57,8 +57,8 @@
+     (move res x)
+     (inst add res y)
+     (inst jmp :no OKAY)
+-    (inst rcr res 1)                  ; carry has correct sign
+-    (inst sar res 2)                  ; remove type bits
++    (inst rcr res 1)                      ; carry has correct sign
++    (inst sar res (1- n-fixnum-tag-bits)) ; remove type bits
+ 
+     (move rcx res)
+ 
+@@ -71,9 +71,9 @@
+     (move res x)
+     (inst sub res y)
+     (inst jmp :no OKAY)
+-    (inst cmc)                        ; carry has correct sign now
++    (inst cmc)                            ; carry has correct sign now
+     (inst rcr res 1)
+-    (inst sar res 2)                  ; remove type bits
++    (inst sar res (1- n-fixnum-tag-bits)) ; remove type bits
+ 
+     (move rcx res)
+ 
+diff --git a/src/code/bit-bash.lisp b/src/code/bit-bash.lisp
+index 3680a1a..faf1174 100644
+--- a/src/code/bit-bash.lisp
++++ b/src/code/bit-bash.lisp
+@@ -117,15 +117,15 @@
+         (declare (type system-area-pointer sap)
+                  (type index offset)
+                  (values system-area-pointer index))
+-        (let ((address (sap-int sap)))
+-          (values (int-sap #!-alpha (word-logical-andc2 address
+-                                                        sb!vm:fixnum-tag-mask)
++        (let ((address (sap-int sap))
++              (word-mask (1- (ash 1 n-word-bits))))
++          (values (int-sap #!-alpha (word-logical-andc2 address word-mask)
+                            #!+alpha (ash (ash address -2) 2))
+                   (+ ,(ecase bitsize
+-                       (1 '(* (logand address sb!vm:fixnum-tag-mask) n-byte-bits))
+-                       (2 '(* (logand address sb!vm:fixnum-tag-mask) (/ n-byte-bits 2)))
+-                       (4 '(* (logand address sb!vm:fixnum-tag-mask) (/ n-byte-bits 4)))
+-                       ((8 16 32 64) '(logand address sb!vm:fixnum-tag-mask)))
++                       (1 '(* (logand address word-mask) n-byte-bits))
++                       (2 '(* (logand address word-mask) (/ n-byte-bits 2)))
++                       (4 '(* (logand address word-mask) (/ n-byte-bits 4)))
++                       ((8 16 32 64) '(logand address word-mask)))
+                      offset)))))))
+ 
+ ;;; We cheat a little bit by using TRULY-THE in the copying function to
+diff --git a/src/code/cross-modular.lisp b/src/code/cross-modular.lisp
+index 931a90f..d3cc313 100644
+--- a/src/code/cross-modular.lisp
++++ b/src/code/cross-modular.lisp
+@@ -55,6 +55,7 @@
+ (defun sb!vm::ash-left-smod30 (integer amount)
+   (mask-signed-field 30 (ash integer amount)))
+ #!+x86-64
+-(defun sb!vm::ash-left-smod61 (integer amount)
+-  (mask-signed-field 61 (ash integer amount)))
++(defun sb!vm::ash-left-modfx (integer amount)
++  (mask-signed-field (- sb!vm:n-word-bits sb!vm:n-fixnum-tag-bits)
++                     (ash integer amount)))
+ 
+diff --git a/src/code/numbers.lisp b/src/code/numbers.lisp
+index 6a2dd70..2d14a00 100644
+--- a/src/code/numbers.lisp
++++ b/src/code/numbers.lisp
+@@ -1485,7 +1485,10 @@ the first."
+     (integer (sb!c::mask-signed-field 30 (ash (sb!c::mask-signed-field 30 integer) amount)))))
+ 
+ #!+x86-64
+-(defun sb!vm::ash-left-smod61 (integer amount)
+-  (etypecase integer
+-    ((signed-byte 61) (sb!c::mask-signed-field 61 (ash integer amount)))
+-    (integer (sb!c::mask-signed-field 61 (ash (sb!c::mask-signed-field 61 integer) amount)))))
++(defun sb!vm::ash-left-modfx (integer amount)
++  (let ((fixnum-width (- sb!vm:n-word-bits sb!vm:n-fixnum-tag-bits)))
++    (etypecase integer
++      (fixnum (sb!c::mask-signed-field fixnum-width (ash integer amount)))
++      (integer (sb!c::mask-signed-field fixnum-width
++                                        (ash (sb!c::mask-signed-field fixnum-width integer)
++                                             amount))))))
+diff --git a/src/compiler/generic/early-vm.lisp b/src/compiler/generic/early-vm.lisp
+index e978fb4..77e5c97 100644
+--- a/src/compiler/generic/early-vm.lisp
++++ b/src/compiler/generic/early-vm.lisp
+@@ -41,11 +41,11 @@
+ (def!constant widetag-mask (1- (ash 1 n-widetag-bits)))
+ 
+ (def!constant sb!xc:most-positive-fixnum
+-    (1- (ash 1 (- n-word-bits n-lowtag-bits)))
++    (1- (ash 1 n-positive-fixnum-bits))
+   #!+sb-doc
+   "the fixnum closest in value to positive infinity")
+ (def!constant sb!xc:most-negative-fixnum
+-    (ash -1 (- n-word-bits n-lowtag-bits))
++    (ash -1 n-positive-fixnum-bits)
+   #!+sb-doc
+   "the fixnum closest in value to negative infinity")
+ 
+diff --git a/src/compiler/generic/vm-tran.lisp b/src/compiler/generic/vm-tran.lisp
+index 22f075a..6b68c3a 100644
+--- a/src/compiler/generic/vm-tran.lisp
++++ b/src/compiler/generic/vm-tran.lisp
+@@ -645,7 +645,8 @@
+     (def sb!vm::ash-left-mod32 :untagged 32 nil))
+   #!+#.(cl:if (cl:= 64 sb!vm:n-machine-word-bits) '(and) '(or))
+   (progn
+-    #!+x86-64 (def sb!vm::ash-left-smod61 :tagged 61 t)
++    #!+x86-64 (def sb!vm::ash-left-modfx :tagged #. (- sb!vm:n-word-bits sb!vm:n-fixnum-tag-bits)
++                t)
+     (def sb!vm::ash-left-mod64 :untagged 64 nil)))
+ 
+ ;;;; word-wise logical operations
+diff --git a/src/compiler/x86-64/arith.lisp b/src/compiler/x86-64/arith.lisp
+index 542ee54..7dec859 100644
+--- a/src/compiler/x86-64/arith.lisp
++++ b/src/compiler/x86-64/arith.lisp
+@@ -677,7 +677,7 @@
+           (t
+            (move result number)
+            (cond ((< -64 amount 64)
+-                  ;; this code is used both in ASH and ASH-SMOD61, so
++                  ;; this code is used both in ASH and ASH-MODFX, so
+                   ;; be careful
+                   (if (plusp amount)
+                       (inst shl result amount)
+@@ -1340,18 +1340,19 @@
+                    (vop64f (intern (format nil "FAST-~S-MOD64/FIXNUM=>FIXNUM" name)))
+                    (vop64cu (intern (format nil "FAST-~S-MOD64-C/WORD=>UNSIGNED" name)))
+                    (vop64cf (intern (format nil "FAST-~S-MOD64-C/FIXNUM=>FIXNUM" name)))
+-                   (sfun61 (intern (format nil "~S-SMOD61" name)))
+-                   (svop61f (intern (format nil "FAST-~S-SMOD61/FIXNUM=>FIXNUM" name)))
+-                   (svop61cf (intern (format nil "FAST-~S-SMOD61-C/FIXNUM=>FIXNUM" name))))
++                   (funfx (intern (format nil "~S-MODFX" name)))
++                   (vopfxf (intern (format nil "FAST-~S-MODFX/FIXNUM=>FIXNUM" name)))
++                   (vopfxcf (intern (format nil "FAST-~S-MODFX-C/FIXNUM=>FIXNUM" name))))
+                `(progn
+                   (define-modular-fun ,fun64 (x y) ,name :untagged nil 64)
+-                  (define-modular-fun ,sfun61 (x y) ,name :tagged t 61)
++                  (define-modular-fun ,funfx (x y) ,name :tagged t #.(- sb!vm:n-word-bits
++                                                                        sb!vm:n-fixnum-tag-bits))
+                   (define-mod-binop (,vop64u ,vopu) ,fun64)
+                   (define-vop (,vop64f ,vopf) (:translate ,fun64))
+-                  (define-vop (,svop61f ,vopf) (:translate ,sfun61))
++                  (define-vop (,vopfxf ,vopf) (:translate ,funfx))
+                   ,@(when -c-p
+                       `((define-mod-binop-c (,vop64cu ,vopcu) ,fun64)
+-                        (define-vop (,svop61cf ,vopcf) (:translate ,sfun61))))))))
++                        (define-vop (,vopfxcf ,vopcf) (:translate ,funfx))))))))
+   (def + t)
+   (def - t)
+   (def * t))
+@@ -1367,24 +1368,24 @@
+     (sb!c::give-up-ir1-transform))
+   '(%primitive fast-ash-left-mod64/unsigned=>unsigned integer count))
+ 
+-(define-vop (fast-ash-left-smod61-c/fixnum=>fixnum
++(define-vop (fast-ash-left-modfx-c/fixnum=>fixnum
+              fast-ash-c/fixnum=>fixnum)
+-  (:translate ash-left-smod61))
+-(define-vop (fast-ash-left-smod61/fixnum=>fixnum
++  (:translate ash-left-modfx))
++(define-vop (fast-ash-left-modfx/fixnum=>fixnum
+              fast-ash-left/fixnum=>fixnum))
+-(deftransform ash-left-smod61 ((integer count)
+-                               ((signed-byte 61) (unsigned-byte 6)))
++(deftransform ash-left-modfx ((integer count)
++                              (fixnum (unsigned-byte 6)))
+   (when (sb!c::constant-lvar-p count)
+     (sb!c::give-up-ir1-transform))
+-  '(%primitive fast-ash-left-smod61/fixnum=>fixnum integer count))
++  '(%primitive fast-ash-left-modfx/fixnum=>fixnum integer count))
+ 
+ (in-package "SB!C")
+ 
+ (defknown sb!vm::%lea-mod64 (integer integer (member 1 2 4 8) (signed-byte 64))
+   (unsigned-byte 64)
+   (foldable flushable movable))
+-(defknown sb!vm::%lea-smod61 (integer integer (member 1 2 4 8) (signed-byte 64))
+-  (signed-byte 61)
++(defknown sb!vm::%lea-modfx (integer integer (member 1 2 4 8) (signed-byte 64))
++    fixnum
+   (foldable flushable movable))
+ 
+ (define-modular-fun-optimizer %lea ((base index scale disp) :untagged nil :width width)
+@@ -1395,19 +1396,20 @@
+     (cut-to-width index :untagged width nil)
+     'sb!vm::%lea-mod64))
+ (define-modular-fun-optimizer %lea ((base index scale disp) :tagged t :width width)
+-  (when (and (<= width 61)
++  (when (and (<= width (- sb!vm:n-word-bits sb!vm:n-fixnum-tag-bits))
+              (constant-lvar-p scale)
+              (constant-lvar-p disp))
+     (cut-to-width base :tagged width t)
+     (cut-to-width index :tagged width t)
+-    'sb!vm::%lea-smod61))
++    'sb!vm::%lea-modfx))
+ 
+ #+sb-xc-host
+ (progn
+   (defun sb!vm::%lea-mod64 (base index scale disp)
+     (ldb (byte 64 0) (%lea base index scale disp)))
+-  (defun sb!vm::%lea-smod61 (base index scale disp)
+-    (mask-signed-field 61 (%lea base index scale disp))))
++  (defun sb!vm::%lea-modfx (base index scale disp)
++    (mask-signed-field (- sb!vm:n-word-bits sb!vm:n-fixnum-tag-bits)
++                       (%lea base index scale disp))))
+ #-sb-xc-host
+ (progn
+   (defun sb!vm::%lea-mod64 (base index scale disp)
+@@ -1416,21 +1418,22 @@
+       ;; can't use modular version of %LEA, as we only have VOPs for
+       ;; constant SCALE and DISP.
+       (ldb (byte 64 0) (+ base (* index scale) disp))))
+-  (defun sb!vm::%lea-smod61 (base index scale disp)
+-    (let ((base (mask-signed-field 61 base))
+-          (index (mask-signed-field 61 index)))
++  (defun sb!vm::%lea-modfx (base index scale disp)
++    (let* ((fixnum-width (- sb!vm:n-word-bits sb!vm:n-fixnum-tag-bits))
++           (base (mask-signed-field fixnum-width base))
++           (index (mask-signed-field fixnum-width index)))
+       ;; can't use modular version of %LEA, as we only have VOPs for
+       ;; constant SCALE and DISP.
+-      (mask-signed-field 61 (+ base (* index scale) disp)))))
++      (mask-signed-field fixnum-width (+ base (* index scale) disp)))))
+ 
+ (in-package "SB!VM")
+ 
+ (define-vop (%lea-mod64/unsigned=>unsigned
+              %lea/unsigned=>unsigned)
+   (:translate %lea-mod64))
+-(define-vop (%lea-smod61/fixnum=>fixnum
++(define-vop (%lea-modfx/fixnum=>fixnum
+              %lea/fixnum=>fixnum)
+-  (:translate %lea-smod61))
++  (:translate %lea-modfx))
+ 
+ ;;; logical operations
+ (define-modular-fun lognot-mod64 (x) lognot :untagged nil 64)
+@@ -1746,14 +1749,14 @@
+     (*-transformer y)))
+ 
+ (deftransform * ((x y)
+-                 ((signed-byte 61) (constant-arg (unsigned-byte 64)))
+-                 (signed-byte 61))
++                 (fixnum (constant-arg (unsigned-byte 64)))
++                 fixnum)
+   "recode as leas, shifts and adds"
+   (let ((y (lvar-value y)))
+     (*-transformer y)))
+-(deftransform sb!vm::*-smod61
+-    ((x y) ((signed-byte 61) (constant-arg (unsigned-byte 64)))
+-     (signed-byte 61))
++(deftransform sb!vm::*-modfx
++    ((x y) (fixnum (constant-arg (unsigned-byte 64)))
++     fixnum)
+   "recode as leas, shifts and adds"
+   (let ((y (lvar-value y)))
+     (*-transformer y)))
+diff --git a/src/compiler/x86-64/array.lisp b/src/compiler/x86-64/array.lisp
+index 8621c09..60262d9 100644
+--- a/src/compiler/x86-64/array.lisp
++++ b/src/compiler/x86-64/array.lisp
+@@ -31,7 +31,7 @@
+   (:generator 13
+     (inst lea bytes
+           (make-ea :qword
+-                   :base rank :scale (ash 1 (- word-shift n-fixnum-tag-bits))
++                   :index rank :scale (ash 1 (- word-shift n-fixnum-tag-bits))
+                    :disp (+ (* (1+ array-dimensions-offset) n-word-bytes)
+                             lowtag-mask)))
+     (inst and bytes (lognot lowtag-mask))
+@@ -354,14 +354,26 @@
+   (:arg-types simple-array-single-float positive-fixnum
+               (:constant (constant-displacement other-pointer-lowtag
+                                                 4 vector-data-offset)))
++  #!+#.(cl:if (cl:<= sb!vm:word-shift sb!vm:n-fixnum-tag-bits)
++           '(and)
++           '(or))
+   (:temporary (:sc unsigned-reg) dword-index)
+   (:results (value :scs (single-reg)))
+   (:result-types single-float)
+   (:generator 5
+-   (move dword-index index)
+-   #!+#.(cl:if (cl:<= sb!vm:word-shift sb!vm:n-fixnum-tag-bits) '(and) '(or))
+-   (inst shr dword-index (1+ (- sb!vm:n-fixnum-tag-bits sb!vm:word-shift)))
+-   (inst movss value (make-ea-for-float-ref object dword-index offset 4))))
++    #!+#.(cl:if (cl:<= sb!vm:word-shift sb!vm:n-fixnum-tag-bits)
++             '(and)
++             '(or))
++    (progn
++      (move dword-index index)
++      (inst shr dword-index (1+ (- sb!vm:n-fixnum-tag-bits sb!vm:word-shift)))
++      (inst movss value (make-ea-for-float-ref object dword-index offset 4)))
++    #!+#.(cl:if (cl:<= sb!vm:word-shift sb!vm:n-fixnum-tag-bits)
++             '(or)
++             '(and))
++    (progn
++      (assert (= 1 n-fixnum-tag-bits))
++      (inst movss value (make-ea-for-float-ref object index offset 4 :scale 2)))))
+ 
+ (define-vop (data-vector-ref-c-with-offset/simple-array-single-float)
+   (:note "inline array access")
+@@ -389,14 +401,27 @@
+               (:constant (constant-displacement other-pointer-lowtag
+                                                 4 vector-data-offset))
+                single-float)
++  #!+#.(cl:if (cl:<= sb!vm:word-shift sb!vm:n-fixnum-tag-bits)
++           '(and)
++           '(or))
+   (:temporary (:sc unsigned-reg) dword-index)
+   (:results (result :scs (single-reg)))
+   (:result-types single-float)
+   (:generator 5
+-   (move dword-index index)
+-   #!+#.(cl:if (cl:<= sb!vm:word-shift sb!vm:n-fixnum-tag-bits) '(and) '(or))
+-   (inst shr dword-index (1+ (- sb!vm:n-fixnum-tag-bits sb!vm:word-shift)))
+-   (inst movss (make-ea-for-float-ref object dword-index offset 4) value)
++    #!+#.(cl:if (cl:<= sb!vm:word-shift sb!vm:n-fixnum-tag-bits)
++             '(and)
++             '(or))
++    (progn
++      (move dword-index index)
++      (inst shr dword-index (1+ (- sb!vm:n-fixnum-tag-bits sb!vm:word-shift)))
++      (inst movss (make-ea-for-float-ref object dword-index offset 4) value))
++    #!+#.(cl:if (cl:<= sb!vm:word-shift sb!vm:n-fixnum-tag-bits)
++             '(or)
++             '(and))
++    (progn
++      (assert (= 1 n-fixnum-tag-bits))
++      (inst movss (make-ea-for-float-ref object index offset 4 :scale 2)
++            value))
+    (move result value)))
+ 
+ (define-vop (data-vector-set-c-with-offset/simple-array-single-float)
+diff --git a/src/runtime/backtrace.c b/src/runtime/backtrace.c
+index d6d8513..9479919 100644
+--- a/src/runtime/backtrace.c
++++ b/src/runtime/backtrace.c
+@@ -602,15 +602,15 @@ backtrace_from_context(os_context_t *context, int nframes)
+     printf("interrupted in ");
+     lispobj *code = (lispobj *) component_ptr_from_pc((lispobj *) pc);
+     if (code) {
+-	struct compiled_debug_fun *df = debug_function_from_pc(code, pc);
+-	if (df)
+-	    print_entry_name(df->name);
+-	else
+-	    print_entry_points(code);
++        struct compiled_debug_fun *df = debug_function_from_pc(code, pc);
++        if (df)
++            print_entry_name(df->name);
++        else
++            print_entry_points(code);
+     } else {
+ #ifdef LISP_FEATURE_OS_PROVIDES_DLADDR
+         Dl_info info;
+-        if (dladdr(ra, &info)) {
++        if (dladdr(pc, &info)) {
+             printf("foreign function %s, pc = 0x%lx",
+                    info.dli_sname,
+                    (unsigned long) pc);
+diff --git a/src/runtime/breakpoint.c b/src/runtime/breakpoint.c
+index 45639c4..38a9d54 100644
+--- a/src/runtime/breakpoint.c
++++ b/src/runtime/breakpoint.c
+@@ -116,7 +116,7 @@ static long compute_offset(os_context_t *context, lispobj code)
+             return 0;
+         else {
+             unsigned long offset = pc - code_start;
+-            if (offset >= codeptr->code_size)
++            if (offset >= N_WORD_BYTES*fixnum_value(codeptr->code_size))
+                 return 0;
+             else
+                 return make_fixnum(offset);
+diff --git a/src/runtime/monitor.c b/src/runtime/monitor.c
+index 80b23bc..ed78b3b 100644
+--- a/src/runtime/monitor.c
++++ b/src/runtime/monitor.c
+@@ -417,14 +417,14 @@ backtrace_context_cmd(char **ptr)
+     free_ici = fixnum_value(SymbolValue(FREE_INTERRUPT_CONTEXT_INDEX,thread));
+ 
+     if (!free_ici) {
+-	printf("There are no interrupt contexts!\n");
+-	return;
++        printf("There are no interrupt contexts!\n");
++        return;
+     }
+ 
+     if (more_p(ptr))
+-	i = parse_number(ptr);
++        i = parse_number(ptr);
+     else
+-	i = free_ici - 1;
++        i = free_ici - 1;
+ 
+     if (more_p(ptr))
+         n = parse_number(ptr);
+@@ -432,11 +432,11 @@ backtrace_context_cmd(char **ptr)
+         n = 100;
+ 
+     if ((i >= 0) && (i < free_ici)) {
+-	printf("There are %d interrupt contexts.\n", free_ici);
++        printf("There are %d interrupt contexts.\n", free_ici);
+     } else {
+-	printf("There aren't that many/few contexts.\n");
+-	printf("There are %d interrupt contexts.\n", free_ici);
+-	return;
++        printf("There aren't that many/few contexts.\n");
++        printf("There are %d interrupt contexts.\n", free_ici);
++        return;
+     }
+ 
+     printf("Backtrace from context %d:\n", i);
+diff --git a/src/runtime/x86-64-assem.S b/src/runtime/x86-64-assem.S
+index 78fdc7a..8919787 100644
+--- a/src/runtime/x86-64-assem.S
++++ b/src/runtime/x86-64-assem.S
+@@ -194,7 +194,7 @@ Lstack:
+ 	xor	%rdx,%rdx	# clear any descriptor registers 
+ 	xor	%rdi,%rdi	# that we can't be sure we'll 
+ 	xor	%rsi,%rsi	# initialise properly.  XX do r8-r15 too?
+-	shl	$N_FIXNUM_TAG_BITS,%rcx	# (fixnumize num-args)
++	shl	$ N_FIXNUM_TAG_BITS,%rcx	# (fixnumize num-args)
+ 	cmp	$0,%rcx
+ 	je	Ldone
+ 	mov	0(%rbx),%rdx	# arg0
+diff --git a/tests/arith.pure.lisp b/tests/arith.pure.lisp
+index af1932c..d8a5eb1 100644
+--- a/tests/arith.pure.lisp
++++ b/tests/arith.pure.lisp
+@@ -151,11 +151,13 @@
+              ((1+ most-positive-fixnum) (1+ most-positive-fixnum) nil)
+              ((1+ most-positive-fixnum) (1- most-negative-fixnum) t)
+              (1 (ash most-negative-fixnum 1) nil)
+-             (#.(- sb-vm:n-word-bits sb-vm:n-lowtag-bits) most-negative-fixnum t)
+-             (#.(1+ (- sb-vm:n-word-bits sb-vm:n-lowtag-bits)) (ash most-negative-fixnum 1) t)
+-             (#.(+ 2 (- sb-vm:n-word-bits sb-vm:n-lowtag-bits)) (ash most-negative-fixnum 1) t)
+-             (#.(+ sb-vm:n-word-bits 32) (ash most-negative-fixnum #.(+ 32 sb-vm:n-lowtag-bits 1)) nil)
+-             (#.(+ sb-vm:n-word-bits 33) (ash most-negative-fixnum #.(+ 32 sb-vm:n-lowtag-bits 1)) t)))
++             (#.(- sb-vm:n-word-bits sb-vm:n-fixnum-tag-bits 1) most-negative-fixnum t)
++             (#.(1+ (- sb-vm:n-word-bits sb-vm:n-fixnum-tag-bits 1)) (ash most-negative-fixnum 1) t)
++             (#.(+ 2 (- sb-vm:n-word-bits sb-vm:n-fixnum-tag-bits 1)) (ash most-negative-fixnum 1) t)
++             (#.(+ sb-vm:n-word-bits 32) (ash most-negative-fixnum
++                                          #.(+ 32 sb-vm:n-fixnum-tag-bits 2)) nil)
++             (#.(+ sb-vm:n-word-bits 33) (ash most-negative-fixnum
++                                          #.(+ 32 sb-vm:n-fixnum-tag-bits 2)) t)))
+   (destructuring-bind (index int result) x
+     (assert (eq (eval `(logbitp ,index ,int)) result))))
+ 

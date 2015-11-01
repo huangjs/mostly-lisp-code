@@ -1,0 +1,9 @@
+svm_type nu_svr
+kernel_type rbf
+gamma 0.01
+nr_class 2
+total_sv 2
+rho -1.0457
+SV
+-0.0003 1:2.4735931 
+0.0003 1:3.1601833 

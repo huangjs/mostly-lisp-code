@@ -1,0 +1,420 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 6.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     14479,        411]
+NotebookOptionsPosition[     13475,        375]
+NotebookOutlinePosition[     13837,        391]
+CellTagsIndexPosition[     13794,        388]
+WindowFrame->Normal
+ContainsDynamic->False*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Definitions of Functions", "Section",
+ CellChangeTimes->{{3.410087196460875*^9, 3.41008720300775*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "coloring", " ", "function", " ", "for", " ", "plotting", " ", 
+    "classification", " ", "functions"}], " ", "*)"}], "\[IndentingNewLine]", 
+  
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"PinkOrBlue", "[", "x_", "]"}], ":=", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"x", "<", "0.01"}], ",", "LightBlue", ",", "LightPink"}], 
+      "]"}]}], ";"}], "\n", "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+      "function", " ", "that", " ", "returns", " ", "a", " ", "Graphics", " ",
+        "object", " ", "containing", " ", "a", " ", "contour", " ", "plot", 
+       " ", "of", " ", "a", " ", "classification", "\[IndentingNewLine]", 
+       "\t", "function", " ", 
+       RowBox[{"(", 
+        RowBox[{"on", " ", "the", " ", "unit", " ", "square"}], ")"}]}], ";", 
+      " ", 
+      RowBox[{
+      "the", " ", "argument", " ", "is", " ", "a", " ", "discriminant", " ", 
+       "function", " ", "that", " ", "takes", " ", "two", " ", "arguments"}], 
+      ";", "\[IndentingNewLine]", "\t ", 
+      RowBox[{
+      "the", " ", "area", " ", "that", " ", "would", " ", "be", " ", 
+       "assigned", " ", "to", " ", "the", " ", "negative", " ", "class", " ", 
+       "is", " ", "colored", " ", "light", " ", "blue"}]}], ",", 
+     "\[IndentingNewLine]", "\t ", 
+     RowBox[{
+     "the", " ", "area", " ", "that", " ", "would", " ", "be", " ", 
+      "assigned", " ", "to", " ", "the", " ", "positive", " ", "class", " ", 
+      "is", " ", "colored", " ", "light", " ", "pink"}]}], " ", "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"ClassificationFunctionPlot", "[", "g_", "]"}], ":=", 
+     "\[IndentingNewLine]", 
+     RowBox[{"ContourPlot", "[", 
+      RowBox[{
+       RowBox[{"g", "[", 
+        RowBox[{"x", ",", "y"}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"x", ",", 
+         RowBox[{"-", "0.08"}], ",", "1.08"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"y", ",", 
+         RowBox[{"-", "0.08"}], ",", "1.08"}], "}"}], ",", 
+       RowBox[{"PlotPoints", "\[Rule]", "101"}], ",", 
+       RowBox[{"Contours", "\[Rule]", 
+        RowBox[{"{", "0", "}"}]}], ",", "\[IndentingNewLine]", 
+       RowBox[{"ColorFunction", "\[Rule]", "PinkOrBlue"}], ",", 
+       RowBox[{"DisplayFunction", "\[Rule]", "Identity"}]}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+      "function", " ", "that", " ", "returns", " ", "a", " ", "Graphics", " ",
+        "object", " ", "containing", " ", "a", " ", "plot", " ", "of", " ", 
+       "a", " ", "binary", " ", "classification", " ", "data", " ", "set"}], 
+      ";", "\[IndentingNewLine]", "\t ", 
+      RowBox[{
+      "points", " ", "belonging", " ", "to", " ", "the", " ", "negative", " ",
+        "class", " ", "are", " ", "colored", " ", "blue"}]}], ",", 
+     "\[IndentingNewLine]", "\t ", 
+     RowBox[{
+     "points", " ", "belonging", " ", "to", " ", "the", " ", "positive", " ", 
+      "class", " ", "are", " ", "colored", " ", "red"}]}], " ", "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"ClassificationDataPlot", "[", "data_", "]"}], ":=", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"Graphics", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"PointSize", "[", "0.015", "]"}], ",", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"data", "\[LeftDoubleBracket]", 
+              RowBox[{"i", ",", "3"}], "\[RightDoubleBracket]"}], 
+             "\[GreaterEqual]", "0"}], ",", "Red", ",", "Blue"}], "]"}], ",", 
+          
+          RowBox[{"Point", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"data", "\[LeftDoubleBracket]", 
+              RowBox[{"i", ",", "1"}], "\[RightDoubleBracket]"}], ",", 
+             RowBox[{"data", "\[LeftDoubleBracket]", 
+              RowBox[{"i", ",", "2"}], "\[RightDoubleBracket]"}]}], "}"}], 
+           "]"}]}], "}"}], "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "1", ",", 
+         RowBox[{"Length", "[", "data", "]"}]}], "}"}]}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+     RowBox[{
+     "function", " ", "for", " ", "putting", " ", "classification", " ", 
+      "data", " ", "and", " ", "function", " ", "together"}], ",", " ", 
+     RowBox[{
+     "the", " ", "argument", " ", "is", " ", "a", " ", "list", " ", "of", 
+      "\[IndentingNewLine]", "\t", "Graphics", " ", "objects"}]}], " ", 
+    "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"ShowClassification", "[", "list_", "]"}], ":=", 
+     RowBox[{"Show", "[", 
+      RowBox[{
+       RowBox[{"Flatten", "[", "list", "]"}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "1"}], ",", 
+       RowBox[{"Frame", "\[Rule]", "True"}], ",", 
+       RowBox[{"PlotRange", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"-", "0.1"}], ",", "1.1"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"-", "0.1"}], ",", "1.1"}], "}"}]}], "}"}]}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"500", ",", "Automatic"}], "}"}]}], ",", 
+       RowBox[{"DisplayFunction", "\[Rule]", "$DisplayFunction"}]}], "]"}]}], 
+    ";"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "auxiliary", " ", "function", " ", "for", " ", "computing", " ", "the", 
+     " ", "Euclidean", " ", "distance", " ", "up", " ", "to", " ", "the", " ",
+      "last", " ", "but", " ", "first", " ", "entry", "\[IndentingNewLine]", 
+     "\t", "of", " ", "the", " ", "second", " ", "argument"}], " ", "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"EuclidDistAux", "[", 
+      RowBox[{"x_List", ",", "y_List"}], "]"}], ":=", 
+     RowBox[{"N", "[", 
+      RowBox[{"EuclideanDistance", "[", 
+       RowBox[{
+        RowBox[{"x", "[", 
+         RowBox[{"[", 
+          RowBox[{"1", ";;", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"Length", "[", "y", "]"}], "-", "1"}], ")"}]}], "]"}], 
+         "]"}], ",", 
+        RowBox[{"y", "[", 
+         RowBox[{"[", 
+          RowBox[{"1", ";;", 
+           RowBox[{"-", "2"}]}], "]"}], "]"}]}], "]"}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"k", "-", 
+       RowBox[{"nearest", " ", "neighbor", " ", "classifier", " ", 
+        RowBox[{"(", 
+         RowBox[{"real", "-", 
+          RowBox[{"valued", " ", "discriminant", " ", "function"}]}], 
+         ")"}]}]}], ";", "\[IndentingNewLine]", "\t", 
+      RowBox[{
+      "the", " ", "first", " ", "argument", " ", "is", " ", "the", " ", 
+       "data", " ", "point", " ", "to", " ", "be", " ", "classified"}]}], ",",
+      "\[IndentingNewLine]", "\t", 
+     RowBox[{
+     "the", " ", "second", " ", "argument", " ", "is", " ", "the", " ", 
+      "data", " ", "set"}], ",", "\[IndentingNewLine]", "\t", 
+     RowBox[{
+     "the", " ", "third", " ", "argument", " ", "is", " ", "the", " ", 
+      "number", " ", "of", " ", "neighbors", " ", "k"}]}], " ", "*)"}], "\n", 
+   
+   RowBox[{
+    RowBox[{
+     RowBox[{"KNN", "[", 
+      RowBox[{"x_List", ",", " ", "data_List", ",", " ", "k_Integer"}], "]"}],
+      " ", ":=", " ", "\n", "  ", 
+     RowBox[{"Mean", "[", 
+      RowBox[{
+       RowBox[{"data", "[", 
+        RowBox[{"[", 
+         RowBox[{"Ordering", "[", 
+          RowBox[{
+           RowBox[{"Map", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"EuclidDistAux", "[", 
+               RowBox[{"x", ",", " ", "#"}], " ", "]"}], "&"}], ",", " ", 
+             "data"}], "]"}], ",", "k"}], "]"}], "]"}], "]"}], "[", 
+       RowBox[{"[", 
+        RowBox[{"All", ",", 
+         RowBox[{"-", "1"}]}], "]"}], "]"}], "]"}]}], ";"}]}]}]], "Input",
+ CellChangeTimes->{{3.410070474617125*^9, 3.41007050119525*^9}, 
+   3.410070779664*^9, {3.41007128244525*^9, 3.41007140413275*^9}, {
+   3.410071438304625*^9, 3.41007144000775*^9}, {3.410071480164*^9, 
+   3.41007148075775*^9}, {3.4100715706015*^9, 3.410071573289*^9}, {
+   3.41007164482025*^9, 3.4100716703515*^9}, {3.41007172694525*^9, 
+   3.410071863164*^9}, {3.4100721499765*^9, 3.410072457398375*^9}, {
+   3.410072991898375*^9, 3.410072996148375*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Load Data Sets", "Section",
+ CellChangeTimes->{{3.41008721150775*^9, 3.41008721800775*^9}, {
+  3.410087366929625*^9, 3.41008736875775*^9}}],
+
+Cell[BoxData[
+ StyleBox[
+  RowBox[{
+   RowBox[{"Change", " ", "to", " ", 
+    RowBox[{"directory", " ", "containing", " ", "data", " ", "sets"}]}], " ",
+    "\[Rule]", " ", 
+   RowBox[{
+   "change", " ", "the", " ", "path", " ", "according", " ", "to", " ", 
+    "your", " ", 
+    RowBox[{"needs", ":"}]}]}], "Subsubsection"]], "Input",
+ CellChangeTimes->{{3.410087395648375*^9, 3.41008741532025*^9}},
+ FormatType->"InputForm"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+   "SetDirectory", "[", "\"\<H:/Teaching/2007 WS TheorConcML UE/DataSets\>\"",
+     "]"}], ";"}], " "}]], "Input",
+ CellChangeTimes->{{3.410087240617125*^9, 3.410087296960875*^9}, {
+  3.41008741825775*^9, 3.4100874194765*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Load data sets; before using any data set, make sure to import the file:\
+\>", "Subsubsection",
+ CellDingbat->None,
+ CellChangeTimes->{{3.41008745413275*^9, 3.41008749532025*^9}, {
+  3.410087924398375*^9, 3.41008792563275*^9}, {3.410087965914*^9, 
+  3.4100879727265*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DataSet1", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"\"\<DataSet1.data\>\"", ",", "\"\<CSV\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.4100873058515*^9, 3.410087363914*^9}, 
+   3.410087425492125*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DataSet2", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"\"\<DataSet2.data\>\"", ",", "\"\<CSV\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.4100873058515*^9, 3.410087363914*^9}, {
+  3.410087425492125*^9, 3.410087435773375*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DataSet3", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"\"\<DataSet3.data\>\"", ",", "\"\<CSV\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.4100873058515*^9, 3.410087363914*^9}, {
+  3.410087425492125*^9, 3.41008743907025*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DataSet4", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"\"\<DataSet4.data\>\"", ",", "\"\<CSV\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.4100873058515*^9, 3.410087363914*^9}, {
+  3.410087425492125*^9, 3.410087442429625*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DataSet5", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"\"\<DataSet5.data\>\"", ",", "\"\<CSV\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.4100873058515*^9, 3.410087363914*^9}, {
+  3.410087425492125*^9, 3.410087445367125*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DataSet6", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"\"\<DataSet6.data\>\"", ",", "\"\<CSV\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.4100873058515*^9, 3.410087363914*^9}, {
+  3.410087425492125*^9, 3.410087447992125*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DataSet7", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"\"\<DataSet7.data\>\"", ",", "\"\<CSV\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.4100873058515*^9, 3.410087363914*^9}, {
+  3.410087425492125*^9, 3.410087447992125*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DataSet8", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"\"\<DataSet8.data\>\"", ",", "\"\<CSV\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.4100900878515*^9, 3.410090091054625*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DataSet9", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"\"\<DataSet9.data\>\"", ",", "\"\<CSV\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.410090097554625*^9, 3.41009010088275*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"RocEx1", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"\"\<ROC-Ex1.data\>\"", ",", "\"\<CSV\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.4100873058515*^9, 3.410087363914*^9}, {
+  3.410087425492125*^9, 3.410087447992125*^9}, {3.41008754319525*^9, 
+  3.41008755213275*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"RocEx2", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{"\"\<ROC-Ex2.data\>\"", ",", "\"\<CSV\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.4100873058515*^9, 3.410087363914*^9}, {
+  3.410087425492125*^9, 3.410087447992125*^9}, {3.4100875574765*^9, 
+  3.41008756613275*^9}}]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1272, 921},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+ShowSelection->True,
+FrontEndVersion->"6.0 for Microsoft Windows (32-bit) (April 20, 2007)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[590, 23, 108, 1, 71, "Section"],
+Cell[701, 26, 8511, 207, 632, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9249, 238, 145, 2, 71, "Section"],
+Cell[9397, 242, 427, 11, 31, "Input"],
+Cell[9827, 255, 273, 7, 31, "Input"],
+Cell[CellGroupData[{
+Cell[10125, 266, 281, 6, 28, "Subsubsection"],
+Cell[10409, 274, 253, 7, 31, "Input"],
+Cell[10665, 283, 276, 7, 31, "Input"],
+Cell[10944, 292, 275, 7, 31, "Input"],
+Cell[11222, 301, 276, 7, 31, "Input"],
+Cell[11501, 310, 276, 7, 31, "Input"],
+Cell[11780, 319, 276, 7, 31, "Input"],
+Cell[12059, 328, 276, 7, 31, "Input"],
+Cell[12338, 337, 230, 6, 31, "Input"],
+Cell[12571, 345, 231, 6, 31, "Input"],
+Cell[12805, 353, 320, 8, 31, "Input"],
+Cell[13128, 363, 319, 8, 31, "Input"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
